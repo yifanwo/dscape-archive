@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DScape Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/package-particlefx@2.0.2/dist/particlefx.umd.js"></script>
+  <style>
+    :root {
+      --ink: #1A3A40;
+      --ink-deep: #0D1F22;
+      --ink-soft: #5A6B69;
+      --cream: #F4F0EC;
+      --cream-dark: #E6E0D8;
+      --white: #FFFFFF;
+      --line: #C8C0B6;
+      --particle: #4A8A92;
+      --warm-grey: #B8B0A8;
+      --glitch-cyan: #00E5FF;
+      --glitch-red: #FF2A54;
+      --acid-teal: #18C4D4;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--cream);
+      color: var(--ink);
+      font-family: 'Space Mono', 'Poppins', monospace;
+      font-weight: 400;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Layer 1: Blurry transparent organic gradient clouds in the light nude-grey palette (no grid lines) */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -12%;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 46% 38% at 18% 22%, rgba(184, 176, 168, 0.58) 0%, rgba(230, 224, 216, 0.25) 55%, transparent 80%),
+        radial-gradient(ellipse 52% 44% at 82% 28%, rgba(164, 156, 148, 0.45) 0%, transparent 72%),
+        radial-gradient(ellipse 60% 48% at 45% 74%, rgba(184, 176, 168, 0.62) 0%, rgba(216, 208, 200, 0.3) 50%, transparent 78%),
+        radial-gradient(ellipse 40% 35% at 85% 84%, rgba(90, 107, 105, 0.16) 0%, transparent 70%),
+        radial-gradient(ellipse 38% 32% at 15% 82%, rgba(255, 255, 255, 0.85) 0%, transparent 68%),
+        linear-gradient(165deg, #F7F4F0 0%, #EAE4DC 48%, #F4F0EC 100%);
+      filter: blur(28px) contrast(1.08);
+    }
+
+    /* Layer 2: Pixelated Bayer-matrix halftone dither layer (like reference image) in warm nude-grey */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        radial-gradient(circle at 2px 2px, rgba(142, 134, 126, 0.44) 1.15px, transparent 1.25px),
+        radial-gradient(circle at 6px 6px, rgba(168, 160, 152, 0.36) 1px, transparent 1.15px),
+        radial-gradient(circle at 6px 2px, rgba(90, 107, 105, 0.2) 0.9px, transparent 1.05px);
+      background-size: 8px 8px, 8px 8px, 16px 16px;
+      image-rendering: pixelated;
+      -webkit-mask-image:
+        radial-gradient(ellipse 55% 42% at 22% 24%, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.35) 55%, transparent 82%),
+        radial-gradient(ellipse 64% 50% at 78% 32%, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.25) 58%, transparent 85%),
+        radial-gradient(ellipse 68% 52% at 42% 78%, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.3) 55%, transparent 80%);
+      mask-image:
+        radial-gradient(ellipse 55% 42% at 22% 24%, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.35) 55%, transparent 82%),
+        radial-gradient(ellipse 64% 50% at 78% 32%, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.25) 58%, transparent 85%),
+        radial-gradient(ellipse 68% 52% at 42% 78%, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.3) 55%, transparent 80%);
+      opacity: 0.88;
+    }
+
+    .archive {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 3.5rem 2.5rem 5rem;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Brutalist Techno Header */
+    .archive-header {
+      margin-bottom: 4.5rem;
+      color: var(--ink);
+      position: relative;
+      z-index: 2;
+      border-top: 3px solid var(--ink);
+      border-bottom: 2px solid var(--ink);
+      padding: 1.5rem 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .sys-status {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--particle);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sys-status::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--particle);
+      box-shadow: 0 0 8px var(--glitch-cyan);
+      animation: pulseBlink 1.6s infinite steps(2);
+    }
+
+    @keyframes pulseBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .archive-header h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 700;
+      font-size: clamp(2.6rem, 5vw, 4.2rem);
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 0.95;
+      position: relative;
+      display: inline-block;
+      color: var(--ink);
+    }
+
+    /* Glitch effect on header title */
+    .archive-header h1::before,
+    .archive-header h1::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .archive-header h1::before {
+      left: 2px;
+      text-shadow: -2px 0 var(--glitch-red);
+      clip-path: inset(15% 0 65% 0);
+      animation: glitchSliceA 4.5s infinite linear alternate-reverse;
+    }
+
+    .archive-header h1::after {
+      left: -2px;
+      text-shadow: 2px 0 var(--glitch-cyan);
+      clip-path: inset(60% 0 10% 0);
+      animation: glitchSliceB 3.8s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitchSliceA {
+      0%, 84%, 100% { clip-path: inset(100% 0 0 0); transform: translate(0); }
+      86% { clip-path: inset(12% 0 68% 0); transform: translate(-3px, 1px); }
+      88% { clip-path: inset(48% 0 22% 0); transform: translate(3px, -1px); }
+      90% { clip-path: inset(75% 0 8% 0); transform: translate(-2px, 0); }
+    }
+
+    @keyframes glitchSliceB {
+      0%, 88%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+      90% { clip-path: inset(58% 0 15% 0); transform: translate(3px, 1px); }
+      93% { clip-path: inset(20% 0 55% 0); transform: translate(-3px, -1px); }
+      96% { clip-path: inset(80% 0 5% 0); transform: translate(2px, 0); }
+    }
+
+    .header-meta {
+      font-family: 'Space Mono', monospace;
+      text-align: right;
+      font-size: 0.75rem;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      line-height: 1.65;
+    }
+
+    .header-meta strong {
+      color: var(--ink);
+      background: var(--cream-dark);
+      padding: 0.1rem 0.4rem;
+      border: 1px solid var(--ink);
+    }
+
+    /* Object Grid */
+    .object-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3.5rem 2.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 1150px) {
+      .object-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 3rem 2rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .archive {
+        padding: 2rem 1.25rem 4rem;
+      }
+      .archive-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .header-meta {
+        text-align: left;
+      }
+      .object-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+    }
+
+    /* Borderless Particle Card — merges seamlessly into background canvas */
+    .object-card {
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      text-align: left;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      outline: none;
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .object-card:hover,
+    .object-card:focus-visible {
+      transform: translateY(-6px);
+    }
+
+    .object-card:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 8px;
+    }
+
+    /* Top Details Prompt Bar + Enlarged Original Image Preview on Hover */
+    .card-top-hud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(26, 58, 64, 0.2);
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 5;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .object-card:hover .card-top-hud,
+    .object-card:focus-visible .card-top-hud {
+      border-bottom-color: var(--ink);
+      color: var(--ink);
+    }
+
+    .hud-index {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    /* Details Prompt Pill at the top of the card */
+    .details-prompt {
+      background: var(--ink);
+      color: var(--cream);
+      padding: 0.18rem 0.55rem;
+      font-weight: 700;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      transform: translateY(4px);
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .object-card:hover .details-prompt,
+    .object-card:focus-visible .details-prompt {
+      opacity: 1;
+      transform: translateY(0);
+      box-shadow: 3px 3px 0 var(--particle), -2px 0 0 var(--glitch-red);
+      animation: brutalGlitchPrompt 0.35s steps(2) 1;
+    }
+
+    @keyframes brutalGlitchPrompt {
+      0% { transform: translate(-3px, 1px) skewX(-6deg); }
+      40% { transform: translate(3px, -1px) skewX(6deg); }
+      80% { transform: translate(-1px, 0); }
+      100% { transform: translate(0, 0); }
+    }
+
+    /* Stage housing the borderless particle silhouette & hover zoom original image */
+    .visual-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+    }
+
+    /* Borderless Particle Container with deep organic shadow against background */
+    .object-card .particle-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: visible;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Strong dimensional shadow so the borderless particles stand out vividly against cream canvas */
+      filter:
+        drop-shadow(0 18px 22px rgba(13, 31, 34, 0.28))
+        drop-shadow(5px 6px 0px rgba(26, 58, 64, 0.16));
+      transition: filter 0.3s ease, opacity 0.28s ease, transform 0.3s ease;
+    }
+
+    .object-card:hover .particle-container {
+      filter:
+        drop-shadow(0 24px 30px rgba(13, 31, 34, 0.38))
+        drop-shadow(4px 0 0 rgba(0, 229, 255, 0.45))
+        drop-shadow(-4px 0 0 rgba(255, 42, 84, 0.35));
+    }
+
+    .object-card .particle-container canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    .object-card .fallback-img {
+      width: 85%;
+      height: 85%;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* Hover Zoom Enlarged Original Image Preview Overlay */
+    .zoom-preview-lens {
+      position: absolute;
+      inset: -4%;
+      z-index: 4;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.84);
+      transition:
+        opacity 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .object-card:hover .zoom-preview-lens,
+    .object-card:focus-visible .zoom-preview-lens {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+
+    .zoom-preview-img {
+      width: 92%;
+      height: 92%;
+      object-fit: contain;
+      filter:
+        drop-shadow(0 24px 32px rgba(13, 31, 34, 0.48))
+        drop-shadow(6px 6px 0px rgba(26, 58, 64, 0.85))
+        contrast(1.06);
+      transition: transform 0.35s ease;
+    }
+
+    .object-card:hover .zoom-preview-img {
+      animation: technoImgGlitch 0.3s steps(2) 1;
+    }
+
+    @keyframes technoImgGlitch {
+      0% {
+        filter:
+          drop-shadow(6px 0 0 var(--glitch-cyan))
+          drop-shadow(-6px 0 0 var(--glitch-red))
+          contrast(1.3);
+        transform: translate(-3px, 1px) scale(1.02);
+      }
+      50% {
+        filter:
+          drop-shadow(-4px 2px 0 var(--glitch-cyan))
+          drop-shadow(4px -2px 0 var(--glitch-red))
+          contrast(1.15);
+        transform: translate(3px, -1px) scale(1.04);
+      }
+      100% {
+        filter:
+          drop-shadow(0 24px 32px rgba(13, 31, 34, 0.48))
+          drop-shadow(6px 6px 0px rgba(26, 58, 64, 0.85))
+          contrast(1.06);
+        transform: translate(0, 0) scale(1);
+      }
+    }
+
+    /* Brutalist technical corner crosshairs around the visual stage on hover */
+    .stage-crosshair {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .object-card:hover .stage-crosshair,
+    .object-card:focus-visible .stage-crosshair {
+      opacity: 1;
+    }
+
+    .stage-crosshair::before,
+    .stage-crosshair::after {
+      content: "";
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-color: var(--ink);
+      border-style: solid;
+    }
+
+    .stage-crosshair::before {
+      top: 0;
+      left: 0;
+      border-width: 2px 0 0 2px;
+    }
+
+    .stage-crosshair::after {
+      bottom: 0;
+      right: 0;
+      border-width: 0 2px 2px 0;
+    }
+
+    /* Bottom Information Block (Brutalist Techno Typography) */
+    .card-info {
+      margin-top: 0.9rem;
+      padding-top: 0.75rem;
+      border-top: 2px solid var(--ink);
+      position: relative;
+      z-index: 5;
+      transition: background-color 0.2s ease;
+    }
+
+    .object-card .category {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--particle);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .object-card .title {
+      font-family: 'Poppins', "Helvetica Neue", Arial, sans-serif;
+      font-weight: 600;
+      font-size: 1.02rem;
+      margin-top: 0.3rem;
+      color: var(--ink);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      transition: text-shadow 0.2s ease;
+    }
+
+    .object-card:hover .title {
+      text-shadow: 1.5px 0 0 rgba(0, 229, 255, 0.55), -1.5px 0 0 rgba(255, 42, 84, 0.45);
+    }
+
+    .object-card .era-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--ink-soft);
+      margin-top: 0.35rem;
+      display: inline-block;
+      background: rgba(26, 58, 64, 0.07);
+      padding: 0.1rem 0.45rem;
+    }
+
+    /* Hidden SVG connections layer (kept in DOM for structural compatibility, disabled visually) */
+    .connections-layer {
+      display: none !important;
+      pointer-events: none;
+    }
+
+    /* Brutalist Techno Modal / Overlay */
+    .overlay-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 31, 34, 0.72);
+      backdrop-filter: blur(3px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+    }
+
+    .overlay-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .overlay-dialog {
+      background: var(--cream);
+      border: 3px solid var(--ink);
+      box-shadow: 12px 12px 0 var(--ink), -4px -4px 0 var(--particle);
+      max-width: 780px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 1.75rem 2.25rem 2.5rem;
+      position: relative;
+      color: var(--ink);
+    }
+
+        /* =========================================
+       Retro-Brutalist Techno Custom Scrollbars
+       (Do NOT use scrollbar-width/scrollbar-color on *, or Chrome/Edge will ignore ::-webkit-scrollbar)
+       ========================================= */
+    ::-webkit-scrollbar,
+    .overlay-dialog::-webkit-scrollbar {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Hide the default Windows ▲ / ▼ arrow buttons */
+    ::-webkit-scrollbar-button,
+    .overlay-dialog::-webkit-scrollbar-button {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    /* Brutalist Track with technical ruler tick marks */
+    ::-webkit-scrollbar-track,
+    .overlay-dialog::-webkit-scrollbar-track {
+      background-color: var(--cream-dark);
+      border-left: 2px solid var(--ink);
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 7px,
+        rgba(26, 58, 64, 0.28) 7px,
+        rgba(26, 58, 64, 0.28) 8px
+      );
+    }
+
+    /* Sharp 0px-radius Techno Thumb with teal center grip lines */
+    ::-webkit-scrollbar-thumb,
+    .overlay-dialog::-webkit-scrollbar-thumb {
+      background-color: var(--ink);
+      border-radius: 0px;
+      border-top: 2px solid var(--cream-dark);
+      border-bottom: 2px solid var(--cream-dark);
+      border-right: 2px solid var(--cream-dark);
+      border-left: 3px solid var(--ink);
+      background-image: linear-gradient(
+        to bottom,
+        transparent calc(50% - 4px),
+        var(--glitch-cyan) calc(50% - 4px),
+        var(--glitch-cyan) calc(50% - 2px),
+        transparent calc(50% - 2px),
+        transparent calc(50% + 2px),
+        var(--glitch-cyan) calc(50% + 2px),
+        var(--glitch-cyan) calc(50% + 4px),
+        transparent calc(50% + 4px)
+      );
+    }
+
+    /* Glitch Teal / Red Accent on Hover & Active Drag */
+    ::-webkit-scrollbar-thumb:hover,
+    .overlay-dialog::-webkit-scrollbar-thumb:hover {
+      background-color: var(--particle);
+      border-color: var(--ink);
+    }
+
+    ::-webkit-scrollbar-thumb:active,
+    .overlay-dialog::-webkit-scrollbar-thumb:active {
+      background-color: var(--glitch-red);
+      border-color: var(--ink);
+    }
+
+    ::-webkit-scrollbar-corner,
+    .overlay-dialog::-webkit-scrollbar-corner {
+      background: var(--ink);
+    }
+
+    /* Apply standard scrollbar-color ONLY in Firefox so Chrome/Edge keep custom WebKit styling */
+    @-moz-document url-prefix() {
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--ink) var(--cream-dark);
+      }
+    }
+
+    .overlay-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-bottom: 0.85rem;
+      margin-bottom: 1.15rem;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .overlay-topbar-status {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .overlay-topbar-status::before {
+      content: "■";
+      color: var(--particle);
+    }
+
+    .overlay-close {
+      position: static;
+      flex-shrink: 0;
+      background: var(--ink);
+      border: 2px solid var(--ink);
+      color: var(--cream);
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.38rem 0.85rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease;
+    }
+
+    .overlay-close:hover {
+      background: var(--glitch-red);
+      border-color: var(--ink);
+      color: var(--white);
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .overlay-close:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+    }
+
+    .overlay-hero-preview {
+      width: 100%;
+      height: 310px;
+      background:
+        radial-gradient(circle at center, rgba(74, 138, 146, 0.14), transparent 70%),
+        var(--cream-dark);
+      border: 2px solid var(--ink);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      position: relative;
+      overflow: hidden;
+      cursor: zoom-in;
+      user-select: none;
+    }
+
+    .overlay-hero-preview.is-zoomed {
+      cursor: grab;
+    }
+
+    .overlay-hero-preview.is-zoomed.is-dragging {
+      cursor: grabbing;
+    }
+
+    .overlay-hero-preview img {
+      max-width: 88%;
+      max-height: 88%;
+      object-fit: contain;
+      filter: drop-shadow(0 14px 20px rgba(13, 31, 34, 0.35));
+      transform-origin: center center;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    .overlay-hero-preview.is-dragging img {
+      transition: none;
+    }
+
+    .hero-zoom-toolbar {
+      position: absolute;
+      bottom: 0.65rem;
+      right: 0.65rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: rgba(244, 240, 236, 0.92);
+      border: 1.5px solid var(--ink);
+      padding: 0.2rem;
+      box-shadow: 3px 3px 0 rgba(26, 58, 64, 0.22);
+      z-index: 5;
+    }
+
+    .zoom-btn {
+      background: var(--white);
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      min-width: 26px;
+      height: 24px;
+      padding: 0 0.35rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.12s ease, color 0.12s ease;
+    }
+
+    .zoom-btn:hover {
+      background: var(--ink);
+      color: var(--cream);
+    }
+
+    .zoom-level-readout {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0 0.4rem;
+      color: var(--ink);
+      min-width: 44px;
+      text-align: center;
+    }
+
+    .hero-zoom-hint {
+      position: absolute;
+      top: 0.6rem;
+      left: 0.65rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      background: rgba(244, 240, 236, 0.85);
+      border: 1px solid var(--line);
+      padding: 0.15rem 0.45rem;
+      pointer-events: none;
+    }
+
+    .overlay-category {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--particle);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+    }
+
+    .overlay-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-top: 0.25rem;
+      line-height: 1.15;
+      padding-right: 5rem;
+      text-transform: uppercase;
+    }
+
+    .overlay-era {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+      margin-top: 0.4rem;
+      padding-bottom: 1.1rem;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .overlay-section {
+      margin-top: 1.35rem;
+    }
+
+    .overlay-section h3 {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink);
+      background: var(--cream-dark);
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border: 1px solid var(--ink);
+      margin-bottom: 0.65rem;
+      font-weight: 700;
+    }
+
+    .overlay-narrative {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      color: var(--ink);
+      line-height: 1.7;
+    }
+
+    .overlay-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.85rem 1.5rem;
+      background: var(--white);
+      padding: 1rem 1.25rem;
+      border: 2px solid var(--ink);
+      box-shadow: 4px 4px 0 rgba(26, 58, 64, 0.18);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 520px) {
+      .overlay-meta-grid {
+        grid-template-columns: 1fr;
+      }
+      .overlay-dialog {
+        padding: 1.5rem 1.15rem;
+      }
+    }
+
+    .overlay-meta-item strong {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--particle);
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+
+    .reading-list {
+      list-style: none;
+      border-top: 1px solid var(--ink);
+    }
+
+    .reading-list li {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.85rem;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .reading-list .reading-title {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .reading-list .reading-type {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--particle);
+      margin-left: 0.5rem;
+    }
+
+    .reading-list .reading-note {
+      color: var(--ink-soft);
+      margin-top: 0.2rem;
+      font-size: 0.8rem;
+    }
+
+    .connected-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .connected-pill {
+      background: var(--white);
+      border: 2px solid var(--ink);
+      color: var(--ink);
+      padding: 0.35rem 0.75rem;
+      font-size: 0.75rem;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease;
+    }
+
+    .connected-pill:hover {
+      background: var(--ink);
+      color: var(--cream);
+      transform: translate(-2px, -2px);
+      box-shadow: 3px 3px 0 var(--particle);
+    }
+
+    .connected-pill:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <main class="archive">
+    <header class="archive-header">
+      <div class="header-left">
+        <div class="sys-status">DSCAPE . ARCHIVE / V1.0.5-1</div>
+        <h1 data-text="Archive">from relics to nodes</h1>
+        <p>HKUST Library | Digital Scholarship</p>
+      </div>
+      <div class="header-meta">
+        <div>OBJECTS INDEXED: <strong>08 UNITS</strong></div>
+        <div>RENDER MODE: <strong>PARTICLE_SILHOUETTE + OPTIC_ZOOM</strong></div>
+      </div>
+    </header>
+    <section class="object-grid" aria-label="Object archive">
+      <!-- cards injected via inline JS -->
+    </section>
+    <svg class="connections-layer" aria-hidden="true"></svg>
+  </main>
+
+  <div class="overlay-backdrop" id="detail-overlay" role="dialog" aria-modal="true" aria-labelledby="overlay-title" aria-hidden="true">
+    <div class="overlay-dialog" id="overlay-dialog-box">
+      <div class="overlay-topbar">
+        <div class="overlay-topbar-status" id="overlay-topbar-id">SPEC_SHEET // ARCHIVE_INSPECTOR</div>
+        <button type="button" class="overlay-close" id="overlay-close-btn" aria-label="Close dialog">[X]</button>
+      </div>
+      <div id="overlay-content"></div>
+    </div>
+  </div>
+
+  <script>
+    const objects = [
+      {
+        "index": "01",
+        "id": "item-01-aten-kvmp",
+        "title": "ATEN Master View CS-1732A",
+        "category": "Peripherals & Input",
+        "era": "Circa 2000–2005",
+        "function": "Share one console across two machines.",
+        "labelNotes": "HKUST LIBRARY; PC / LAPTOP",
+        "narrative": "The ATEN CS-1732A is a 2-port PS/2 and USB KVMP switch with a built-in 2-port USB hub and audio support, reaching up to 2048x1536 resolution. Tagged \"PC / LAPTOP\" and \"HKUST LIBRARY,\" it exemplifies the classic desktop KVM solution for managing multiple computers with a single console in early server rooms.",
+        "connections": ["item-08-lacie-nas"],
+        "image": "./public/images/01-aten-kvmp.png",
+        "altPaths": ["./public/images/01-aten-kvmp.png"],
+        "furtherReading": [
+          {
+            "title": "USB Device Emulation and KVM Switching Mechanics",
+            "type": "Paper",
+            "note": "Understand how KVM switches emulate PS/2 and USB endpoints to the host machines."
+          }
+        ]
+      },
+      {
+        "index": "02",
+        "id": "item-02-floppy-disk-3-5",
+        "title": "3.5\" Floppy Disk (US MARC/COM.CP Format)",
+        "category": "Magnetic Storage",
+        "era": "May 1999",
+        "function": "Exchanging library machine-readable cataloging data.",
+        "labelNotes": "Order No. 8009974F; Format: US MARC/COM.CP",
+        "narrative": "Manufactured by Professional Media Service, this 3.5-inch high-density floppy is labeled \"US MARC/COM.CP\" and \"HKUST LIBRARY.\" In the 1990s and early 2000s, libraries relied on such physical media to exchange machine-readable cataloging records between automated systems, serving as a crucial carrier during the early digital library era.",
+        "connections": ["item-05-floppy-disk-5-25"],
+        "image": "./public/images/02-floppy-disk.png",
+        "altPaths": ["./public/images/02-floppy-disk.png"],
+        "furtherReading": []
+      },
+      {
+        "index": "03",
+        "id": "item-03-hp-dat-160",
+        "title": "HP DAT 160 Data Cartridge (C8011A)",
+        "category": "Tape Storage",
+        "era": "Circa 2007",
+        "function": "Server data backup and archiving.",
+        "labelNotes": "HP DAT 160; C8011A; compressed capacity: 160GB",
+        "narrative": "The HP DAT 160 belongs to the DDS-6 generation, offering 80GB native capacity and 160GB compressed. With a native transfer rate of roughly 6.9MB/s, it was widely used by small to medium enterprises and lab servers for nightly unattended backups via SCSI or USB interfaces.",
+        "connections": ["item-04-basf-reel"],
+        "image": "./public/images/03-hp-dat-160.png",
+        "altPaths": ["./public/images/03-hp-dat-160.png"],
+        "furtherReading": []
+      },
+      {
+        "index": "04",
+        "id": "item-04-basf-reel",
+        "title": "BASF 9-Track 1/2-inch Open Reel Tape (080305)",
+        "category": "Open Reel Tape",
+        "era": "Label date: 1993-01-25",
+        "function": "Mainframe offline batch backup.",
+        "labelNotes": "CONTROL DATA HONG KONG LTD; BRUNEI DARUSSALAM; EXPORT VESSEL",
+        "narrative": "This professional-grade BASF half-inch 9-track open reel tape features a handwritten label documenting a 1993 shipment from Control Data Hong Kong Ltd, involving an export vessel to Brunei Darussalam. It represents the standard practice of batch processing, archiving, and cross-regional data transfer using tape drives in the mainframe era.",
+        "connections": ["item-03-hp-dat-160"],
+        "image": "./public/images/04-basf-reel.png",
+        "altPaths": ["./public/images/04-basf-reel.png"],
+        "furtherReading": []
+      },
+      {
+        "index": "05",
+        "id": "item-05-floppy-disk-5-25",
+        "title": "5.25\" Floppy Disk (Library Database Reference Disk)",
+        "category": "Magnetic Storage",
+        "era": "Circa 1990s",
+        "function": "Offline reference and database installation medium for library information systems.",
+        "labelNotes": "Biological Abstracts/RRM; Install Disk; Call No. QH 301 B5; HKUST Library",
+        "narrative": "This 5.25-inch floppy disk features a textured black jacket with a central metal drive hub and an essential write-protect notch on the side, representing the standard magnetic storage format of the 1980s and early 1990s. Bound with the HKUST Library call number \"QH 301 B5\" and tagged for \"Biological Abstracts/RRM,\" it preserves the physical workflow through which early digital bibliographic indexes were installed and queried locally on workstation terminals.",
+        "connections": ["item-02-floppy-disk-3-5"],
+        "image": "./public/images/05-silverplatter-floppy.png",
+        "altPaths": ["./public/images/05-silverplatter-floppy.png"],
+        "furtherReading": []
+      },
+      {
+        "index": "06",
+        "id": "item-06-innopac-cd",
+        "title": "Software Disc (InnoPAC / SilverPlatter Folio)",
+        "category": "Optical Storage",
+        "era": "Copyright 1997",
+        "function": "Installation disc for integrated library system.",
+        "labelNotes": "InnoPAC User Manual Release 11; P/N 28373",
+        "narrative": "This blue disc is the installation and manual medium for Release 11 of Innovative Interfaces' InnoPAC integrated library system. Its presence, stacked with the sleeve of Release 10, reflects the software distribution model of the era, where libraries periodically received physical optical discs to update their systems.",
+        "connections": ["item-05-floppy-disk-5-25"],
+        "image": "./public/images/06-innopac-cd.png",
+        "altPaths": ["./public/images/06-innopac-cd.png"],
+        "furtherReading": []
+      },
+      {
+        "index": "07",
+        "id": "item-07-planet-camera",
+        "title": "PLANET Network Camera (ICA-107 Series)",
+        "category": "Embedded Network Device",
+        "era": "Circa 2007–2010",
+        "function": "Budget IP surveillance solution.",
+        "labelNotes": "PLANET; 30fps Wired/Wireless",
+        "narrative": "The PLANET ICA-107 features a built-in microprocessor and CMOS sensor, using MPEG-4 compression to support 30fps VGA streaming with 802.11n and PoE. Compact and supporting UPnP and motion detection, it allowed regular users and small businesses to set up independent web-based video surveillance without dedicated capture cards.",
+        "connections": [],
+        "image": "./public/images/07-planet-camera.png",
+        "altPaths": ["./public/images/07-planet-camera.png"],
+        "furtherReading": []
+      },
+      {
+        "index": "08",
+        "id": "item-08-lacie-nas",
+        "title": "LaCie d2 Network 2 (Single-Drive NAS)",
+        "category": "Network Attached Storage",
+        "era": "Circa 2010–2012",
+        "function": "Dedicated network-attached storage (NAS) for centralized file sharing and client backups.",
+        "labelNotes": "LaCie d2 Network 2; aluminum enclosure; fanless design",
+        "narrative": "The LaCie d2 Network 2 represents the evolution from direct-attached external hard drives to dedicated personal cloud appliances. Housed in a signature fanless, ribbed aluminum chassis, it served as a single-drive Gigabit NAS for small businesses and laboratories. Equipped with USB 2.0 and eSATA expansion ports alongside Ethernet, it supported centralized client backups, remote access, and direct USB drive mode, bridging the gap between local storage and networked home/office infrastructure.",
+        "connections": ["item-01-aten-kvmp"],
+        "image": "./public/images/08-lacie.png",
+        "altPaths": ["./public/images/08-lacie.png"],
+        "furtherReading": [
+          {
+            "title": "NAS and Network Protocol Fundamentals (SMB/NFS/DLNA)",
+            "type": "Technical Overview",
+            "note": "Explores how single-drive NAS appliances integrated file sharing services and client backup management."
+          }
+        ]
+      }
+    ];
+
+    const generalResources = [
+      {
+        "title": "Computer Organization and Design",
+        "author": "Patterson & Hennessy",
+        "type": "Book",
+        "note": "Chapter 5 discusses the memory hierarchy, contextualizing hard drives and tapes as secondary/tertiary storage."
+      },
+      {
+        "title": "The Essential Guide to Computer Data Storage: From Floppy to DVD",
+        "author": "Andrei Khurshudov",
+        "type": "Book",
+        "note": "Covers magnetic and optical recording principles and interface trade-offs."
+      }
+    ];
+
+    (function initArchive() {
+      const grid = document.querySelector('.object-grid');
+      const overlay = document.getElementById('detail-overlay');
+      const overlayContent = document.getElementById('overlay-content');
+      const closeBtn = document.getElementById('overlay-close-btn');
+      let lastFocusedCard = null;
+
+      function getParticleInitFn() {
+        if (typeof window.createParticleCanvas === 'function') return window.createParticleCanvas;
+        if (window.ParticleFX && typeof window.ParticleFX.createParticleCanvas === 'function') {
+          return window.ParticleFX.createParticleCanvas.bind(window.ParticleFX);
+        }
+        if (window.particlefx && typeof window.particlefx.createParticleCanvas === 'function') {
+          return window.particlefx.createParticleCanvas.bind(window.particlefx);
+        }
+        return null;
+      }
+
+      // Procedural hardware silhouette generator (used if local images are missing or blocked by file:// CORS)
+      function generateProceduralHardwareDataURL(objId) {
+        const c = document.createElement('canvas');
+        c.width = 280;
+        c.height = 280;
+        const ctx = c.getContext('2d');
+
+        const ink = '#1A3A40';
+        const strokeTeal = '#4A8A92';
+        const warmGrey = '#B8B0A8';
+
+        if (objId.includes('aten-kvmp')) {
+          ctx.fillStyle = warmGrey;
+          ctx.fillRect(28, 92, 224, 94);
+          ctx.fillStyle = ink;
+          ctx.fillRect(44, 108, 192, 62);
+          ctx.fillStyle = strokeTeal;
+          ctx.fillRect(114, 118, 14, 42);
+          ctx.fillRect(150, 118, 14, 42);
+          ctx.fillRect(180, 138, 22, 12);
+          ctx.fillRect(208, 138, 22, 12);
+        } else if (objId.includes('floppy-disk-3-5')) {
+          ctx.fillStyle = warmGrey;
+          ctx.fillRect(48, 42, 184, 196);
+          ctx.fillStyle = ink;
+          ctx.fillRect(92, 42, 92, 62);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(68, 124, 144, 96);
+          ctx.fillStyle = strokeTeal;
+          ctx.fillRect(84, 144, 112, 8);
+          ctx.fillRect(84, 164, 92, 8);
+        } else if (objId.includes('hp-dat-160')) {
+          ctx.fillStyle = ink;
+          ctx.fillRect(38, 64, 204, 152);
+          ctx.fillStyle = strokeTeal;
+          ctx.fillRect(58, 134, 164, 52);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.beginPath();
+          ctx.arc(104, 160, 18, 0, Math.PI * 2);
+          ctx.arc(176, 160, 18, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (objId.includes('basf-reel') || objId.includes('innopac-cd')) {
+          ctx.fillStyle = objId.includes('innopac-cd') ? strokeTeal : ink;
+          ctx.beginPath();
+          ctx.arc(140, 140, 102, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalCompositeOperation = 'destination-out';
+          ctx.beginPath();
+          ctx.arc(140, 140, 32, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.strokeStyle = warmGrey;
+          ctx.lineWidth = 8;
+          ctx.beginPath();
+          ctx.arc(140, 140, 44, 0, Math.PI * 2);
+          ctx.stroke();
+        } else if (objId.includes('floppy-disk-5-25')) {
+          ctx.fillStyle = ink;
+          ctx.fillRect(44, 44, 192, 192);
+          ctx.globalCompositeOperation = 'destination-out';
+          ctx.beginPath();
+          ctx.arc(140, 140, 28, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillRect(130, 180, 20, 46);
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.fillStyle = warmGrey;
+          ctx.fillRect(54, 54, 172, 42);
+        } else if (objId.includes('planet-camera')) {
+          ctx.fillStyle = warmGrey;
+          ctx.fillRect(78, 38, 124, 166);
+          ctx.fillRect(64, 204, 152, 28);
+          ctx.fillStyle = ink;
+          ctx.beginPath();
+          ctx.arc(140, 110, 44, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = strokeTeal;
+          ctx.beginPath();
+          ctx.arc(140, 110, 14, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = warmGrey;
+          ctx.fillRect(74, 38, 132, 186);
+          ctx.fillRect(58, 220, 164, 18);
+          ctx.fillStyle = ink;
+          for (let y = 54; y < 210; y += 12) {
+            ctx.fillRect(114, y, 86, 5);
+          }
+          ctx.fillStyle = strokeTeal;
+          ctx.beginPath();
+          ctx.arc(94, 84, 14, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        return c.toDataURL('image/png');
+      }
+
+      // Create an image with solid-black background stripped to transparent so particles & zoom preview float borderlessly
+      function createTransparentCutoutDataURL(imgElement, size) {
+        const off = document.createElement('canvas');
+        off.width = size;
+        off.height = size;
+        const offCtx = off.getContext('2d');
+
+        const scale = Math.min((size * 0.88) / imgElement.width, (size * 0.88) / imgElement.height);
+        const dw = imgElement.width * scale;
+        const dh = imgElement.height * scale;
+        const dx = (size - dw) / 2;
+        const dy = (size - dh) / 2;
+        offCtx.drawImage(imgElement, dx, dy, dw, dh);
+
+        const imgData = offCtx.getImageData(0, 0, size, size);
+        const d = imgData.data;
+        for (let i = 0; i < d.length; i += 4) {
+          const r = d[i], g = d[i + 1], b = d[i + 2];
+          // Strip near-black studio backdrop so object merges borderlessly into --cream
+          if (r < 18 && g < 18 && b < 18) {
+            d[i + 3] = 0;
+          }
+        }
+        offCtx.putImageData(imgData, 0, 0);
+        return off.toDataURL('image/png');
+      }
+
+      // Built-in interactive Canvas2D particle engine with techno glitch jitter & mouse repulsion
+      function mountInlineParticleCanvas(container, imgSourceUrl, obj, zoomImgEl) {
+        const img = new Image();
+        img.onload = function() {
+          try {
+            const width = container.clientWidth || 280;
+            const height = container.clientHeight || 280;
+            const off = document.createElement('canvas');
+            off.width = width;
+            off.height = height;
+            const offCtx = off.getContext('2d');
+
+            const scale = Math.min((width * 0.86) / img.width, (height * 0.86) / img.height);
+            const dw = img.width * scale;
+            const dh = img.height * scale;
+            const dx = (width - dw) / 2;
+            const dy = (height - dh) / 2;
+            offCtx.drawImage(img, dx, dy, dw, dh);
+
+            const imgData = offCtx.getImageData(0, 0, width, height).data;
+
+            if (zoomImgEl) {
+              try {
+                zoomImgEl.src = createTransparentCutoutDataURL(img, 520);
+              } catch (err) {
+                zoomImgEl.src = imgSourceUrl;
+              }
+            }
+
+            container.innerHTML = '';
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            container.appendChild(canvas);
+            const ctx = canvas.getContext('2d');
+
+            const gap = 4;
+            const particles = [];
+            for (let y = 0; y < height; y += gap) {
+              for (let x = 0; x < width; x += gap) {
+                const idx = (y * width + x) * 4;
+                const a = imgData[idx + 3];
+                const r = imgData[idx];
+                const g = imgData[idx + 1];
+                const b = imgData[idx + 2];
+                const isBlackBg = (r < 18 && g < 18 && b < 18);
+                if (a > 40 && !isBlackBg) {
+                  particles.push({
+                    ox: x,
+                    oy: y,
+                    x: x + (Math.random() - 0.5) * 14,
+                    y: y + (Math.random() - 0.5) * 14,
+                    vx: 0,
+                    vy: 0,
+                    color: `rgba(${r},${g},${b},${(a / 255).toFixed(2)})`,
+                    radius: 1.75
+                  });
+                }
+              }
+            }
+
+            const mouse = { x: -9999, y: -9999, radius: 60 };
+            canvas.addEventListener('mousemove', (e) => {
+              const rect = canvas.getBoundingClientRect();
+              mouse.x = (e.clientX - rect.left) * (canvas.width / rect.width);
+              mouse.y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            });
+            canvas.addEventListener('mouseleave', () => {
+              mouse.x = -9999;
+              mouse.y = -9999;
+            });
+
+            function animate() {
+              ctx.clearRect(0, 0, width, height);
+              const glitchTick = Math.random() < 0.015;
+              const glitchOffsetY = glitchTick ? Math.floor(Math.random() * height) : -100;
+
+              for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                const mdx = mouse.x - p.x;
+                const mdy = mouse.y - p.y;
+                const distSq = mdx * mdx + mdy * mdy;
+                const maxDistSq = mouse.radius * mouse.radius;
+
+                if (distSq < maxDistSq && distSq > 0.01) {
+                  const dist = Math.sqrt(distSq);
+                  const force = (mouse.radius - dist) / mouse.radius;
+                  const angle = Math.atan2(mdy, mdx);
+                  p.vx -= Math.cos(angle) * force * 3.8;
+                  p.vy -= Math.sin(angle) * force * 3.8;
+                }
+
+                // Occasional subtle horizontal techno glitch slice
+                if (glitchTick && Math.abs(p.oy - glitchOffsetY) < 12) {
+                  p.x += (Math.random() - 0.5) * 8;
+                }
+
+                p.vx += (p.ox - p.x) * 0.12;
+                p.vy += (p.oy - p.y) * 0.12;
+                p.vx *= 0.82;
+                p.vy *= 0.82;
+                p.x += p.vx;
+                p.y += p.vy;
+
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+              }
+              requestAnimationFrame(animate);
+            }
+            animate();
+          } catch (securityErr) {
+            if (!imgSourceUrl.startsWith('data:')) {
+              const procUrl = generateProceduralHardwareDataURL(obj.id);
+              mountInlineParticleCanvas(container, procUrl, obj, null);
+            }
+          }
+        };
+        img.src = imgSourceUrl;
+      }
+
+      function setupParticlesForCard(container, zoomImgEl, obj) {
+        const candidates = [obj.image, ...(obj.altPaths || [])];
+        let idx = 0;
+
+        function tryNextPath() {
+          if (idx >= candidates.length) {
+            const dataUrl = generateProceduralHardwareDataURL(obj.id);
+            if (zoomImgEl) zoomImgEl.src = dataUrl;
+            runParticleFX(container, dataUrl, obj, zoomImgEl);
+            return;
+          }
+          const candidateUrl = candidates[idx++];
+          const testImg = new Image();
+          testImg.onload = function() {
+            obj.resolvedUrl = candidateUrl;
+            if (zoomImgEl) zoomImgEl.src = candidateUrl;
+            runParticleFX(container, candidateUrl, obj, zoomImgEl);
+          };
+          testImg.onerror = function() {
+            tryNextPath();
+          };
+          testImg.src = candidateUrl;
+        }
+
+        tryNextPath();
+      }
+
+      function runParticleFX(container, resolvedUrl, obj, zoomImgEl) {
+        const isFileProtocol = window.location.protocol === 'file:' && !resolvedUrl.startsWith('data:');
+        if (isFileProtocol) {
+          mountInlineParticleCanvas(container, resolvedUrl, obj, zoomImgEl);
+          return;
+        }
+
+        // Pre-strip black background so package-particlefx renders borderless silhouette without a black box
+        const prepImg = new Image();
+        prepImg.crossOrigin = 'anonymous';
+        prepImg.onload = function() {
+          try {
+            const cleanCutoutUrl = createTransparentCutoutDataURL(prepImg, 420);
+            if (zoomImgEl) zoomImgEl.src = cleanCutoutUrl;
+            obj.cutoutUrl = cleanCutoutUrl;
+
+            const createFn = getParticleInitFn();
+            const boxSize = container.clientWidth || 280;
+            if (createFn) {
+              container.innerHTML = '';
+              createFn(container, {
+                image: cleanCutoutUrl,
+                imageSrc: cleanCutoutUrl,
+                width: boxSize,
+                height: boxSize,
+                particleGap: 4,
+                mouseForce: 30,
+                particleShape: 'circle',
+                filter: 'none'
+              });
+              return;
+            }
+            mountInlineParticleCanvas(container, cleanCutoutUrl, obj, zoomImgEl);
+          } catch (err) {
+            mountInlineParticleCanvas(container, resolvedUrl, obj, zoomImgEl);
+          }
+        };
+        prepImg.onerror = function() {
+          mountInlineParticleCanvas(container, resolvedUrl, obj, zoomImgEl);
+        };
+        prepImg.src = resolvedUrl;
+      }
+
+      // Open detail overlay
+            // Interactive Zoom & Pan handler for the modal's top hero image
+      function setupHeroImageZoom(viewportEl, imgEl) {
+        let scale = 1;
+        let panX = 0;
+        let panY = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let movedDuringDrag = false;
+
+        const readout = viewportEl.querySelector('.zoom-level-readout');
+        const btnIn = viewportEl.querySelector('[data-zoom="in"]');
+        const btnOut = viewportEl.querySelector('[data-zoom="out"]');
+        const btnReset = viewportEl.querySelector('[data-zoom="reset"]');
+
+        function applyTransform() {
+          if (scale <= 1) {
+            scale = 1;
+            panX = 0;
+            panY = 0;
+            viewportEl.classList.remove('is-zoomed');
+          } else {
+            viewportEl.classList.add('is-zoomed');
+          }
+          imgEl.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+          if (readout) readout.textContent = `${Math.round(scale * 100)}%`;
+        }
+
+        function setZoom(newScale) {
+          scale = Math.min(4, Math.max(1, Number(newScale.toFixed(2))));
+          applyTransform();
+        }
+
+        btnIn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setZoom(scale + 0.5);
+        });
+
+        btnOut.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setZoom(scale - 0.5);
+        });
+
+        btnReset.addEventListener('click', (e) => {
+          e.stopPropagation();
+          scale = 1;
+          panX = 0;
+          panY = 0;
+          applyTransform();
+        });
+
+        // Mouse wheel zoom
+        viewportEl.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const delta = e.deltaY < 0 ? 0.25 : -0.25;
+          setZoom(scale + delta);
+        }, { passive: false });
+
+        // Drag to pan when zoomed in
+        viewportEl.addEventListener('mousedown', (e) => {
+          if (e.target.closest('.hero-zoom-toolbar')) return;
+          isDragging = true;
+          movedDuringDrag = false;
+          startX = e.clientX - panX;
+          startY = e.clientY - panY;
+          if (scale > 1) viewportEl.classList.add('is-dragging');
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+          if (Math.abs(dx - panX) > 4 || Math.abs(dy - panY) > 4) {
+            movedDuringDrag = true;
+          }
+          if (scale > 1) {
+            panX = dx;
+            panY = dy;
+            applyTransform();
+          }
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (!isDragging) return;
+          isDragging = false;
+          viewportEl.classList.remove('is-dragging');
+        });
+
+        // Click to cycle zoom levels (100% -> 220% -> 320% -> 100%)
+        viewportEl.addEventListener('click', (e) => {
+          if (e.target.closest('.hero-zoom-toolbar')) return;
+          if (movedDuringDrag) return;
+          if (scale === 1) setZoom(2.2);
+          else if (scale < 3) setZoom(3.2);
+          else setZoom(1);
+        });
+      }
+
+      // Open detail overlay
+      function openOverlay(obj, triggerEl) {
+        if (triggerEl) lastFocusedCard = triggerEl;
+
+        const overlayTopbarId = document.getElementById('overlay-topbar-id');
+        if (overlayTopbarId) {
+          overlayTopbarId.textContent = `SPEC_SHEET // UNIT_${obj.index} // ${obj.id.toUpperCase()}`;
+        }
+
+        const readings = (obj.furtherReading && obj.furtherReading.length > 0)
+          ? obj.furtherReading
+          : generalResources;
+
+        const readingItemsHtml = readings.map(r => `
+          <li>
+            <span class="reading-title">${r.title}${r.author ? ' — ' + r.author : ''}</span>
+            ${r.type ? `<span class="reading-type">[${r.type}]</span>` : ''}
+            ${r.note ? `<p class="reading-note">${r.note}</p>` : ''}
+          </li>
+        `).join('');
+
+        const connectedObjs = (obj.connections || [])
+          .map(cid => objects.find(o => o.id === cid))
+          .filter(Boolean);
+
+        const connectedHtml = connectedObjs.length > 0 ? `
+          <div class="overlay-section">
+            <h3>Linked Hardware Nodes</h3>
+            <div class="connected-pills">
+              ${connectedObjs.map(co => `<button type="button" class="connected-pill" data-target-id="${co.id}">>> ${co.title}</button>`).join('')}
+            </div>
+          </div>
+        ` : '';
+
+        const heroSrc = obj.cutoutUrl || obj.resolvedUrl || obj.image;
+
+        overlayContent.innerHTML = `
+          <div class="overlay-hero-preview" id="hero-zoom-viewport" title="Click or scroll to zoom, drag to pan">
+            <span class="hero-zoom-hint">CLICK / SCROLL TO ZOOM &bull; DRAG TO PAN</span>
+            <img src="${heroSrc}" alt="${obj.title}" id="hero-zoom-img">
+            <div class="hero-zoom-toolbar">
+              <button type="button" class="zoom-btn" data-zoom="out" aria-label="Zoom out">&minus;</button>
+              <span class="zoom-level-readout">100%</span>
+              <button type="button" class="zoom-btn" data-zoom="in" aria-label="Zoom in">+</button>
+              <button type="button" class="zoom-btn" data-zoom="reset" aria-label="Reset zoom">1:1</button>
+            </div>
+          </div>
+          <div class="overlay-category">// UNIT_${obj.index} :: ${obj.category}</div>
+          <h2 class="overlay-title" id="overlay-title">${obj.title}</h2>
+          <div class="overlay-era">TIMESTAMP_ERA: ${obj.era}</div>
+
+          <div class="overlay-section">
+            <h3>Archival Dossier</h3>
+            <p class="overlay-narrative">${obj.narrative}</p>
+          </div>
+
+          <div class="overlay-section">
+            <div class="overlay-meta-grid">
+              <div class="overlay-meta-item">
+                <strong>Primary Function</strong>
+                <span>${obj.function || 'Hardware artifact'}</span>
+              </div>
+              <div class="overlay-meta-item">
+                <strong>Physical Markings / Label</strong>
+                <span>${obj.labelNotes || 'N/A'}</span>
+              </div>
+            </div>
+          </div>
+
+          ${connectedHtml}
+
+          <div class="overlay-section">
+            <h3>Further Reading &amp; References</h3>
+            <ul class="reading-list">
+              ${readingItemsHtml}
+            </ul>
+          </div>
+        `;
+
+        const viewportEl = document.getElementById('hero-zoom-viewport');
+        const heroImgEl = document.getElementById('hero-zoom-img');
+        if (viewportEl && heroImgEl) {
+          setupHeroImageZoom(viewportEl, heroImgEl);
+        }
+
+        overlayContent.querySelectorAll('.connected-pill').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const targetObj = objects.find(item => item.id === btn.getAttribute('data-target-id'));
+            if (targetObj) openOverlay(targetObj, lastFocusedCard);
+          });
+        });
+
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+        closeBtn.focus();
+      }
+
+
+      function closeOverlay() {
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+        if (lastFocusedCard) lastFocusedCard.focus();
+      }
+
+      // Render all 8 borderless brutalist techno cards
+      objects.forEach(obj => {
+        const card = document.createElement('article');
+        card.className = 'object-card';
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', `${obj.title} — ${obj.category}, ${obj.era}`);
+        card.dataset.id = obj.id;
+
+        card.innerHTML = `
+          <div class="card-top-hud">
+            <span class="hud-index">UNIT // ${obj.index}</span>
+            <span class="details-prompt">[+ INSPECT]</span>
+          </div>
+          <div class="visual-stage">
+            <div class="particle-container"></div>
+            <div class="zoom-preview-lens" aria-hidden="true">
+              <img class="zoom-preview-img" alt="" src="${obj.image}">
+            </div>
+            <div class="stage-crosshair" aria-hidden="true"></div>
+          </div>
+          <div class="card-info">
+            <div class="category">
+              <span>${obj.category}</span>
+              <span>[ID:${obj.index}]</span>
+            </div>
+            <h2 class="title">${obj.title}</h2>
+            <div class="era-badge">${obj.era}</div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+
+        const particleContainer = card.querySelector('.particle-container');
+        const zoomImgEl = card.querySelector('.zoom-preview-img');
+        requestAnimationFrame(() => setupParticlesForCard(particleContainer, zoomImgEl, obj));
+
+        card.addEventListener('click', () => openOverlay(obj, card));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openOverlay(obj, card);
+          }
+        });
+      });
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeOverlay();
+      });
+      closeBtn.addEventListener('click', closeOverlay);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('open')) {
+          closeOverlay();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

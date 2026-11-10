@@ -1,0 +1,313 @@
+{
+  "archiveMetadata": {
+    "title": "DScape . Archive",
+    "version": "1.0.4",
+    "curator": "DScape"
+  },
+  "generalResources": [
+    {
+      "title": "Computer Organization and Design",
+      "author": "Patterson & Hennessy",
+      "type": "Book",
+      "note": "Chapter 5 discusses the memory hierarchy, contextualizing hard drives and tapes as secondary/tertiary storage."
+    },
+    {
+      "title": "The Essential Guide to Computer Data Storage: From Floppy to DVD",
+      "author": "Andrei Khurshudov",
+      "type": "Book",
+      "note": "Covers magnetic and optical recording principles and interface trade-offs."
+    }
+  ],
+  "items": [
+    {
+      "id": "item-01-aten-kvmp",
+      "title": "ATEN Master View CS-1732A",
+      "category": "Peripherals & Input",
+      "era": "Circa 2000–2005",
+      "dateStart": 2000,
+      "dateEnd": 2005,
+      "tags": ["peripheral", "kvm", "library-hardware", "usb", "ps2"],
+      "citation": {
+        "manufacturer": "ATEN",
+        "model": "Master View CS-1732A",
+        "partNumber": null
+      },
+      "specs": {
+        "ports": "2",
+        "interfaces": ["PS/2", "USB", "VGA"]
+      },
+      "labelNotes": "HKUST LIBRARY; PC / LAPTOP",
+      "function": "Share one console across two machines.",
+      "narrative": "The ATEN CS-1732A is a 2-port PS/2 and USB KVMP switch with a built-in 2-port USB hub and audio support, reaching up to 2048x1536 resolution. Tagged \"PC / LAPTOP\" and \"HKUST LIBRARY,\" it exemplifies the classic desktop KVM solution for managing multiple computers with a single console in early server rooms.",
+      "media": {
+        "thumbnail": "/01-aten-kvmp.png",
+        "image": "/01-aten-kvmp.png",
+        "layers": {
+          "background": null,
+          "midground": null,
+          "foreground": null
+        },
+        "model3d": null,
+        "viewerConfig": null
+      },
+      "furtherReading": [
+        {
+          "title": "USB Device Emulation and KVM Switching Mechanics",
+          "type": "Paper",
+          "note": "Understand how KVM switches emulate PS/2 and USB endpoints to the host machines."
+        }
+      ],
+      "connections": ["item-08-lacie-nas"]
+    },
+    {
+      "id": "item-02-floppy-disk-3-5",
+      "title": "3.5\" Floppy Disk (US MARC/COM.CP Format)",
+      "category": "Magnetic Storage",
+      "era": "May 1999",
+      "dateStart": 1999,
+      "dateEnd": 1999,
+      "tags": ["storage", "magnetic-media", "floppy-disk", "library-cataloging"],
+      "citation": {
+        "manufacturer": "Professional Media Service Corp.",
+        "model": "3.5-inch High Density Floppy",
+        "partNumber": "8009974F"
+      },
+      "specs": {
+        "size": "3.5-inch",
+        "capacity": "1.44MB",
+        "density": "High Density (HD)"
+      },
+      "labelNotes": "Order No. 8009974F; Format: US MARC/COM.CP",
+      "function": "Exchanging library machine-readable cataloging data.",
+      "narrative": "Manufactured by Professional Media Service, this 3.5-inch high-density floppy is labeled \"US MARC/COM.CP\" and \"HKUST LIBRARY.\" In the 1990s and early 2000s, libraries relied on such physical media to exchange machine-readable cataloging records between automated systems, serving as a crucial carrier during the early digital library era.",
+      "media": {
+        "thumbnail": "/02-floppy-disk.png",
+        "image": "/02-floppy-disk.png",
+        "layers": {
+          "background": null,
+          "midground": null,
+          "foreground": null
+        },
+        "model3d": null,
+        "viewerConfig": null
+      },
+      "furtherReading": [],
+      "connections": ["item-05-floppy-disk-5-25"]
+    },
+    {
+      "id": "item-03-hp-dat-160",
+      "title": "HP DAT 160 Data Cartridge (C8011A)",
+      "category": "Tape Storage",
+      "era": "Circa 2007",
+      "dateStart": 2007,
+      "dateEnd": 2007,
+      "tags": ["storage", "backup", "magnetic-media", "tape"],
+      "citation": {
+        "manufacturer": "HP",
+        "model": "DAT 160",
+        "partNumber": "C8011A"
+      },
+      "specs": {
+        "format": "DDS-6 / DAT-160",
+        "capacity": "80GB native / 160GB compressed",
+        "tapeLength": "150m",
+        "transferRate": "~6.9MB/s"
+      },
+      "labelNotes": "HP DAT 160; C8011A; compressed capacity: 160GB",
+      "function": "Server data backup and archiving.",
+      "narrative": "The HP DAT 160 belongs to the DDS-6 generation, offering 80GB native capacity and 160GB compressed. With a native transfer rate of roughly 6.9MB/s, it was widely used by small to medium enterprises and lab servers for nightly unattended backups via SCSI or USB interfaces.",
+      "media": {
+        "thumbnail": "/03-hp-dat-160.png",
+        "image": "/03-hp-dat-160.png",
+        "layers": {
+          "background": null,
+          "midground": null,
+          "foreground": null
+        },
+        "model3d": null,
+        "viewerConfig": null
+      },
+      "furtherReading": [],
+      "connections": ["item-04-basf-reel"]
+    },
+    {
+      "id": "item-04-basf-reel",
+      "title": "BASF 9-Track 1/2-inch Open Reel Tape (080305)",
+      "category": "Open Reel Tape",
+      "era": "Label date: 1993-01-25",
+      "dateStart": 1993,
+      "dateEnd": 1993,
+      "tags": ["storage", "backup", "magnetic-media", "open-reel", "mainframe"],
+      "citation": {
+        "manufacturer": "BASF",
+        "model": "9-Track 1/2-inch Open Reel Tape",
+        "partNumber": "080305"
+      },
+      "specs": {
+        "format": "9-track half-inch magnetic tape"
+      },
+      "labelNotes": "CONTROL DATA HONG KONG LTD; BRUNEI DARUSSALAM; EXPORT VESSEL",
+      "function": "Mainframe offline batch backup.",
+      "narrative": "This professional-grade BASF half-inch 9-track open reel tape features a handwritten label documenting a 1993 shipment from Control Data Hong Kong Ltd, involving an export vessel to Brunei Darussalam. It represents the standard practice of batch processing, archiving, and cross-regional data transfer using tape drives in the mainframe era.",
+      "media": {
+        "thumbnail": "/04-basf-reel.png",
+        "image": "/04-basf-reel.png",
+        "layers": {
+          "background": null,
+          "midground": null,
+          "foreground": null
+        },
+        "model3d": null,
+        "viewerConfig": null
+      },
+      "furtherReading": [],
+      "connections": ["item-03-hp-dat-160"]
+    },
+    {
+      "id": "item-05-floppy-disk-5-25",
+      "title": "5.25\" Floppy Disk (Library Database Reference Disk)",
+      "category": "Magnetic Storage",
+      "era": "Circa 1990s",
+      "dateStart": 1990,
+      "dateEnd": 1999,
+      "tags": ["storage", "magnetic-media", "floppy-disk", "5.25-inch", "library-database"],
+      "citation": {
+        "manufacturer": "Unknown",
+        "model": "5.25-inch Floppy Disk",
+        "partNumber": null
+      },
+      "specs": {
+        "mediaType": "Magnetic Disk",
+        "size": "5.25-inch",
+        "capacity": "360KB (DD) / 1.2MB (HD)"
+      },
+      "labelNotes": "Biological Abstracts/RRM; Install Disk; Call No. QH 301 B5; HKUST Library",
+      "function": "Offline reference and database installation medium for library information systems.",
+      "narrative": "This 5.25-inch floppy disk features a textured black jacket with a central metal drive hub and an essential write-protect notch on the side, representing the standard magnetic storage format of the 1980s and early 1990s. Bound with the HKUST Library call number \"QH 301 B5\" and tagged for \"Biological Abstracts/RRM,\" it preserves the physical workflow through which early digital bibliographic indexes were installed and queried locally on workstation terminals.",
+      "media": {
+        "thumbnail": "/05-silverplatter-floppy.png",
+        "image": "/05-silverplatter-floppy.png",
+        "layers": {
+          "background": null,
+          "midground": null,
+          "foreground": null
+        },
+        "model3d": null,
+        "viewerConfig": null
+      },
+      "furtherReading": [],
+      "connections": ["item-02-floppy-disk-3-5"]
+    },
+    {
+      "id": "item-06-innopac-cd",
+      "title": "Software Disc (InnoPAC / SilverPlatter Folio)",
+      "category": "Optical Storage",
+      "era": "Copyright 1997",
+      "dateStart": 1997,
+      "dateEnd": 1997,
+      "tags": ["storage", "optical-media", "cd-rom", "software", "library-system"],
+      "citation": {
+        "manufacturer": "Innovative Interfaces Inc.",
+        "model": "InnoPAC User Manual Release 11",
+        "partNumber": "28373"
+      },
+      "specs": {
+        "format": "CD-ROM"
+      },
+      "labelNotes": "InnoPAC User Manual Release 11; P/N 28373",
+      "function": "Installation disc for integrated library system.",
+      "narrative": "This blue disc is the installation and manual medium for Release 11 of Innovative Interfaces' InnoPAC integrated library system. Its presence, stacked with the sleeve of Release 10, reflects the software distribution model of the era, where libraries periodically received physical optical discs to update their systems.",
+      "media": {
+        "thumbnail": "/06-innopac-cd.png",
+        "image": "/06-innopac-cd.png",
+        "layers": {
+          "background": null,
+          "midground": null,
+          "foreground": null
+        },
+        "model3d": null,
+        "viewerConfig": null
+      },
+      "furtherReading": [],
+      "connections": ["item-05-floppy-disk-5-25"]
+    },
+    {
+      "id": "item-07-planet-camera",
+      "title": "PLANET Network Camera (ICA-107 Series)",
+      "category": "Embedded Network Device",
+      "era": "Circa 2007–2010",
+      "dateStart": 2007,
+      "dateEnd": 2010,
+      "tags": ["network", "embedded", "camera", "surveillance", "poe"],
+      "citation": {
+        "manufacturer": "PLANET",
+        "model": "ICA-107 Series",
+        "partNumber": null
+      },
+      "specs": {
+        "sensor": "CMOS",
+        "encoding": "MPEG-4",
+        "interfaces": ["10/100Base-TX", "802.11b/g/n", "PoE"]
+      },
+      "labelNotes": "PLANET; 30fps Wired/Wireless",
+      "function": "Budget IP surveillance solution.",
+      "narrative": "The PLANET ICA-107 features a built-in microprocessor and CMOS sensor, using MPEG-4 compression to support 30fps VGA streaming with 802.11n and PoE. Compact and supporting UPnP and motion detection, it allowed regular users and small businesses to set up independent web-based video surveillance without dedicated capture cards.",
+      "media": {
+        "thumbnail": "/07-planet-camera.png",
+        "image": "/07-planet-camera.png",
+        "layers": {
+          "background": null,
+          "midground": null,
+          "foreground": null
+        },
+        "model3d": null,
+        "viewerConfig": null
+      },
+      "furtherReading": [],
+      "connections": []
+    },
+    {
+      "id": "item-08-lacie-nas",
+      "title": "LaCie d2 Network 2 (Single-Drive NAS)",
+      "category": "Network Attached Storage",
+      "era": "Circa 2010–2012",
+      "dateStart": 2010,
+      "dateEnd": 2012,
+      "tags": ["nas", "network-storage", "lacie", "ethernet", "esata", "usb2"],
+      "citation": {
+        "manufacturer": "LaCie",
+        "model": "d2 Network 2",
+        "partNumber": null
+      },
+      "specs": {
+        "driveBay": "1 x 3.5-inch SATA",
+        "capacity": "1TB / 1.5TB / 2TB",
+        "interfaces": ["Gigabit Ethernet (10/100/1000)", "USB 2.0 (Type B)", "eSATA"],
+        "chassis": "Ribbed aluminum, fanless passive cooling",
+        "maxTransferRate": "~68 MB/s"
+      },
+      "labelNotes": "LaCie d2 Network 2; aluminum enclosure; fanless design",
+      "function": "Dedicated network-attached storage (NAS) for centralized file sharing and client backups.",
+      "narrative": "The LaCie d2 Network 2 represents the evolution from direct-attached external hard drives to dedicated personal cloud appliances. Housed in a signature fanless, ribbed aluminum chassis, it served as a single-drive Gigabit NAS for small businesses and laboratories. Equipped with USB 2.0 and eSATA expansion ports alongside Ethernet, it supported centralized client backups, remote access, and direct USB drive mode, bridging the gap between local storage and networked home/office infrastructure.",
+      "media": {
+        "thumbnail": "/08-lacie.png",
+        "image": "/08-lacie.png",
+        "layers": {
+          "background": null,
+          "midground": null,
+          "foreground": null
+        },
+        "model3d": null,
+        "viewerConfig": null
+      },
+      "furtherReading": [
+        {
+          "title": "NAS and Network Protocol Fundamentals (SMB/NFS/DLNA)",
+          "type": "Technical Overview",
+          "note": "Explores how single-drive NAS appliances integrated file sharing services and client backup management."
+        }
+      ],
+      "connections": ["item-01-aten-kvmp"]
+    }
+  ]
+}

@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DScape Archive — From Physical Relics to Networked Nodes</title>
+<!-- 100% Open-Source SIL Open Font License (OFL) Retro-Futurist & Editorial Font Stack -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,500&family=Cormorant+Garamond:ital,wght@0,600;1,500;1,600&family=Share+Tech+Mono&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Sampled directly from reference poster image.png */
+  --bg-peony-top: #F59DC5;
+  --bg-blush-upper: #F6E3DC;
+  --bg-ivory-mid: #F5EAD8;
+  --bg-celadon-bottom: #E7F5E4;
+  --bg-panel: rgba(252, 247, 241, 0.78);
+  --bg-panel-inner: rgba(246, 236, 226, 0.65);
+
+  /* Primary Typography & Fine Graphic Ink */
+  --ink-plum: #2A1822;
+  --ink-muted: #785564;
+  --carmine-primary: #D93870;
+  --carmine-bright: #E34E8A;
+  --celadon-jade: #3E8272;
+  --celadon-soft: #9EBAA5;
+  --porcelain-cobalt: #425B8A;
+
+  /* Dynamic Active Theme Variables (Morphs per Curatorial Lens) */
+  --theme-accent: var(--carmine-primary);
+  --theme-accent-soft: rgba(217, 56, 112, 0.12);
+  --theme-hairline: 1px solid rgba(217, 56, 112, 0.30);
+  --theme-hairline-strong: 1px solid rgba(217, 56, 112, 0.68);
+}
+
+body[data-lens="archaeologist"] {
+  --theme-accent: #D93870;
+  --theme-accent-soft: rgba(217, 56, 112, 0.11);
+  --theme-hairline: 1px solid rgba(217, 56, 112, 0.30);
+  --theme-hairline-strong: 1px solid rgba(217, 56, 112, 0.68);
+}
+
+body[data-lens="materialist"] {
+  --theme-accent: #357A68;
+  --theme-accent-soft: rgba(53, 122, 104, 0.12);
+  --theme-hairline: 1px solid rgba(53, 122, 104, 0.32);
+  --theme-hairline-strong: 1px solid rgba(53, 122, 104, 0.70);
+}
+
+body[data-lens="systems"] {
+  --theme-accent: #3B5488;
+  --theme-accent-soft: rgba(59, 84, 136, 0.12);
+  --theme-hairline: 1px solid rgba(59, 84, 136, 0.32);
+  --theme-hairline-strong: 1px solid rgba(59, 84, 136, 0.70);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-ivory-mid);
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(245, 157, 197, 0.72) 0%, transparent 58%),
+    radial-gradient(ellipse at 50% 78%, rgba(227, 78, 138, 0.24) 0%, transparent 48%),
+    linear-gradient(180deg,
+      #F59DC5 0%,
+      #F6E3DC 26%,
+      #F5EAD8 56%,
+      #EDD5DA 77%,
+      #E7F5E4 100%
+    ),
+    linear-gradient(to right, rgba(217, 56, 112, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(217, 56, 112, 0.045) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 44px 44px, 44px 44px;
+  background-attachment: fixed;
+  color: var(--ink-plum);
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  min-height: 100vh;
+  transition: color 0.3s ease;
+}
+
+/* Tactile Art-Paper / Risograph Grain Overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.085;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperNoise)'/%3E%3C/svg%3E");
+}
+
+/* Ambient Botanical/Vector Particle Canvas */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.75;
+}
+
+/* Top Global Navigation HUD */
+.global-hud {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 2rem;
+  background: rgba(250, 240, 234, 0.86);
+  backdrop-filter: blur(14px);
+  border-bottom: var(--theme-hairline);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.09em;
+}
+
+.hud-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--carmine-primary);
+  font-family: 'Chakra Petch', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.hud-brand .pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--theme-accent);
+  box-shadow: 0 0 8px var(--theme-accent);
+  animation: pulseGlow 2.4s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.82); }
+}
+
+.hud-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.hud-btn {
+  background: rgba(255, 255, 255, 0.55);
+  border: var(--theme-hairline);
+  color: var(--ink-plum);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  padding: 0.38rem 0.8rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.hud-btn:hover {
+  color: #FFFDFB;
+  background: var(--theme-accent);
+  border-color: var(--theme-accent);
+}
+
+.hud-btn.lens-btn {
+  background: var(--theme-accent);
+  color: #FFFDFB;
+  border-color: var(--theme-accent);
+  border-radius: 999px;
+  padding: 0.38rem 0.95rem;
+}
+
+.hud-btn.lens-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+#story {
+  position: relative;
+  z-index: 10;
+  margin: 0 auto;
+  max-width: 1140px;
+  padding: 2.2rem 1.5rem 5rem 1.5rem;
+}
+
+.passage {
+  animation: fadeIn 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Neo-Brutalist Fine-Line Archival Frame */
+.archival-frame {
+  border: var(--theme-hairline-strong);
+  background: var(--bg-panel);
+  backdrop-filter: blur(20px);
+  position: relative;
+  padding: 0;
+  box-shadow:
+    0 24px 60px rgba(145, 55, 88, 0.14),
+    0 0 0 4px rgba(255, 255, 255, 0.45);
+  transition: border-color 0.3s ease;
+}
+
+/* Corner Crosshairs */
+.archival-frame::before,
+.archival-frame::after {
+  content: "+";
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px;
+  color: var(--theme-accent);
+  position: absolute;
+  line-height: 1;
+  pointer-events: none;
+  font-weight: 700;
+}
+.archival-frame::before { top: -10px; left: -6px; }
+.archival-frame::after { bottom: -10px; right: -6px; }
+
+/* Decorative Vertical Flanking Marginalia (Inspired by image.png) */
+.vertical-marginalia {
+  position: absolute;
+  top: 56px;
+  right: -28px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.25em;
+  color: var(--carmine-primary);
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+/* Bottom Horizontal Marginalia — Global Credits across all cards */
+.marginalia-h {
+  position: absolute;
+  bottom: -30px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  color: var(--carmine-primary);
+  opacity: 0.65;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .marginalia-h {
+    white-space: normal;
+    bottom: -42px;
+    letter-spacing: 0.12em;
+    line-height: 1.35;
+  }
+}
+
+@media (max-width: 1200px) {
+  .vertical-marginalia { display: none; }
+}
+
+/* Top Telemetry Header Bar */
+.telemetry-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: var(--theme-hairline);
+  padding: 0.72rem 1.6rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  background: rgba(255, 255, 255, 0.42);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.telemetry-bar .status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--theme-accent);
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* Main Content Grid */
+.exhibit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.18fr;
+  border-bottom: var(--theme-hairline);
+}
+
+@media (max-width: 860px) {
+  .exhibit-grid {
+    grid-template-columns: 1fr;
+  }
+  .specimen-viewport {
+    border-right: none !important;
+    border-bottom: var(--theme-hairline);
+  }
+}
+
+/* Left Column: Visual Specimen Viewport */
+.specimen-viewport {
+  border-right: var(--theme-hairline);
+  padding: 2.1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(245, 157, 197, 0.28) 0%, rgba(231, 245, 228, 0.35) 75%);
+  position: relative;
+}
+
+.specimen-reticle {
+  border: 1px dashed var(--theme-accent);
+  padding: 1.9rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 315px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.85) 0%, rgba(246, 227, 220, 0.52) 68%, rgba(231, 245, 228, 0.65) 100%);
+  overflow: hidden;
+  cursor: zoom-in;
+  box-shadow: inset 0 0 28px rgba(217, 56, 112, 0.08);
+}
+
+/* Fine vector cross-hairs inside specimen basin */
+.specimen-reticle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, transparent 49.8%, rgba(217, 56, 112, 0.11) 50%, transparent 50.2%),
+    linear-gradient(to bottom, transparent 49.8%, rgba(217, 56, 112, 0.11) 50%, transparent 50.2%);
+  pointer-events: none;
+}
+
+.specimen-reticle img.artifact-img {
+  max-width: 100%;
+  max-height: 285px;
+  object-fit: contain;
+  filter: contrast(1.04) drop-shadow(0 16px 26px rgba(68, 28, 45, 0.26));
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.specimen-reticle:hover img.artifact-img {
+  transform: scale(1.06) translateY(-3px);
+  filter: contrast(1.07) drop-shadow(0 22px 34px rgba(217, 56, 112, 0.24));
+}
+
+.specimen-reticle.zoomed img.artifact-img {
+  transform: scale(1.38);
+  cursor: zoom-out;
+}
+
+.reticle-coord {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--ink-muted);
+  opacity: 0.85;
+  z-index: 3;
+}
+
+.reticle-tag-tl {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--theme-accent);
+  letter-spacing: 0.08em;
+  z-index: 3;
+}
+
+/* Spec Sheet Table */
+.spec-table {
+  margin-top: 1.4rem;
+  border-top: var(--theme-hairline);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.78rem;
+}
+
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.52rem 0;
+  border-bottom: 1px solid rgba(217, 56, 112, 0.12);
+  gap: 1rem;
+}
+
+.spec-label {
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.spec-val {
+  color: var(--ink-plum);
+  text-align: right;
+  font-weight: 600;
+}
+
+/* Right Column: Curatorial & Poetic Field Notes */
+.curatorial-panel {
+  padding: 2.3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Pill-Shaped Date/Act Badge (Directly inspired by 12.13-12.23 pill in image.png) */
+.act-badge {
+  display: inline-block;
+  font-family: 'Chakra Petch', sans-serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.28rem 0.95rem;
+  border-radius: 999px;
+  background: var(--carmine-primary);
+  color: #FFFDFB;
+  margin-bottom: 0.9rem;
+}
+
+.act-badge.systems {
+  background: var(--celadon-jade);
+}
+
+.act-badge.networks {
+  background: var(--porcelain-cobalt);
+}
+
+h1.artifact-title {
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: 0.01em;
+  margin: 0 0 0.45rem 0;
+  text-transform: uppercase;
+  color: var(--carmine-primary);
+}
+
+.era-subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  color: var(--ink-muted);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.8rem;
+  border-bottom: var(--theme-hairline);
+}
+
+/* In-Panel 3-Lens Wavelength Switcher */
+.lens-switcher-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.45rem;
+  margin-bottom: 1.35rem;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 0.35rem;
+  border: var(--theme-hairline);
+}
+
+.lens-tab {
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.52rem 0.4rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.lens-tab:hover {
+  color: var(--ink-plum);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.lens-tab.active-arch {
+  background: var(--carmine-primary);
+  color: #FFFDFB;
+}
+
+.lens-tab.active-mat {
+  background: var(--celadon-jade);
+  color: #FFFDFB;
+}
+
+.lens-tab.active-sys {
+  background: var(--porcelain-cobalt);
+  color: #FFFDFB;
+}
+
+.lens-mode-header {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--theme-accent);
+  margin-bottom: 0.55rem;
+  font-weight: 600;
+}
+
+.poetic-verse {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.38rem;
+  line-height: 1.42;
+  color: var(--ink-plum);
+  margin-bottom: 1.15rem;
+  border-left: 3px solid var(--theme-accent);
+  padding-left: 1.1rem;
+}
+
+.field-note {
+  font-size: 0.95rem;
+  line-height: 1.68;
+  color: var(--ink-plum);
+  margin-bottom: 1.25rem;
+}
+
+/* Interactive Micro-Inspection Box */
+.inspection-box {
+  background: var(--theme-accent-soft);
+  border: var(--theme-hairline);
+  padding: 0.95rem 1.2rem;
+  margin-top: 0.35rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--ink-plum);
+}
+
+.action-link {
+  color: var(--theme-accent);
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--theme-accent);
+  cursor: pointer;
+  padding-bottom: 1px;
+  transition: all 0.18s ease;
+}
+
+.action-link:hover {
+  color: #FFFDFB;
+  background: var(--theme-accent);
+}
+
+/* Branching Navigation Matrix */
+.nav-matrix {
+  padding: 1.45rem 2.1rem;
+  background: rgba(255, 250, 245, 0.68);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.nav-matrix-header {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.nav-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+  gap: 0.85rem;
+}
+
+/* Neo-Brutalist Vector Nodes in Light Poster Palette */
+a.link-internal {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-decoration: none;
+  font-family: 'Chakra Petch', sans-serif;
+  font-weight: 600;
+  font-size: 0.86rem;
+  line-height: 1.4;
+  color: var(--ink-plum);
+  border: var(--theme-hairline-strong);
+  padding: 0.85rem 1.1rem;
+  background: rgba(255, 255, 255, 0.72);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  cursor: pointer;
+}
+
+a.link-internal .link-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.66rem;
+  color: var(--theme-accent);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  margin-bottom: 0.28rem;
+}
+
+a.link-internal.visited-node .link-tag {
+  color: var(--celadon-jade);
+}
+
+a.link-internal:hover {
+  background: var(--theme-accent);
+  color: #FFFDFB;
+  border-color: var(--theme-accent);
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0px rgba(42, 24, 34, 0.22);
+}
+
+a.link-internal:hover .link-tag {
+  color: #FFFDFB;
+}
+
+/* Full-Width Chapter Intro Layout */
+.chapter-hero {
+  padding: 3rem 2.8rem;
+  border-bottom: var(--theme-hairline);
+  background:
+    radial-gradient(circle at 82% 22%, rgba(245, 157, 197, 0.38), transparent 58%);
+  position: relative;
+}
+
+.chapter-number {
+  display: inline-block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  color: #FFFDFB;
+  background: var(--theme-accent);
+  padding: 0.22rem 0.85rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  margin-bottom: 0.9rem;
+}
+
+.chapter-title {
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: clamp(2.1rem, 4.4vw, 3.35rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.02;
+  text-transform: uppercase;
+  color: var(--carmine-primary);
+  margin: 0 0 1.1rem 0;
+}
+
+.chapter-subline {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.48rem;
+  color: var(--ink-plum);
+  max-width: 720px;
+  line-height: 1.42;
+  margin-bottom: 1.3rem;
+}
+
+/* Constellation Card Grid for Overview */
+.constellation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+  gap: 1rem;
+  padding: 1.8rem 2.2rem;
+  border-bottom: var(--theme-hairline);
+}
+
+.constellation-card {
+  border: var(--theme-hairline);
+  background: rgba(255, 255, 255, 0.65);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.24s ease;
+  position: relative;
+}
+
+.constellation-card:hover {
+  border-color: var(--carmine-primary);
+  transform: translateY(-3px);
+  box-shadow: 4px 4px 0px rgba(217, 56, 112, 0.28);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.constellation-card img {
+  width: 100%;
+  height: 120px;
+  object-fit: contain;
+  margin: 0.6rem 0;
+  filter: drop-shadow(0 8px 14px rgba(68, 28, 45, 0.22));
+}
+
+.constellation-card .card-meta {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--ink-muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+.constellation-card .card-title {
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: var(--carmine-primary);
+  margin-top: 0.35rem;
+}
+
+/* Footer Archival Ledger */
+.ledger-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.72rem 1.6rem;
+  border-top: var(--theme-hairline);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.74rem;
+  color: var(--ink-muted);
+  background: rgba(255, 255, 255, 0.45);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+code {
+  font-family: 'Share Tech Mono', monospace;
+  background: rgba(217, 56, 112, 0.10);
+  padding: 0.1rem 0.38rem;
+  color: var(--carmine-primary);
+}
+</style>
+</head>
+<body data-lens="archaeologist">
+
+<canvas id="bg-canvas"></canvas>
+
+<!-- SVG Filter Fallback for Chroma-Keying Green Screen (#00FF00) when opened via local file:// -->
+<svg width="0" height="0" style="position:absolute; pointer-events:none;">
+  <defs>
+    <filter id="chroma-key" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="
+        1  0  0  0  0
+        0  1  0  0  0
+        0  0  1  0  0
+        1.4 -2.2 1.4 1  0" />
+    </filter>
+  </defs>
+</svg>
+
+<header class="global-hud">
+  <div class="hud-brand">
+    <span class="pulse-dot"></span>
+    <span>DSCAPE ARCHIVE [VER 1.0.6-2]</span>
+  </div>
+  <div class="hud-controls">
+    <button class="hud-btn" onclick="Engine.goBack()" id="btn-back" title="Step Back in Excavation History">← BACK</button>
+    <button class="hud-btn" onclick="Engine.goto('Start')">TERMINAL 00</button>
+    <button class="hud-btn" onclick="Engine.goto('Archive Constellation')">CONSTELLATION [<span id="hud-count">0</span>/8]</button>
+    <button class="hud-btn lens-btn" onclick="Engine.toggleLens()" id="btn-lens">LENS: 01. ANTHROPOLOGIST</button>
+  </div>
+</header>
+
+<main id="story">
+  <div id="passages"></div>
+</main>
+
+<!-- Embedded Twine 2 / Twee 3 Archive Data Store -->
+<tw-storydata name="DScape Archive: From Physical Relics to Networked Nodes" startnode="1" creator="Twine" creator-version="2.8.1" ifid="8F7B4E21-9C3D-4A1E-B850-7D2C6A9F0E12" zoom="1" format="SugarCube" format-version="2.36.1" options="" hidden>
+  <tw-passagedata pid="1" name="Start" tags="system-entry" position="100,100" size="100,100">Entry Terminal</tw-passagedata>
+  <tw-passagedata pid="2" name="Act 1: RECORDS" tags="act-records" position="300,100" size="100,100">Act I</tw-passagedata>
+  <tw-passagedata pid="3" name="Act 2: SYSTEMS" tags="act-systems" position="500,100" size="100,100">Act II</tw-passagedata>
+  <tw-passagedata pid="4" name="Act 3: NETWORKS" tags="act-networks" position="700,100" size="100,100">Act III</tw-passagedata>
+  <tw-passagedata pid="5" name="item-04-basf-reel" tags="act-records" position="300,250" size="100,100">BASF 9-Track Open Reel</tw-passagedata>
+  <tw-passagedata pid="6" name="item-05-floppy-disk-5-25" tags="act-records" position="300,400" size="100,100">5.25 Floppy Disk</tw-passagedata>
+  <tw-passagedata pid="7" name="item-02-floppy-disk-3-5" tags="act-records" position="300,550" size="100,100">3.5 Floppy Disk</tw-passagedata>
+  <tw-passagedata pid="8" name="item-06-innopac-cd" tags="act-systems" position="500,250" size="100,100">InnoPAC CD-ROM</tw-passagedata>
+  <tw-passagedata pid="9" name="item-01-aten-kvmp" tags="act-systems" position="500,400" size="100,100">ATEN Master View KVMP</tw-passagedata>
+  <tw-passagedata pid="10" name="item-03-hp-dat-160" tags="act-systems" position="500,550" size="100,100">HP DAT 160 Cartridge</tw-passagedata>
+  <tw-passagedata pid="11" name="item-07-planet-camera" tags="act-networks" position="700,250" size="100,100">PLANET Network Camera</tw-passagedata>
+  <tw-passagedata pid="12" name="item-08-lacie-nas" tags="act-networks" position="700,400" size="100,100">LaCie d2 Network 2 NAS</tw-passagedata>
+  <tw-passagedata pid="13" name="Archive Constellation" tags="synthesis" position="900,250" size="100,100">Archive Constellation</tw-passagedata>
+  <tw-passagedata pid="14" name="Media Archaeology Synthesis" tags="synthesis" position="900,400" size="100,100">Media Archaeology Synthesis</tw-passagedata>
+</tw-storydata>
+
+<script>
+// Each artifact has 3 completely distinct, non-redundant curatorial lenses:
+// 1. archaeologist (Techno-Anthropologist: Human rituals, inscriptions, social logistics)
+// 2. materialist (Media Archaeologist: Physical substrate, chemistry, industrial design, forensics)
+// 3. systems (Systems Architect: Data schemas, protocols, bus emulation, throughput hierarchy)
+const ARTIFACT_DB = {
+  "item-04-basf-reel": {
+    id: "item-04",
+    code: "SPECIMEN 04 // BASF-080305",
+    act: "ACT I: RECORDS (1/3)",
+    actClass: "",
+    sectorTitle: "ACT I: RECORDS // MAINFRAME ERA",
+    title: "BASF 9-Track Open Reel",
+    subtitle: "STAMPED 1993-01-25 // OFFLINE BATCH FREIGHT",
+    imgPrimary: "./public/images/04-basf-reel.png",
+    imgFallback: "./public/images/04-basf-reel.png",
+    specs: [
+      ["Manufacturer", "BASF (Part #080305)"],
+      ["Format", "9-Track 1/2-inch Open Reel Tape"],
+      ["Stamped Date", "1993-01-25"],
+      ["Provenance", "Control Data HK → Brunei Vessel"]
+    ],
+    lenses: {
+      archaeologist: {
+        modeTitle: "LENS 01 // TECHNO-ANTHROPOLOGY: MARITIME DATA LOGISTICS",
+        verse: "“Before bandwidth was measured in megabits per second, it was measured in knots across the South China Sea.”",
+        fieldNote: "In January 1993, transferring a mainframe dataset between Hong Kong and Brunei Darussalam meant handwriting a shipping label, sealing a plastic canister, and booking cargo space aboard an export vessel. Human couriers and customs officers were the physical routers of the early institutional archive.",
+        inspectPrompt: "🔍 [DECODE SHIPPING MANIFEST & HANDWRITTEN LABEL]",
+        inspectReveal: "<strong>HUMAN INSCRIPTION TRACE:</strong><br><code>CONTROL DATA HONG KONG LTD // BRUNEI DARUSSALAM // EXPORT VESSEL // 1993-01-25 // Handwritten ID: 080305</code><br><em>Anthropological Insight:</em> Notice how two different hands annotated this reel—a dot-matrix shipping manifest paired with penciled archival numbering."
+      },
+      materialist: {
+        modeTitle: "LENS 02 // MEDIA ARCHAEOLOGY: FERRIC OXIDE & RIGID CANISTER",
+        verse: "“Two thousand four hundred feet of half-inch mylar ribbon, suspended inside a dust-proof wheel of high-impact polymer.”",
+        fieldNote: "The BASF Gold reel houses a half-inch polyethylene terephthalate (PET) substrate coated in ferric oxide particles. Its grey outer protective collar locks via a black cam-action lever, preventing edge-curling and humidity ingress during tropical maritime transit.",
+        inspectPrompt: "🔍 [INSPECT HUB TEETH & PERIMETER LATCH MECHANISM]",
+        inspectReveal: "<strong>MATERIAL FORENSICS:</strong><br><code>Substrate: 1/2-inch Ferric Oxide PET // Canister: Self-locking perimeter ring with central rubber grommet</code><br><em>Material Insight:</em> The transparent inner hub window allowed operators to visually gauge tape winding tension before mounting it onto a vacuum-column drive."
+      },
+      systems: {
+        modeTitle: "LENS 03 // SYSTEMS ARCHITECTURE: 9-TRACK PARALLEL PARITY",
+        verse: "“Eight bits of data and one bit of parity marching in lockstep across the width of the ribbon.”",
+        fieldNote: "Unlike modern serial streams, 9-track mainframe tape writes one full byte plus an error-checking parity bit simultaneously across nine parallel linear tracks. Designed for offline batch processing, the reel occupied the tertiary tier of the memory hierarchy.",
+        inspectPrompt: "🔍 [QUERY 9-TRACK LINEAR RECORDING TOPOLOGY]",
+        inspectReveal: "<strong>SYSTEM TELEMETRY:</strong><br><code>Track Layout: 8 Data Bits + 1 Odd Parity Bit // Encoding: NRZI / Phase Encoded / GCR (800–6250 BPI)</code><br><em>Systems Insight:</em> Sequential access meant finding a record near the end of the reel required physically spooling hundreds of meters of tape past the read head."
+      }
+    },
+    affinityHtml: "AFFINITY THREAD: Magnetic tape endures—compare with the 2007 <a class='action-link' onclick=\"Engine.goto('item-03-hp-dat-160')\">HP DAT 160 Cartridge</a>.",
+    links: [
+      { tag: "NEXT IN ACT I // CHRONOLOGICAL", label: "5.25\" Floppy Disk (Local Reference)", target: "item-05-floppy-disk-5-25" },
+      { tag: "CROSS-ERA AFFINITY // MAGNETIC TAPE", label: "HP DAT 160 (2007 Server Tape Backup)", target: "item-03-hp-dat-160" },
+      { tag: "SECTOR OVERVIEW", label: "Up to ACT I: RECORDS", target: "Act 1: RECORDS" },
+      { tag: "RANDOM ACCESS", label: "Constellation Matrix (All 8 Relics)", target: "Archive Constellation" }
+    ]
+  },
+
+  "item-05-floppy-disk-5-25": {
+    id: "item-05",
+    code: "SPECIMEN 05 // CALL NO. QH 301 B5",
+    act: "ACT I: RECORDS (2/3)",
+    actClass: "",
+    sectorTitle: "ACT I: RECORDS // LOCALIZED REFERENCE",
+    title: "5.25\" Reference Floppy",
+    subtitle: "CIRCA 1990s // EXPOSED OXIDE & CALL NUMBERS",
+    imgPrimary: "./public/images/05-silverplatter-floppy.png",
+    imgFallback: "./public/images/05-silverplatter-floppy.png",
+    specs: [
+      ["Media Type", "5.25-inch Flexible Magnetic Disk"],
+      ["Capacity", "360KB (DD) / 1.2MB (HD)"],
+      ["Call Number", "QH 301 B5 (HKUST Library)"],
+      ["Database", "Biological Abstracts / RRM"]
+    ],
+    lenses: {
+      archaeologist: {
+        modeTitle: "LENS 01 // TECHNO-ANTHROPOLOGY: WHEN SOFTWARE WAS SHELVED LIKE A BOOK",
+        verse: "“A paper-thin magnetic membrane, cataloged on the shelf right beside the bound journals it indexed.”",
+        fieldNote: "Look at the top-right corner of the label: a Library of Congress call number sticker (<code>QH 301 B5</code>) identical to those pasted onto hardcover biology textbooks. In the early 1990s, HKUST librarians domesticated unfamiliar digital disks by folding them into centuries-old print classification rituals.",
+        inspectPrompt: "🔍 [INSPECT LIBRARY CALL NUMBER & SILVERPLATTER LABEL]",
+        inspectReveal: "<strong>CATALOGING ARTIFACT TRACE:</strong><br><code>Biological abstracts/RRM on compact disc // SW-PCA-203 // HKUST LIBRARY // Call No. QH 301 B5</code><br><em>Anthropological Insight:</em> Patrons checked out this floppy at the reference desk to boot the local search interface for Biological Abstracts."
+      },
+      materialist: {
+        modeTitle: "LENS 02 // MEDIA ARCHAEOLOGY: EXPOSED MYLAR & FELT LINERS",
+        verse: "“Through the oblong window of pebbled black PVC, the naked magnetic oxide breathes the room's air.”",
+        fieldNote: "True to the name 'floppy,' this 5.25-inch specimen consists of a flexible BoPET circular wafer sandwiching a low-friction fabric liner that wiped dust off the surface as it spun. A central white reinforcement ring prevented the drive spindle clamp from tearing the thin mylar hub.",
+        inspectPrompt: "🔍 [INSPECT WRITE-PROTECT NOTCH & INDEX HOLE]",
+        inspectReveal: "<strong>MATERIAL FORENSICS:</strong><br><code>Jacket: Pebbled Black PVC // Hub: White Reinforcing Ring // Right Edge: Mechanical Write-Protect Notch</code><br><em>Material Insight:</em> The small circular hole near the hub allowed a phototransistor beam to detect each physical rotation before sector formatting existed."
+      },
+      systems: {
+        modeTitle: "LENS 03 // SYSTEMS ARCHITECTURE: LOCAL WORKSTATION BOOTSTRAP",
+        verse: "“Three hundred sixty kilobytes of retrieval code unlocking a tower of optical compact discs.”",
+        fieldNote: "While the massive bibliographic database lived on CD-ROMs, early MS-DOS workstations lacked built-in search engines. This diskette supplied the SilverPlatter Information Retrieval System (SPIRS) client software and device drivers needed to query local optical drives.",
+        inspectPrompt: "🔍 [INSPECT SPIRS RETRIEVAL WORKFLOW ARCHITECTURE]",
+        inspectReveal: "<strong>SYSTEM TELEMETRY:</strong><br><code>Tracks: 40 (DD) / 80 (HD) @ 300/360 RPM // Role: SilverPlatter MS-DOS Retrieval Client (SW-PCA-203)</code><br><em>Systems Insight:</em> Represents a split-media architecture: mutable configuration on magnetic floppy, immutable index on optical CD-ROM."
+      }
+    },
+    affinityHtml: "AFFINITY THREAD: Connected to <a class='action-link' onclick=\"Engine.goto('item-02-floppy-disk-3-5')\">3.5\" US MARC Floppy</a> &amp; <a class='action-link' onclick=\"Engine.goto('item-06-innopac-cd')\">InnoPAC / SilverPlatter Disc</a>.",
+    links: [
+      { tag: "NEXT IN ACT I // CHRONOLOGICAL", label: "3.5\" Floppy Disk (US MARC Exchange)", target: "item-02-floppy-disk-3-5" },
+      { tag: "CROSS-ERA AFFINITY // OPTICAL SHIFT", label: "InnoPAC / SilverPlatter CD-ROM (Act II)", target: "item-06-innopac-cd" },
+      { tag: "PREVIOUS IN ACT I", label: "BASF 9-Track Open Reel (1993)", target: "item-04-basf-reel" },
+      { tag: "RANDOM ACCESS", label: "Constellation Matrix (All 8 Relics)", target: "Archive Constellation" }
+    ]
+  },
+
+  "item-02-floppy-disk-3-5": {
+    id: "item-02",
+    code: "SPECIMEN 02 // ORDER #8009974F",
+    act: "ACT I: RECORDS (3/3)",
+    actClass: "",
+    sectorTitle: "ACT I: RECORDS // MARC STANDARDIZATION",
+    title: "3.5\" US MARC Floppy",
+    subtitle: "MAY 1999 // THE POCKET-SIZED METADATA PARCEL",
+    imgPrimary: "./public/images/02-floppy-disk.png",
+    imgFallback: "./public/images/02-floppy-disk.png",
+    specs: [
+      ["Manufacturer", "Professional Media Service Corp."],
+      ["Capacity", "1.44 MB High Density (HD)"],
+      ["Schema", "US MARC / COM.CP (Audio)"],
+      ["Order Date", "May 1999 (Order #8009974F)"]
+    ],
+    lenses: {
+      archaeologist: {
+        modeTitle: "LENS 01 // TECHNO-ANTHROPOLOGY: THE CATALOGER'S BLUE MARKER",
+        verse: "“Across machine-printed vendor courier text, a human hand scrawls '7098' in bold blue ink.”",
+        fieldNote: "In May 1999, when HKUST Library ordered audio recordings from Professional Media Service Corp., the bibliographic metadata arrived separately on this 3.5-inch disk. Once the records were uploaded into the catalog, an archivist wrote the batch count across the label by hand—signing off on the digital ingest.",
+        inspectPrompt: "🔍 [INSPECT VENDOR LABEL & HANDWRITTEN SIGN-OFF]",
+        inspectReveal: "<strong>HUMAN INSCRIPTION TRACE:</strong><br><code>Cust: HONG KONG UNIV OF SCI &amp; TECH // Format: US MARC/COM.CP (AUDIO) // Order No. 8009974F // 05/25/1999 // Ink: \"7098\"</code><br><em>Anthropological Insight:</em> Even at the threshold of Y2K, institutional trust required a physical signature on a physical carrier."
+      },
+      materialist: {
+        modeTitle: "LENS 02 // MEDIA ARCHAEOLOGY: SPRING-LOADED STEEL & RIGID ABS",
+        verse: "“Snap the brushed aluminum shutter aside, and the fragile magnetic film reveals itself—armored for the shirt pocket.”",
+        fieldNote: "Sony's 3.5-inch design solved the fragility of the 5.25-inch envelope by encasing the magnetic wafer inside a rigid putty-grey ABS shell. A spring-loaded steel shutter automatically sealed the read/write window the moment the disk ejected from the drive.",
+        inspectPrompt: "🔍 [INSPECT HD NOTCH & SLIDING SHUTTER MECHANICS]",
+        inspectReveal: "<strong>MATERIAL FORENSICS:</strong><br><code>Shell: Rigid Putty ABS // Shutter: Spring-loaded Brushed Aluminum // Bottom Corners: Dual Write-Protect &amp; High-Density (HD) Sensor Holes</code><br><em>Material Insight:</em> The square hole on the lower right tells the drive's mechanical pin that this is a 1.44MB High-Density barium-ferrite disk."
+      },
+      systems: {
+        modeTitle: "LENS 03 // SYSTEMS ARCHITECTURE: US MARC / ISO 2709 SYNTAX",
+        verse: "“Inside 1.44 megabytes lives the universal grammar of libraries: variable fields, tags, and delimiters.”",
+        fieldNote: "The disk carries Machine-Readable Cataloging (US MARC) records structured under ISO 2709—invented by Henriette Avram at the Library of Congress. Each record begins with a 24-character Leader and a Directory that maps variable-length bibliographic fields (such as <code>245</code> Title and <code>100</code> Author).",
+        inspectPrompt: "🔍 [DECODE US MARC / COM.CP RECORD STRUCTURE]",
+        inspectReveal: "<strong>SYSTEM TELEMETRY:</strong><br><code>Capacity: 1.44 MB (80 tracks, 18 sectors/track, 512 bytes/sector) // Payload: US MARC (ISO 2709) Batch File</code><br><em>Systems Insight:</em> Standardized MARC syntax allowed HKUST's INNOPAC system to ingest vendor records without manual re-keying."
+      }
+    },
+    affinityHtml: "END OF ACT I: Physical records now demand a localized system to ingest and serve them.",
+    links: [
+      { tag: "ENTER ACT II // CHAPTER TRANSITION", label: "PROCEED TO ACT II: SYSTEMS", target: "Act 2: SYSTEMS" },
+      { tag: "DIRECT HARDWARE SEQUENCE", label: "InnoPAC Release 11 CD-ROM (1997)", target: "item-06-innopac-cd" },
+      { tag: "PREVIOUS IN ACT I", label: "5.25\" Reference Floppy (1990s)", target: "item-05-floppy-disk-5-25" },
+      { tag: "RANDOM ACCESS", label: "Constellation Matrix (All 8 Relics)", target: "Archive Constellation" }
+    ]
+  },
+
+  "item-06-innopac-cd": {
+    id: "item-06",
+    code: "SPECIMEN 06 // P/N 28373",
+    act: "ACT II: SYSTEMS (1/3)",
+    actClass: "systems",
+    sectorTitle: "ACT II: SYSTEMS // OPTICAL DISTRIBUTION",
+    title: "InnoPAC Release 11 Disc",
+    subtitle: "COPYRIGHT 1997 // LASER-ETCHED INSTITUTIONAL BRAIN",
+    imgPrimary: "./public/images/06-innopac-cd.png",
+    imgFallback: "./public/images/06-innopac-cd.png",
+    specs: [
+      ["Publisher", "Innovative Interfaces Inc."],
+      ["System", "INNOPAC Millennium Release 11"],
+      ["Medium", "Polycarbonate Optical CD-ROM"],
+      ["Copyright", "1997 (Part #28373)"]
+    ],
+    lenses: {
+      archaeologist: {
+        modeTitle: "LENS 01 // TECHNO-ANTHROPOLOGY: THE RITUAL OF THE VERSIONED DISC",
+        verse: "“Before silent cloud patches, a major library upgrade arrived in Emeryville postmarks as a cobalt-blue mirror.”",
+        fieldNote: "Excavated from the archive stacked directly atop the paper sleeve of Release 10, this Release 11 CD-ROM captures the era of discrete software epochs. System librarians scheduled maintenance windows around the physical arrival of these discs from California.",
+        inspectPrompt: "🔍 [INSPECT RELEASE 11 & FOLIO INFOBASE BRANDING]",
+        inspectReveal: "<strong>HUMAN WORKFLOW TRACE:</strong><br><code>INNOPAC Millennium // MANUAL Release 11 // © Copyright 1997 Innovative Interfaces Inc., Emeryville, CA</code><br><em>Anthropological Insight:</em> Replacing shelf-loads of printed 3-ring binders, this single disc put the entire INNOPAC operations manual onto staff desktops."
+      },
+      materialist: {
+        modeTitle: "LENS 02 // MEDIA ARCHAEOLOGY: POLYCARBONATE PITS & COBALT INK",
+        verse: "“Sub-micron pits stamped into clear plastic, veiled beneath a vapor-deposited film of reflective aluminum.”",
+        fieldNote: "Unlike magnetic media that can be erased by stray fields or mechanical wear, this 120mm optical disc encodes bits physically as microscopic pits and lands read by a 780nm semiconductor laser. Its deep cobalt-blue and metallic gold silkscreen top coat protects the thin reflective layer beneath.",
+        inspectPrompt: "🔍 [INSPECT INNER CLAMPING RING & MATRIX CODE]",
+        inspectReveal: "<strong>MATERIAL FORENSICS:</strong><br><code>Substrate: 1.2mm Polycarbonate // Reflective Layer: Aluminum // Silkscreen: Cobalt Blue &amp; Gold Metallic Ink</code><br><em>Material Insight:</em> Optical non-contact reading eliminated head-to-surface friction, promising archival permanence."
+      },
+      systems: {
+        modeTitle: "LENS 03 // SYSTEMS ARCHITECTURE: FROM GREENSCREEN TO MILLENNIUM",
+        verse: "“The bridge between VT100 character terminals and the web-based integrated library system.”",
+        fieldNote: "Release 11 marked Innovative Interfaces' pivotal transition from character-based telnet terminals (INNOPAC) toward the Java/Web-enabled Millennium architecture. Bundled with Folio Infobase, it provided full-text boolean hypertext indexing across system documentation.",
+        inspectPrompt: "🔍 [QUERY ISO-9660 & FOLIO INFOBASE ENGINE]",
+        inspectReveal: "<strong>SYSTEM TELEMETRY:</strong><br><code>Filesystem: ISO-9660 (~650 MB Capacity) // Search Engine: Folio Views / Infobase Hypertext</code><br><em>Systems Insight:</em> Allowed system administrators to query MARC indexing rules, circulation parameters, and Z39.50 server configs locally."
+      }
+    },
+    affinityHtml: "AFFINITY THREAD: Upgraded the local database workflows initiated by <a class='action-link' onclick=\"Engine.goto('item-05-floppy-disk-5-25')\">5.25\" SilverPlatter Floppy</a>.",
+    links: [
+      { tag: "NEXT IN ACT II // CHRONOLOGICAL", label: "ATEN Master View KVMP Switch (2000–2005)", target: "item-01-aten-kvmp" },
+      { tag: "CROSS-ERA AFFINITY // DATABASE LINEAGE", label: "Back to 5.25\" SilverPlatter Floppy", target: "item-05-floppy-disk-5-25" },
+      { tag: "SECTOR OVERVIEW", label: "Up to ACT II: SYSTEMS", target: "Act 2: SYSTEMS" },
+      { tag: "RANDOM ACCESS", label: "Constellation Matrix (All 8 Relics)", target: "Archive Constellation" }
+    ]
+  },
+
+  "item-01-aten-kvmp": {
+    id: "item-01",
+    code: "SPECIMEN 01 // ATEN CS-1732A",
+    act: "ACT II: SYSTEMS (2/3)",
+    actClass: "systems",
+    sectorTitle: "ACT II: SYSTEMS // CONSOLE MULTIPLEXING",
+    title: "ATEN Master View KVMP",
+    subtitle: "CIRCA 2000–2005 // ONE HUMAN CONSOLE, TWO MACHINES",
+    imgPrimary: "./public/images/01-aten-kvmp.png",
+    imgFallback: "./public/images/01-aten-kvmp.png",
+    specs: [
+      ["Manufacturer", "ATEN (Master View CS-1732A)"],
+      ["Era", "Circa 2000–2005"],
+      ["Interfaces", "2-Port PS/2, USB Hub, VGA, Audio"],
+      ["Max Resolution", "2048 × 1536 Analog CRT/LCD"]
+    ],
+    lenses: {
+      archaeologist: {
+        modeTitle: "LENS 01 // TECHNO-ANTHROPOLOGY: CHOREOGRAPHY OF THE TWO-MACHINE DESK",
+        verse: "“One human gaze, one keyboard, two isolated computers—united by the click of a physical button.”",
+        fieldNote: "Annotated with HKUST Library labels reading <code>PC / LAPTOP</code>, this switch sat on a staff desk where a single operator had to tend two separate computers without cluttering the workspace with duplicate CRT monitors and keyboards.",
+        inspectPrompt: "🔍 [PRESS KVM SWITCH BUTTON: TOGGLE PORT 1 ⇄ PORT 2]",
+        inspectReveal: "<strong>HUMAN-MACHINE INTERACTION TRACE:</strong><br><code>BEEP! [PORT 02 SELECTED] // Labels: \"HKUST LIBRARY\" &amp; \"PC / LAPTOP\"</code><br><em>Anthropological Insight:</em> The audible piezoelectric beep and glowing LED confirmed which machine held the operator's attention."
+      },
+      materialist: {
+        modeTitle: "LENS 02 // MEDIA ARCHAEOLOGY: BEIGE STEEL IN BRUTALIST BUMPERS",
+        verse: "“Late-90s office beige wrapped in speckled industrial elastomer—an aesthetic caught between two centuries.”",
+        fieldNote: "The ATEN CS-1732A's chassis is a study in Y2K industrial design: a classic putty-beige sheet-metal housing armored at both ends by chunky, stone-speckled brown rubberized bumpers that allowed units to stack securely in cramped server closets.",
+        inspectPrompt: "🔍 [INSPECT FRONT PANEL CONSOLE USB PORTS & ROCKERS]",
+        inspectReveal: "<strong>MATERIAL FORENSICS:</strong><br><code>Chassis: Painted Steel + Speckled Elastomer Bumpers // Controls: Dual Vertical Tactile Pushbuttons with Recessed LED Windows</code><br><em>Material Insight:</em> Front-accessible USB Type-A ports bear miniature silkscreened keyboard and mouse icons."
+      },
+      systems: {
+        modeTitle: "LENS 03 // SYSTEMS ARCHITECTURE: USB/PS2 ENDPOINT EMULATION",
+        verse: "“A hardware diplomat translating legacy PS/2 interrupts into hot-pluggable USB packets.”",
+        fieldNote: "Early operating systems would freeze or drop input if a keyboard was unplugged mid-session. The KVMP switch solved this with an internal microcontroller that continuously emulated keyboard and mouse presence to both connected hosts simultaneously while multiplexing 2048×1536 analog VGA video.",
+        inspectPrompt: "🔍 [QUERY KVMP SWITCHING & USB HUB TOPOLOGY]",
+        inspectReveal: "<strong>SYSTEM TELEMETRY:</strong><br><code>Video Bandwidth: 2048×1536 DDC2B // Protocol Bridge: PS/2-to-USB Emulation + 2-Port USB 1.1 Peripheral Hub + Audio</code><br><em>Systems Insight:</em> The 'P' in KVMP stands for Peripheral—allowing two computers to share scanners or printers alongside the console."
+      }
+    },
+    affinityHtml: "AFFINITY THREAD: Physical multi-machine sharing anticipates networked file sharing on the <a class='action-link' onclick=\"Engine.goto('item-08-lacie-nas')\">LaCie d2 Network 2 NAS</a>.",
+    links: [
+      { tag: "NEXT IN ACT II // CHRONOLOGICAL", label: "HP DAT 160 Data Cartridge (2007)", target: "item-03-hp-dat-160" },
+      { tag: "CROSS-ERA AFFINITY // SHARING TOPOLOGY", label: "LaCie d2 Network 2 NAS (Act III)", target: "item-08-lacie-nas" },
+      { tag: "PREVIOUS IN ACT II", label: "InnoPAC Release 11 CD-ROM (1997)", target: "item-06-innopac-cd" },
+      { tag: "RANDOM ACCESS", label: "Constellation Matrix (All 8 Relics)", target: "Archive Constellation" }
+    ]
+  },
+
+  "item-03-hp-dat-160": {
+    id: "item-03",
+    code: "SPECIMEN 03 // HP C8011A",
+    act: "ACT II: SYSTEMS (3/3)",
+    actClass: "systems",
+    sectorTitle: "ACT II: SYSTEMS // NOCTURNAL ARCHIVING",
+    title: "HP DAT 160 Cartridge",
+    subtitle: "CIRCA 2007 // 150 METERS OF COMPRESSED INSURANCE",
+    imgPrimary: "./public/images/03-hp-dat-160.png",
+    imgFallback: "./public/images/03-hp-dat-160.png",
+    specs: [
+      ["Manufacturer", "Hewlett-Packard (Part #C8011A)"],
+      ["Standard", "DDS-6 / DAT-160 Helical Scan"],
+      ["Capacity", "80GB Native / 160GB Compressed"],
+      ["Tape Length", "150 Meters (~6.9 MB/s Transfer)"]
+    ],
+    lenses: {
+      archaeologist: {
+        modeTitle: "LENS 01 // TECHNO-ANTHROPOLOGY: THE MIDNIGHT BACKUP RITUAL",
+        verse: "“At 2:00 AM in an unlit server room, twin miniature hubs spin 160 gigabytes of institutional memory into maroon plastic.”",
+        fieldNote: "Every evening before locking the lab, system administrators slotted a fresh DAT cartridge into the server's tape drive. While the campus slept, automated cron jobs streamed the day's database transactions onto tape—an insurance policy carried off-site in a briefcase.",
+        inspectPrompt: "🔍 [INSPECT CARTRIDGE WINDOW & ROTATION HUBS]",
+        inspectReveal: "<strong>HUMAN RITUAL TRACE:</strong><br><code>HP DAT 160 // C8011A // compressed capacity: 160GB</code><br><em>Anthropological Insight:</em> Even in 2007, administrators relied on the clear plastic window to visually check whether the tape had rewound to the leader before ejecting."
+      },
+      materialist: {
+        modeTitle: "LENS 02 // MEDIA ARCHAEOLOGY: HELICAL-SCAN METAL PARTICULATE",
+        verse: "“Born from consumer digital audio tape, reborn in burgundy ABS to guard enterprise servers.”",
+        fieldNote: "Compare this palm-sized cassette with the 1993 BASF open reel: magnetic tape folded inward into a dust-sealed burgundy shell with a hinged protective door. Inside, 150 meters of ultra-thin 8mm metal-particulate tape wind between twin white-toothed hubs.",
+        inspectPrompt: "🔍 [INSPECT 8MM TAPE WIDTH & SLIDING DOOR MECHANISM]",
+        inspectReveal: "<strong>MATERIAL FORENSICS:</strong><br><code>Shell: Burgundy High-Impact ABS // Tape: 150m Metal-Particulate (MP) // Form Factor: DDS-6 (Widened 8mm ribbon)</code><br><em>Material Insight:</em> To reach 160GB, DDS-6 widened the tape ribbon from 3.81mm to 8mm while keeping the compact cassette footprint."
+      },
+      systems: {
+        modeTitle: "LENS 03 // SYSTEMS ARCHITECTURE: HELICAL DRUM & DCLZ COMPRESSION",
+        verse: "“A spinning head tilted at six degrees writes diagonal tracks across the moving ribbon at 6.9 megabytes per second.”",
+        fieldNote: "Rather than recording straight longitudinal tracks like the 1993 mainframe reel, DAT-160 uses a rotating helical-scan drum (like a VCR) to pack dense diagonal tracks across the tape, doubling its 80GB native capacity to 160GB via hardware Lempel-Ziv (DCLZ) compression.",
+        inspectPrompt: "🔍 [QUERY DDS-6 HELICAL SCAN & SCSI/USB THROUGHPUT]",
+        inspectReveal: "<strong>SYSTEM TELEMETRY:</strong><br><code>Native Capacity: 80 GB // Compressed (2:1 DCLZ): 160 GB // Sustained Rate: ~6.9 MB/s (24.8 GB/hr)</code><br><em>Systems Insight:</em> At 6.9 MB/s, a full 80GB native backup took roughly 3.2 hours—ideal for overnight batch windows."
+      }
+    },
+    affinityHtml: "END OF ACT II: Nocturnal tape cartridges give way to always-on networked nodes.",
+    links: [
+      { tag: "ENTER ACT III // CHAPTER TRANSITION", label: "PROCEED TO ACT III: NETWORKS", target: "Act 3: NETWORKS" },
+      { tag: "DIRECT HARDWARE SEQUENCE", label: "PLANET Network Camera (2007–2010)", target: "item-07-planet-camera" },
+      { tag: "CROSS-ERA AFFINITY // MAGNETIC LINEAGE", label: "Compare with 1993 BASF 9-Track Reel", target: "item-04-basf-reel" },
+      { tag: "RANDOM ACCESS", label: "Constellation Matrix (All 8 Relics)", target: "Archive Constellation" }
+    ]
+  },
+
+  "item-07-planet-camera": {
+    id: "item-07",
+    code: "SPECIMEN 07 // ICA-107 SERIES",
+    act: "ACT III: NETWORKS (1/2)",
+    actClass: "networks",
+    sectorTitle: "ACT III: NETWORKS // EMBEDDED SURVEILLANCE",
+    title: "PLANET IP Network Camera",
+    subtitle: "CIRCA 2007–2010 // THE UNBLINKING EMBEDDED NODE",
+    imgPrimary: "./public/images/07-planet-camera.png",
+    imgFallback: "./public/images/07-planet-camera.png",
+    specs: [
+      ["Catalog Identity", "PLANET ICA-107 Series (D-Link Chassis)"],
+      ["Era", "Circa 2007–2010"],
+      ["Stream Engine", "CMOS Sensor, 30fps VGA MPEG-4"],
+      ["Protocols", "10/100Base-TX, 802.11b/g/n, PoE, UPnP"]
+    ],
+    lenses: {
+      archaeologist: {
+        modeTitle: "LENS 01 // TECHNO-ANTHROPOLOGY: THE ROOM GAINS AN IP ADDRESS",
+        verse: "“When the network stepped out of the server closet and mounted itself onto the laboratory wall to watch us back.”",
+        fieldNote: "For decades, network cables connected human workstations. In the late 2000s, embedded IP cameras turned physical architecture into a remotely observable space—allowing lab managers to check equipment rooms from any web browser.",
+        inspectPrompt: "🔍 [INSPECT REMOTE LAB MONITORING WORKFLOW]",
+        inspectReveal: "<strong>SPATIAL ANTHROPOLOGY TRACE:</strong><br><code>Deployment: Autonomous Web-Streamed Lab Surveillance // Motion-triggered E-mail/FTP alerts</code><br><em>Anthropological Insight:</em> Marks the birth of everyday institutional IoT—where tiny, headless computers outnumbered human operators."
+      },
+      materialist: {
+        modeTitle: "LENS 02 // MEDIA ARCHAEOLOGY: THE OEM REBADGING FORENSIC ANOMALY",
+        verse: "“Cataloged in the archive ledger as PLANET, yet stamped on its white plastic brow with the name D-Link.”",
+        fieldNote: "A close forensic inspection of this specimen reveals a fascinating hardware discrepancy: while archived under the <code>PLANET ICA-107 Series</code> inventory record, the physical swivel-pedestal body bears a <code>D-Link</code> front silkscreen—a testament to Taiwanese ODM/OEM shared molds and mixed lab procurement.",
+        inspectPrompt: "🔍 [FORENSIC ZOOM: VERIFY D-LINK / PLANET CHASSIS ANOMALY]",
+        inspectReveal: "<strong>FORENSIC HARDWARE ANOMALY:</strong><br><code>Inventory Record: PLANET ICA-107 // Physical Silkscreen: D-Link // Front Array: CMOS Lens + PIR Motion Dome + Mic Grille</code><br><em>Material Insight:</em> Identical injection-molded shells were frequently licensed across networking brands in Hsinchu and Taipei."
+      },
+      systems: {
+        modeTitle: "LENS 03 // SYSTEMS ARCHITECTURE: EMBEDDED SOC & POWER-OVER-ETHERNET",
+        verse: "“An autonomous microprocessor, a CMOS retina, and a single Ethernet vein carrying both power and sight.”",
+        fieldNote: "Earlier webcams required a USB tether to a host PC with a capture card. This embedded appliance integrates its own CPU, web server, and hardware MPEG-4 encoder—compressing 30fps VGA video while drawing electrical power directly over twisted-pair Ethernet (PoE).",
+        inspectPrompt: "🔍 [QUERY EMBEDDED STREAMING & POE STACK]",
+        inspectReveal: "<strong>SYSTEM TELEMETRY:</strong><br><code>Codec: Real-time MPEG-4 / MJPEG @ 30fps VGA // Network: 10/100Base-TX + 802.11b/g/n + IEEE 802.3af PoE + UPnP</code><br><em>Systems Insight:</em> Self-contained HTTP/RTSP streaming decoupled video sensors from desktop workstations."
+      }
+    },
+    affinityHtml: "AFFINITY THREAD: While the IP camera streams live sight, the <a class='action-link' onclick=\"Engine.goto('item-08-lacie-nas')\">LaCie d2 NAS</a> centralizes shared memory.",
+    links: [
+      { tag: "NEXT IN ACT III // CHRONOLOGICAL", label: "LaCie d2 Network 2 NAS (2010–2012)", target: "item-08-lacie-nas" },
+      { tag: "SECTOR OVERVIEW", label: "Up to ACT III: NETWORKS", target: "Act 3: NETWORKS" },
+      { tag: "PREVIOUS IN ARCHIVE", label: "HP DAT 160 Cartridge (2007)", target: "item-03-hp-dat-160" },
+      { tag: "RANDOM ACCESS", label: "Constellation Matrix (All 8 Relics)", target: "Archive Constellation" }
+    ]
+  },
+
+  "item-08-lacie-nas": {
+    id: "item-08",
+    code: "SPECIMEN 08 // LACIE D2 NETWORK 2",
+    act: "ACT III: NETWORKS (2/2)",
+    actClass: "networks",
+    sectorTitle: "ACT III: NETWORKS // CENTRALIZED STORAGE",
+    title: "LaCie d2 Network 2 NAS",
+    subtitle: "CIRCA 2010–2012 // THE MONOLITH BEFORE THE CLOUD",
+    imgPrimary: "./public/images/08-lacie.png",
+    imgFallback: "./public/images/08-lacie.png",
+    specs: [
+      ["Manufacturer", "LaCie (Industrial Design: Neil Poulton)"],
+      ["Model", "d2 Network 2 (Single-Drive SATA NAS)"],
+      ["Capacity / Speed", "Up to 2TB // ~68 MB/s via Gigabit LAN"],
+      ["Chassis", "Ribbed Aluminum Fanless Heat-Sink"]
+    ],
+    lenses: {
+      archaeologist: {
+        modeTitle: "LENS 01 // TECHNO-ANTHROPOLOGY: COMMUNAL MEMORY & THE BLUE ORB",
+        verse: "“A ribbed aluminum monolith standing on the threshold between a tangible hard drive and an invisible cloud.”",
+        fieldNote: "Before commercial cloud storage made data weightless, the LaCie d2 Network 2 gave the laboratory its own private, touchable cloud. Researchers no longer passed floppy disks or USB sticks by hand; they mounted a shared network drive while the front cobalt-blue LED eye pulsed quietly on the shelf.",
+        inspectPrompt: "🔍 [INSPECT THE ICONIC BLUE LED ORB & STAND]",
+        inspectReveal: "<strong>HUMAN-SPACE TRACE:</strong><br><code>Role: Centralized Lab File Sharing &amp; Automated Client Backups (2010–2012)</code><br><em>Anthropological Insight:</em> The last generation of storage where researchers could still point to a physical box in the room and say, 'Our project lives in there.'"
+      },
+      materialist: {
+        modeTitle: "LENS 02 // MEDIA ARCHAEOLOGY: NEIL POULTON'S THERMODYNAMIC RIBS",
+        verse: "“Sculpted like an industrial radiator, its corrugated aluminum skin breathes heat into the room without a sound.”",
+        fieldNote: "Designed by Scottish industrial designer Neil Poulton, the d2 enclosure is extruded from thick bead-blasted aluminum. Its deep horizontal ribs increase surface area by 60%, acting as a passive heat-sink that cools the internal 3.5-inch SATA platter without a noisy cooling fan.",
+        inspectPrompt: "🔍 [INSPECT EXTRUDED ALUMINUM HEAT-SINK FINS]",
+        inspectReveal: "<strong>MATERIAL FORENSICS:</strong><br><code>Chassis: Bead-blasted Extruded Aluminum // Cooling: 100% Fanless Passive Convection // Foot: Slide-on Alloy Pedestal</code><br><em>Material Insight:</em> Form follows thermodynamics—keeping the library lab whisper-quiet while dissipating 7200 RPM drive heat."
+      },
+      systems: {
+        modeTitle: "LENS 03 // SYSTEMS ARCHITECTURE: GIGABIT LAN & MULTI-PROTOCOL NAS",
+        verse: "“Sixty-eight megabytes per second streaming over copper twisted-pair to every workstation simultaneously.”",
+        fieldNote: "Bridging direct-attached storage and networked infrastructure, the d2 Network 2 runs an embedded Linux OS serving SMB, AFP, NFS, FTP, and DLNA over Gigabit Ethernet alongside eSATA and USB 2.0 expansion ports.",
+        inspectPrompt: "🔍 [QUERY GIGABIT NAS THROUGHPUT VS. 1993 REEL]",
+        inspectReveal: "<strong>SYSTEM TELEMETRY:</strong><br><code>Capacity: Up to 2 TB (1,400,000× the 1999 3.5\" Floppy) // Throughput: ~68 MB/s via 1000Base-T Ethernet</code><br><em>Systems Insight:</em> Completes the 20-year arc from shipping magnetic reels by boat to mounting terabytes instantaneously over LAN."
+      }
+    },
+    affinityHtml: "AFFINITY THREAD: Completes the multi-host sharing arc begun by the <a class='action-link' onclick=\"Engine.goto('item-01-aten-kvmp')\">ATEN Master View KVMP Switch</a>.",
+    links: [
+      { tag: "CURATORIAL EPILOGUE // SYNTHESIS", label: "PROCEED TO MEDIA ARCHAEOLOGY SYNTHESIS", target: "Media Archaeology Synthesis" },
+      { tag: "CROSS-ERA AFFINITY // MULTI-HOST SHARING", label: "Back to ATEN KVMP Switch (Act II)", target: "item-01-aten-kvmp" },
+      { tag: "PREVIOUS IN ACT III", label: "PLANET Network Camera (2007–2010)", target: "item-07-planet-camera" },
+      { tag: "RANDOM ACCESS", label: "Constellation Matrix (All 8 Relics)", target: "Archive Constellation" }
+    ]
+  }
+};
+
+// Client-Side Chroma Key Processor (Removes #00FF00 green screen automatically)
+const ChromaKeyCache = {};
+function applyChromaKey(imgElement) {
+  const srcKey = imgElement.getAttribute("src");
+  if (!srcKey || srcKey.startsWith("data:")) return;
+  if (ChromaKeyCache[srcKey]) {
+    imgElement.src = ChromaKeyCache[srcKey];
+    return;
+  }
+  try {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const w = imgElement.naturalWidth;
+    const h = imgElement.naturalHeight;
+    if (!w || !h) return;
+    canvas.width = w;
+    canvas.height = h;
+    ctx.drawImage(imgElement, 0, 0);
+    const imgData = ctx.getImageData(0, 0, w, h);
+    const d = imgData.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const r = d[i], g = d[i + 1], b = d[i + 2];
+      const maxRB = Math.max(r, b);
+      const excess = g - maxRB;
+      if (excess > 35) {
+        const alpha = Math.max(0, Math.min(1, 1 - (excess - 35) / 60));
+        d[i + 3] = Math.round(alpha * 255);
+        d[i + 1] = Math.min(g, maxRB + 15);
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+    const dataUrl = canvas.toDataURL("image/png");
+    ChromaKeyCache[srcKey] = dataUrl;
+    imgElement.src = dataUrl;
+  } catch (e) {
+    imgElement.style.filter = "url(#chroma-key) drop-shadow(0 16px 26px rgba(68, 28, 45, 0.26))";
+  }
+}
+
+const LENS_LABELS = {
+  archaeologist: "01. ANTHROPOLOGIST",
+  materialist: "02. ARCHAEOLOGIST",
+  systems: "03. SYSTEMS ARCHITECT"
+};
+
+const Engine = {
+  state: {
+    currentPassage: "Start",
+    visitedItems: [],
+    lens: "archaeologist",
+    history: []
+  },
+
+  init() {
+    document.body.setAttribute("data-lens", this.state.lens);
+    this.render("Start");
+    this.initParticles();
+  },
+
+  toggleLens() {
+    const order = ["archaeologist", "materialist", "systems"];
+    const nextIdx = (order.indexOf(this.state.lens) + 1) % order.length;
+    this.setLens(order[nextIdx]);
+  },
+
+  setLens(lensName) {
+    this.state.lens = lensName;
+    document.body.setAttribute("data-lens", lensName);
+    document.getElementById("btn-lens").textContent = "LENS: " + LENS_LABELS[lensName];
+    this.render(this.state.currentPassage);
+  },
+
+  goto(passageName) {
+    if (this.state.currentPassage !== passageName) {
+      this.state.history.push(this.state.currentPassage);
+    }
+    this.render(passageName);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  },
+
+  goBack() {
+    if (this.state.history.length > 0) {
+      const prev = this.state.history.pop();
+      this.render(prev);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  },
+
+  markVisited(itemId) {
+    if (!this.state.visitedItems.includes(itemId)) {
+      this.state.visitedItems.push(itemId);
+    }
+    document.getElementById("hud-count").textContent = this.state.visitedItems.length;
+  },
+
+  revealInspect() {
+    const item = ARTIFACT_DB[this.state.currentPassage];
+    if (!item) return;
+    const activeLensData = item.lenses[this.state.lens];
+    const box = document.getElementById("inspect-box");
+    if (box && activeLensData) {
+      box.innerHTML = activeLensData.inspectReveal;
+    }
+  },
+
+  randomCoord() {
+    const rx = (Math.random() * 88 + 10).toFixed(2);
+    const ry = (Math.random() * 88 + 10).toFixed(2);
+    return `VEC_POS // X:${rx} Y:${ry} [LENS:${this.state.lens.slice(0,4).toUpperCase()}]`;
+  },
+
+  render(passageName) {
+    this.state.currentPassage = passageName;
+    const container = document.getElementById("passages");
+    document.getElementById("btn-back").style.opacity = this.state.history.length > 0 ? "1" : "0.35";
+
+    if (ARTIFACT_DB[passageName]) {
+      const item = ARTIFACT_DB[passageName];
+      this.markVisited(item.id);
+      container.innerHTML = `<div class="passage">${this.renderArtifactPassage(item)}</div>`;
+      return;
+    }
+
+    switch (passageName) {
+      case "Start":
+        container.innerHTML = `<div class="passage">${this.renderStart()}</div>`;
+        break;
+      case "Act 1: RECORDS":
+        container.innerHTML = `<div class="passage">${this.renderAct1()}</div>`;
+        break;
+      case "Act 2: SYSTEMS":
+        container.innerHTML = `<div class="passage">${this.renderAct2()}</div>`;
+        break;
+      case "Act 3: NETWORKS":
+        container.innerHTML = `<div class="passage">${this.renderAct3()}</div>`;
+        break;
+      case "Archive Constellation":
+        container.innerHTML = `<div class="passage">${this.renderConstellation()}</div>`;
+        break;
+      case "Media Archaeology Synthesis":
+        container.innerHTML = `<div class="passage">${this.renderSynthesis()}</div>`;
+        break;
+      default:
+        container.innerHTML = `<div class="passage">${this.renderStart()}</div>`;
+    }
+  },
+
+  renderArtifactPassage(item) {
+    const activeLensData = item.lenses[this.state.lens];
+    const specsHtml = item.specs.map(([lbl, val]) =>
+      `<div class="spec-row"><span class="spec-label">${lbl}</span><span class="spec-val">${val}</span></div>`
+    ).join("");
+
+    const navHtml = item.links.map(lnk => {
+      const targetItem = ARTIFACT_DB[lnk.target];
+      const isVisited = targetItem && this.state.visitedItems.includes(targetItem.id);
+      return `<a class="link-internal ${isVisited ? 'visited-node' : ''}" onclick="Engine.goto('${lnk.target}')">
+        <span class="link-tag">${lnk.tag} ${isVisited ? '✓' : ''}</span>
+        <span>${lnk.label} →</span>
+      </a>`;
+    }).join("");
+
+    return `
+    <div class="archival-frame">
+      <div class="vertical-marginalia">DSCAPE ARCHIVE // ${item.code}</div>
+      <div class="marginalia-h"><em>*Curated with assistance from Gemini 4 Argon, DeepSeek-V4.1-Flash-1017, GPT-Image 2.5 Sunburst, and Qwen 3.6.</em></div>
+      <div class="telemetry-bar">
+        <span><span class="status-dot"></span>${item.code}</span>
+        <span>${item.sectorTitle}</span>
+      </div>
+
+      <div class="exhibit-grid">
+        <div class="specimen-viewport">
+          <div class="specimen-reticle" onclick="this.classList.toggle('zoomed')" title="Click to toggle forensic zoom">
+            <span class="reticle-tag-tl">[SPECIMEN_BASIN // CLICK TO ZOOM]</span>
+            <img class="artifact-img" src="${item.imgPrimary}" onload="applyChromaKey(this)" onerror="this.onerror=null;this.src='${item.imgFallback}';" alt="${item.title}">
+            <span class="reticle-coord">${this.randomCoord()}</span>
+          </div>
+          <div class="spec-table">
+            ${specsHtml}
+          </div>
+        </div>
+
+        <div class="curatorial-panel">
+          <div>
+            <span class="act-badge ${item.actClass}">${item.act}</span>
+            <h1 class="artifact-title">${item.title}</h1>
+            <div class="era-subtitle">${item.subtitle}</div>
+
+            <!-- In-Panel 3-Lens Switcher: Visibly transforms the entire curatorial narrative & UI theme -->
+            <div class="lens-switcher-bar" role="tablist" aria-label="Curatorial Perspectives">
+              <button class="lens-tab ${this.state.lens === 'archaeologist' ? 'active-arch' : ''}" onclick="Engine.setLens('archaeologist')">
+                01. Anthropologist
+              </button>
+              <button class="lens-tab ${this.state.lens === 'materialist' ? 'active-mat' : ''}" onclick="Engine.setLens('materialist')">
+                02. Archaeologist
+              </button>
+              <button class="lens-tab ${this.state.lens === 'systems' ? 'active-sys' : ''}" onclick="Engine.setLens('systems')">
+                03. Systems
+              </button>
+            </div>
+
+            <div class="lens-mode-header">${activeLensData.modeTitle}</div>
+            <div class="poetic-verse">${activeLensData.verse}</div>
+            <p class="field-note">${activeLensData.fieldNote}</p>
+
+            <div class="inspection-box" id="inspect-box">
+              <a class="action-link" onclick="Engine.revealInspect()">
+                ${activeLensData.inspectPrompt}
+              </a>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.4rem; font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--ink-muted);">
+            ${item.affinityHtml}
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-matrix">
+        <div class="nav-matrix-header">BRANCHING NAVIGATION VECTORS // CHRONOLOGICAL SPINE OR CROSS-ERA LEAP</div>
+        <div class="nav-links">
+          ${navHtml}
+        </div>
+      </div>
+
+      <div class="ledger-bar">
+        <span>RELICS EXCAVATED: ${this.state.visitedItems.length} / 8</span>
+        <span>ACTIVE LENS: ${LENS_LABELS[this.state.lens]} // STATUS: VERIFIED</span>
+      </div>
+    </div>`;
+  },
+
+  renderStart() {
+    const lensExplainer = {
+      archaeologist: {
+        title: "LENS 01 // TECHNO-ANTHROPOLOGIST (Carmine Rose Mode)",
+        desc: "Focuses on human rituals, handwritten blue-marker sign-offs, Library of Congress call numbers pasted onto floppy sleeves, and maritime shipping manifests."
+      },
+      materialist: {
+        title: "LENS 02 // MEDIA ARCHAEOLOGIST (Celadon Jade Mode)",
+        desc: "Focuses on physical substrates, ferric-oxide mylar, polycarbonate laser pits, Neil Poulton's fanless aluminum cooling ribs, and the D-Link/PLANET OEM rebadging anomaly."
+      },
+      systems: {
+        title: "LENS 03 // SYSTEMS ARCHITECT (Porcelain Cobalt Mode)",
+        desc: "Focuses on machine syntax and topology: 9-track parallel parity, US MARC / ISO 2709 schemas, USB/PS2 endpoint emulation, and Gigabit LAN throughput."
+      }
+    }[this.state.lens];
+
+    return `
+    <div class="archival-frame">
+      <div class="vertical-marginalia">FROM PHYSICAL RELICS TO NETWORKED NODES // 1990–2012</div>
+      <div class="marginalia-h"><em>*Curated with assistance from Gemini 4 Argon, DeepSeek-V4.1-Flash-1017, GPT-Image 2.5 Sunburst, and Qwen 3.6.</em></div>
+      <div class="telemetry-bar">
+        <span><span class="status-dot"></span>HKUST Library / Digital Scholarship</span>
+        <span>CURATORIAL ENGINE: TWINE</span>
+      </div>
+
+      <div class="chapter-hero">
+        <div class="chapter-number">EXHIBITION TERMINAL // ENTRY NODE 00</div>
+        <h1 class="chapter-title">FROM PHYSICAL RELICS<br>TO NETWORKED NODES</h1>
+        <div class="chapter-subline">
+          “Before the cloud dissolved weight into ether, memory had mass. Data sailed on cargo vessels, spun inside mylar jackets, and hummed through ribbed aluminum.”
+        </div>
+        <p class="field-note" style="max-width: 740px;">
+          Welcome to the interactive hardware mini-archive of the HKUST Library and computing laboratories (1990–2012). Every specimen in this collection can be examined through <strong>three distinct curatorial wavelengths</strong>—transforming the poetic epigraph, field analysis, and forensic inspection on every page:
+        </p>
+
+        <div class="lens-switcher-bar" style="max-width: 680px; margin-bottom: 0.75rem;">
+          <button class="lens-tab ${this.state.lens === 'archaeologist' ? 'active-arch' : ''}" onclick="Engine.setLens('archaeologist')">
+            01. Techno-Anthropologist
+          </button>
+          <button class="lens-tab ${this.state.lens === 'materialist' ? 'active-mat' : ''}" onclick="Engine.setLens('materialist')">
+            02. Media Archaeologist
+          </button>
+          <button class="lens-tab ${this.state.lens === 'systems' ? 'active-sys' : ''}" onclick="Engine.setLens('systems')">
+            03. Systems Architect
+          </button>
+        </div>
+
+        <div class="inspection-box" style="max-width: 680px;">
+          <strong>${lensExplainer.title}</strong><br>
+          ${lensExplainer.desc}
+        </div>
+      </div>
+
+      <div class="nav-matrix">
+        <div class="nav-matrix-header">SELECT EXCAVATION VECTOR // THREE ACTS OR CONSTELLATION MATRIX</div>
+        <div class="nav-links">
+          <a class="link-internal" onclick="Engine.goto('Act 1: RECORDS')">
+            <span class="link-tag">ACT I // 1990–1999</span>
+            <span>RECORDS — Physical Media Carrying the Early Catalog →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('Act 2: SYSTEMS')">
+            <span class="link-tag">ACT II // 1997–2007</span>
+            <span>SYSTEMS — Local Infrastructure &amp; Console Management →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('Act 3: NETWORKS')">
+            <span class="link-tag">ACT III // 2007–2012</span>
+            <span>NETWORKS — Autonomous IP Eyes &amp; Shared NAS Nodes →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('Archive Constellation')">
+            <span class="link-tag">VISUAL SPECIMEN MATRIX</span>
+            <span>CONSTELLATION — Inspect All 8 Relics Directly →</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="ledger-bar">
+        <span>RELICS EXCAVATED: ${this.state.visitedItems.length} / 8</span>
+        <span>FONTS: CHAKRA PETCH + CORMORANT GARAMOND + SHARE TECH MONO (SIL OFL)</span>
+      </div>
+    </div>`;
+  },
+
+  renderAct1() {
+    return `
+    <div class="archival-frame">
+      <div class="vertical-marginalia">DSCAPE ARCHIVE // ACT I: RECORDS (1990–1999)</div>
+      <div class="marginalia-h"><em>*Curated with assistance from Gemini 4 Argon, DeepSeek-V4.1-Flash-1017, GPT-Image 2.5 Sunburst, and Qwen 3.6.</em></div>
+      <div class="telemetry-bar">
+        <span><span class="status-dot"></span>SECTOR 01 // THE AGE OF PHYSICAL DISTRIBUTION</span>
+        <span>TIMESPAN: 1990 — 1999</span>
+      </div>
+
+      <div class="chapter-hero">
+        <div class="chapter-number">ACT I // PHYSICAL CARRIERS</div>
+        <h1 class="chapter-title">RECORDS</h1>
+        <div class="chapter-subline">
+          “Moving data before the network meant moving the physical substrate itself.”
+        </div>
+        <p class="field-note" style="max-width: 700px;">
+          In the early 1990s, bibliographic intelligence was bound to iron oxide. Whether wound onto half-inch open reels aboard South China Sea freighters, slipped into 5.25-inch paper sleeves, or mailed in rigid 3.5-inch shells, a library catalog was something you held in your palm.
+        </p>
+      </div>
+
+      <div class="nav-matrix">
+        <div class="nav-matrix-header">TRACE THE SEQUENCE OF ACT I // OR JUMP TO SPECIMEN</div>
+        <div class="nav-links">
+          <a class="link-internal" onclick="Engine.goto('item-04-basf-reel')">
+            <span class="link-tag">SPECIMEN 01 // 1993</span>
+            <span>BASF 9-Track Open Reel — The Mainframe Freight →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('item-05-floppy-disk-5-25')">
+            <span class="link-tag">SPECIMEN 02 // 1990s</span>
+            <span>5.25" Floppy Disk — The Local Reference Terminal →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('item-02-floppy-disk-3-5')">
+            <span class="link-tag">SPECIMEN 03 // 1999</span>
+            <span>3.5" Floppy Disk — Standardized US MARC Exchange →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('Start')">
+            <span class="link-tag">TERMINAL 00</span>
+            <span>← Return to Entry Terminal</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="ledger-bar">
+        <span>RELICS EXCAVATED: ${this.state.visitedItems.length} / 8</span>
+        <span>NEXT HORIZON: <a class="action-link" onclick="Engine.goto('Act 2: SYSTEMS')">ACT II: SYSTEMS →</a></span>
+      </div>
+    </div>`;
+  },
+
+  renderAct2() {
+    return `
+    <div class="archival-frame">
+      <div class="vertical-marginalia">DSCAPE ARCHIVE // ACT II: SYSTEMS (1997–2007)</div>
+      <div class="marginalia-h"><em>*Curated with assistance from Gemini 4 Argon, DeepSeek-V4.1-Flash-1017, GPT-Image 2.5 Sunburst, and Qwen 3.6.</em></div>
+      <div class="telemetry-bar">
+        <span><span class="status-dot"></span>SECTOR 02 // LOCAL INFRASTRUCTURE MANAGEMENT</span>
+        <span>TIMESPAN: 1997 — 2007</span>
+      </div>
+
+      <div class="chapter-hero">
+        <div class="chapter-number" style="background: var(--celadon-jade);">ACT II // THE ENGINE ROOM</div>
+        <h1 class="chapter-title" style="color: var(--celadon-jade);">SYSTEMS</h1>
+        <div class="chapter-subline">
+          “Building the digital library demanded localized discipline: optical updates, shared consoles, and nocturnal tape rituals.”
+        </div>
+        <p class="field-note" style="max-width: 700px;">
+          As catalogs outgrew floppy disks, the library became a localized machine room. Core software arrived pressed in polycarbonate CD-ROMs; administrators toggled between server towers via beige KVM switches; and every midnight, helical-scan DAT cartridges drank 160 gigabytes of institutional memory.
+        </p>
+      </div>
+
+      <div class="nav-matrix">
+        <div class="nav-matrix-header">TRACE THE SEQUENCE OF ACT II // OR JUMP TO SPECIMEN</div>
+        <div class="nav-links">
+          <a class="link-internal" onclick="Engine.goto('item-06-innopac-cd')">
+            <span class="link-tag">SPECIMEN 04 // 1997</span>
+            <span>InnoPAC CD-ROM — Optical System Distribution →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('item-01-aten-kvmp')">
+            <span class="link-tag">SPECIMEN 05 // 2000–2005</span>
+            <span>ATEN Master View KVMP — Two Machines, One Gaze →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('item-03-hp-dat-160')">
+            <span class="link-tag">SPECIMEN 06 // 2007</span>
+            <span>HP DAT 160 Cartridge — Nocturnal Server Guardian →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('Start')">
+            <span class="link-tag">TERMINAL 00</span>
+            <span>← Return to Entry Terminal</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="ledger-bar">
+        <span>RELICS EXCAVATED: ${this.state.visitedItems.length} / 8</span>
+        <span>NEXT HORIZON: <a class="action-link" onclick="Engine.goto('Act 3: NETWORKS')">ACT III: NETWORKS →</a></span>
+      </div>
+    </div>`;
+  },
+
+  renderAct3() {
+    return `
+    <div class="archival-frame">
+      <div class="vertical-marginalia">DSCAPE ARCHIVE // ACT III: NETWORKS (2007–2012)</div>
+      <div class="marginalia-h"><em>*Curated with assistance from Gemini 4 Argon, DeepSeek-V4.1-Flash-1017, GPT-Image 2.5 Sunburst, and Qwen 3.6.</em></div>
+      <div class="telemetry-bar">
+        <span><span class="status-dot"></span>SECTOR 03 // CONNECTED INFRASTRUCTURE</span>
+        <span>TIMESPAN: 2007 — 2012</span>
+      </div>
+
+      <div class="chapter-hero">
+        <div class="chapter-number" style="background: var(--porcelain-cobalt);">ACT III // ETHERNET &amp; AUTONOMY</div>
+        <h1 class="chapter-title" style="color: var(--porcelain-cobalt);">NETWORKS</h1>
+        <div class="chapter-subline">
+          “Isolated drives dissolve into shared protocols; the room itself gains an IP address.”
+        </div>
+        <p class="field-note" style="max-width: 700px;">
+          When Gigabit Ethernet and Power-over-Ethernet matured, hardware shed its tether to a single host workstation. Storage stepped onto the local area network inside fanless aluminum heat-sinks, while embedded CMOS eyes began streaming 30 frames per second directly to the web.
+        </p>
+      </div>
+
+      <div class="nav-matrix">
+        <div class="nav-matrix-header">TRACE THE SEQUENCE OF ACT III // OR SYNTHESIZE</div>
+        <div class="nav-links">
+          <a class="link-internal" onclick="Engine.goto('item-07-planet-camera')">
+            <span class="link-tag">SPECIMEN 07 // 2007–2010</span>
+            <span>PLANET Network Camera — The Autonomous IP Eye →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('item-08-lacie-nas')">
+            <span class="link-tag">SPECIMEN 08 // 2010–2012</span>
+            <span>LaCie d2 Network 2 NAS — Ribbed Aluminum Cloud →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('Media Archaeology Synthesis')">
+            <span class="link-tag">EPILOGUE // SYNTHESIS</span>
+            <span>The Weight of Disappearing Media →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('Start')">
+            <span class="link-tag">TERMINAL 00</span>
+            <span>← Return to Entry Terminal</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="ledger-bar">
+        <span>RELICS EXCAVATED: ${this.state.visitedItems.length} / 8</span>
+        <span>FULL MATRIX: <a class="action-link" onclick="Engine.goto('Archive Constellation')">CONSTELLATION MAP →</a></span>
+      </div>
+    </div>`;
+  },
+
+  renderConstellation() {
+    const orderedKeys = [
+      "item-04-basf-reel",
+      "item-05-floppy-disk-5-25",
+      "item-02-floppy-disk-3-5",
+      "item-06-innopac-cd",
+      "item-01-aten-kvmp",
+      "item-03-hp-dat-160",
+      "item-07-planet-camera",
+      "item-08-lacie-nas"
+    ];
+
+    const cardsHtml = orderedKeys.map(k => {
+      const item = ARTIFACT_DB[k];
+      const visited = this.state.visitedItems.includes(item.id);
+      return `
+      <div class="constellation-card" onclick="Engine.goto('${k}')">
+        <div class="card-meta">
+          <span>${item.act.split(' ')[0]} ${item.act.split(' ')[1]}</span>
+          <span style="color: ${visited ? 'var(--celadon-jade)' : 'var(--carmine-primary)'}; font-weight: 700;">
+            ${visited ? '[EXCAVATED ✓]' : '[UNVISITED]'}
+          </span>
+        </div>
+        <img src="${item.imgPrimary}" onload="applyChromaKey(this)" onerror="this.onerror=null;this.src='${item.imgFallback}';" alt="${item.title}">
+        <div>
+          <div class="card-meta"><span>${item.subtitle.split('//')[0]}</span></div>
+          <div class="card-title">${item.title}</div>
+        </div>
+      </div>`;
+    }).join("");
+
+    return `
+    <div class="archival-frame">
+      <div class="vertical-marginalia">DSCAPE ARCHIVE // CONSTELLATION MATRIX</div>
+      <div class="marginalia-h"><em>*Curated with assistance from Gemini 4 Argon, DeepSeek-V4.1-Flash-1017, GPT-Image 2.5 Sunburst, and Qwen 3.6.</em></div>
+      <div class="telemetry-bar">
+        <span><span class="status-dot"></span>CONSTELLATION MATRIX // VISUAL RANDOM-ACCESS INDEX</span>
+        <span>EXCAVATED: ${this.state.visitedItems.length} / 8 SPECIMENS</span>
+      </div>
+
+      <div class="chapter-hero" style="padding: 2.2rem 2.5rem;">
+        <div class="chapter-number">RANDOM ACCESS INDEX // ALL 8 SPECIMENS</div>
+        <h1 class="chapter-title" style="font-size: 2.4rem; margin-bottom: 0.6rem;">ARCHIVE CONSTELLATION</h1>
+        <p class="field-note" style="margin-bottom: 0;">
+          Select any specimen below to inspect its high-resolution chroma-keyed artifact scan, switch across the 3 curatorial lenses, and trace cross-era hardware affinities.
+        </p>
+      </div>
+
+      <div class="constellation-grid">
+        ${cardsHtml}
+      </div>
+
+      <div class="nav-matrix">
+        <div class="nav-matrix-header">CHAPTER ACTS &amp; CURATORIAL SYNTHESIS</div>
+        <div class="nav-links">
+          <a class="link-internal" onclick="Engine.goto('Act 1: RECORDS')">
+            <span class="link-tag">ACT I</span>
+            <span>RECORDS (1990–1999) →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('Act 2: SYSTEMS')">
+            <span class="link-tag">ACT II</span>
+            <span>SYSTEMS (1997–2007) →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('Act 3: NETWORKS')">
+            <span class="link-tag">ACT III</span>
+            <span>NETWORKS (2007–2012) →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('Media Archaeology Synthesis')">
+            <span class="link-tag">TERMINAL EPILOGUE</span>
+            <span>Media Archaeology Synthesis →</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="ledger-bar">
+        <span><a class="action-link" onclick="Engine.goto('Start')">← Return to Entry Terminal 00</a></span>
+        <span>DSCAPE ARCHIVE</span>
+      </div>
+    </div>`;
+  },
+
+  renderSynthesis() {
+    const complete = this.state.visitedItems.length >= 8;
+    return `
+    <div class="archival-frame">
+      <div class="vertical-marginalia">DSCAPE ARCHIVE // CURATORIAL SYNTHESIS</div>
+      <div class="marginalia-h"><em>*Curated with assistance from Gemini 4 Argon, DeepSeek-V4.1-Flash-1017, GPT-Image 2.5 Sunburst, and Qwen 3.6.</em></div>
+      <div class="telemetry-bar">
+        <span><span class="status-dot"></span>TERMINAL EPILOGUE // TECHNO-ANTHROPOLOGY FIELD REPORT</span>
+        <span>RELICS LOGGED: ${this.state.visitedItems.length} / 8</span>
+      </div>
+
+      <div class="chapter-hero">
+        <div class="chapter-number">CURATORIAL SYNTHESIS // 1993 → 2012</div>
+        <h1 class="chapter-title">THE WEIGHT OF<br>DISAPPEARING MEDIA</h1>
+        <div class="chapter-subline">
+          “What happens when an institution's memory migrates from maritime cargo reels to invisible Ethernet packets?”
+        </div>
+
+        <p class="field-note" style="max-width: 740px;">
+          Across two decades at HKUST Library, the density of storage multiplied by more than a millionfold—from a <strong>360-kilobyte</strong> 5.25-inch floppy to a <strong>2-terabyte</strong> LaCie network appliance—while direct human touch progressively receded:
+        </p>
+
+        <div class="inspection-box" style="margin-bottom: 1.5rem;">
+          <strong>I. THE DEMATERIALIZATION OF TRANSIT (Techno-Anthropology):</strong> In 1993, moving records meant shipping a <code>BASF 9-Track Reel</code> aboard an export vessel to Brunei. By 2010, the <code>LaCie d2 NAS</code> served gigabytes across campus over copper twisted-pair at 68 MB/s.<br><br>
+          <strong>II. THE PERSISTENCE OF INSCRIPTION (Media Archaeology):</strong> Even as formats shrank from 5.25" jackets to 3.5" shells and DDS-6 cartridges, librarians pasted call numbers (<code>QH 301 B5</code>) and scrawled blue marker across plastic—taming volatile bits with analog cataloging discipline.<br><br>
+          <strong>III. ARCHIVAL BIBLIOGRAPHY (Systems Architecture):</strong><br>
+          • Patterson &amp; Hennessy, <em>Computer Organization and Design</em> (Ch. 5: Memory Hierarchy — primary, secondary, and tertiary tape/disk trade-offs)<br>
+          • Andrei Khurshudov, <em>The Essential Guide to Computer Data Storage: From Floppy to DVD</em> (Magnetic &amp; optical recording principles)
+        </div>
+
+        <div class="inspection-box" style="border-color: ${complete ? 'var(--celadon-jade)' : 'var(--carmine-primary)'};">
+          ${complete
+            ? "<strong>[✓] COMPLETE EXCAVATION ACHIEVED:</strong> All 8 digital relics have been verified in your techno-anthropological field log."
+            : `<strong>[!] ARCHIVAL NOTICE:</strong> You have excavated ${this.state.visitedItems.length} of 8 specimens. Open the Constellation Matrix below to inspect the remaining ${8 - this.state.visitedItems.length} artifacts.`
+          }
+        </div>
+      </div>
+
+      <div class="nav-matrix">
+        <div class="nav-matrix-header">ARCHIVE NAVIGATION</div>
+        <div class="nav-links">
+          <a class="link-internal" onclick="Engine.goto('Archive Constellation')">
+            <span class="link-tag">VISUAL MATRIX</span>
+            <span>Explore All 8 Relics in Constellation Matrix →</span>
+          </a>
+          <a class="link-internal" onclick="Engine.goto('Start')">
+            <span class="link-tag">REBOOT ARCHIVE</span>
+            <span>Restart Excavation from Terminal 00 →</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="ledger-bar">
+        <span>CURATOR: DSCAPE (VER 1.0.6-2)</span>
+        <span>END OF TRANSMISSION // EOF</span>
+      </div>
+    </div>`;
+  },
+
+  initParticles() {
+    const canvas = document.getElementById("bg-canvas");
+    const ctx = canvas.getContext("2d");
+    let w, h;
+    const nodes = [];
+    const N = 32;
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    for (let i = 0; i < N; i++) {
+      nodes.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
+        r: Math.random() * 1.8 + 0.9
+      });
+    }
+
+    function step() {
+      ctx.clearRect(0, 0, w, h);
+      for (let i = 0; i < N; i++) {
+        const a = nodes[i];
+        a.x += a.vx;
+        a.y += a.vy;
+        if (a.x < 0 || a.x > w) a.vx *= -1;
+        if (a.y < 0 || a.y > h) a.vy *= -1;
+
+        ctx.fillStyle = "rgba(217, 56, 112, 0.32)";
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+        ctx.fill();
+
+        for (let j = i + 1; j < N; j++) {
+          const b = nodes[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 175) {
+            ctx.strokeStyle = `rgba(217, 56, 112, ${(1 - dist / 175) * 0.14})`;
+            ctx.lineWidth = 0.75;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(step);
+    }
+    step();
+  }
+};
+
+window.addEventListener("DOMContentLoaded", () => Engine.init());
+</script>
+</body>
+</html>

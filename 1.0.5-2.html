@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DScape Archive</title>
+<meta name="description" content="A scroll-driven curatorial exhibition of eight pieces of HKUST Library &amp; Lab hardware — from mainframe tape reels to networked storage." />
+<meta name="color-scheme" content="light" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- NOTE: the upstream file is `package-particlefx.umd.min.js`; `dist/particlefx.umd.js` does not exist and 404s. -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/package-particlefx@2.0.2/dist/package-particlefx.umd.min.js" defer></script>
+
+<style>
+/* ============================================================
+   0. TOKENS
+   ============================================================ */
+:root{
+  --cream:#F7F7F9;
+  --paper:#FFFFFF;
+  --ink:#111111;
+  --grey:#666666;
+  --hair:rgba(0,0,0,.10);
+  --hair-soft:rgba(0,0,0,.06);
+
+  --pink:#FF007F;
+  --orange:#FF8C00;
+  --blue:#00D0FF;
+  --lime:#39FF14;
+  --yellow:#FFD700;
+
+  --nav-h:54px;
+  --rail-h:52px;
+  --maxw:1320px;
+
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+
+html{scroll-behavior:smooth;}
+
+/* `overflow-x: clip` (not `hidden`) on body/html: `hidden` would promote
+   body into a scroll container and silently kill `position: sticky`
+   on the section rails. `clip` clips without creating a scrollport.
+   The `hidden` line stays as a fallback for engines without `clip`. */
+html{overflow-x:hidden;overflow-x:clip;}
+
+body{
+  margin:0;
+  background:var(--cream);
+  color:var(--ink);
+  font-family:'Space Grotesk',system-ui,-apple-system,Segoe UI,sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  overflow-x:hidden;
+  overflow-x:clip;
+  -webkit-font-smoothing:antialiased;
+}
+
+h1,h2,h3,h4{
+  font-family:'Syne',system-ui,sans-serif;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:-.02em;
+  margin:0;
+  line-height:.92;
+}
+p{margin:0;}
+
+::selection{background:var(--pink);color:#fff;}
+
+a{color:inherit;}
+
+:focus-visible{
+  outline:2px solid var(--pink);
+  outline-offset:3px;
+  border-radius:4px;
+}
+
+/* ============================================================
+   1. BACKGROUND FIELD — blurred viscous shapes
+   ============================================================ */
+.orb-layer{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  overflow:hidden;
+}
+.orb{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(110px);
+  mix-blend-mode:multiply;
+  opacity:.3;
+  will-change:transform;
+}
+.orb--pink{background:var(--pink);}
+.orb--cyan{background:var(--blue);}
+.orb--lime{background:var(--lime);}
+.orb--orange{background:var(--orange);}
+.orb--yellow{background:var(--yellow);}
+
+.blob{
+  position:absolute;
+  border-radius:48% 52% 60% 40% / 42% 58% 42% 58%;
+  filter:blur(80px);
+  mix-blend-mode:multiply;
+  opacity:.3;
+  pointer-events:none;
+  z-index:-1;
+  will-change:transform;
+}
+.blob--pink{background:var(--pink);}
+.blob--orange{background:var(--orange);}
+.blob--blue{background:var(--blue);}
+.blob--lime{background:var(--lime);}
+.blob--yellow{background:var(--yellow);}
+
+/* ============================================================
+   2. SHELL / NAV
+   ============================================================ */
+.shell{
+  position:relative;
+  z-index:1;
+}
+
+.site-nav{
+  position:fixed;
+  top:0; left:0; right:0;
+  height:var(--nav-h);
+  z-index:40;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding:0 clamp(16px,4vw,40px);
+  background:rgba(247,247,249,.72);
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid var(--hair-soft);
+}
+.nav-brand{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:13px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.nav-brand span{color:var(--grey);font-weight:500;}
+.site-nav ul{
+  display:flex;
+  gap:clamp(10px,2.4vw,28px);
+  list-style:none;
+  margin:0; padding:0;
+}
+.site-nav a{
+  display:block;
+  font-size:11.5px;
+  font-weight:600;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  text-decoration:none;
+  color:var(--grey);
+  padding:6px 2px;
+  border-bottom:1px solid transparent;
+  transition:color .3s var(--ease),border-color .3s var(--ease);
+}
+.site-nav a:hover,.site-nav a.is-active{color:var(--ink);border-bottom-color:var(--pink);}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(16px,4vw,40px);}
+
+/* ============================================================
+   3. COVER
+   ============================================================ */
+.cover{
+  position:relative;
+  min-height:100svh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:calc(var(--nav-h) + 24px) 0 40px;
+}
+.cover-inner{
+  display:grid;
+  grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);
+  gap:clamp(28px,4.5vw,64px);
+  align-items:center;
+}
+.cover-head{
+  margin-bottom:clamp(22px,3.2vh,42px);
+}
+.cover-body{
+  display:grid;
+  grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+  gap:clamp(26px,4vw,60px);
+  align-items:center;
+}
+.cover-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:clamp(10px,1.4vw,20px);
+}
+.overview-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  text-align:center;
+}
+.ov-btn{
+  position:relative;
+  width:100%;
+  aspect-ratio:1/1;
+  max-width:170px;
+  border:1px solid var(--hair);
+  border-radius:14px;
+  background:rgba(255,255,255,.55);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 10px 26px rgba(0,0,0,.05);
+  padding:0;
+  cursor:pointer;
+  overflow:hidden;
+  transition:transform .45s var(--ease),box-shadow .45s var(--ease),border-color .45s var(--ease);
+}
+.ov-btn:hover{transform:translateY(-6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 20px 44px rgba(0,0,0,.12);border-color:rgba(0,0,0,.2);}
+.ov-btn canvas{margin:0 auto;display:block;max-width:100%;height:auto;}
+.ov-meta{display:flex;flex-direction:column;gap:2px;}
+.ov-title{
+  font-family:'Syne',sans-serif;
+  font-weight:700;
+  font-size:11.5px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  line-height:1.25;
+}
+.ov-era{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);}
+
+.cover-kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--grey);
+  margin-bottom:20px;
+}
+.cover-kicker::before{
+  content:"";width:38px;height:1px;background:var(--ink);
+}
+.cover h1{
+  font-size:clamp(30px,3.85vw,54px);
+  line-height:1.02;
+  max-width:100%;
+  overflow-wrap:break-word;
+}
+.cover h1 em{
+  font-style:normal;
+  color:transparent;
+  -webkit-text-stroke:1.4px var(--ink);
+}
+.cover-sub{
+  margin-top:20px;
+  font-size:clamp(14px,1.5vw,19px);
+  color:var(--grey);
+  max-width:52ch;
+  font-weight:300;
+}
+.cover-meta{
+  margin-top:26px;display:flex;flex-wrap:wrap;gap:10px;
+}
+.chip{
+  font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  border:1px solid var(--hair);border-radius:999px;padding:7px 14px;
+  background:rgba(255,255,255,.5);
+  backdrop-filter:blur(8px);
+}
+.scroll-hint{
+  margin-top:clamp(22px,4vh,44px);
+  display:flex;align-items:center;gap:12px;
+  font-size:10.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--grey);
+}
+.scroll-hint .bar{
+  width:1px;height:44px;background:linear-gradient(var(--ink),transparent);position:relative;overflow:hidden;
+}
+.scroll-hint .bar::after{
+  content:"";position:absolute;inset:0;background:var(--pink);
+  animation:trickle 2.2s var(--ease) infinite;
+}
+@keyframes trickle{0%{transform:translateY(-100%)}60%,100%{transform:translateY(100%)}}
+
+/* ============================================================
+   4. EXHIBITION SECTIONS
+   ============================================================ */
+.act{
+  position:relative;
+  padding:clamp(70px,11vh,140px) 0 clamp(40px,7vh,90px);
+}
+.act + .act{padding-top:clamp(50px,8vh,100px);}
+
+.act-blob{position:absolute;}
+
+.act-opener{
+  margin-bottom:clamp(38px,7vh,80px);
+}
+.act-opener-body{
+  display:grid;
+  grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);
+  gap:clamp(24px,5vw,72px);
+  align-items:start;
+  margin-top:clamp(16px,2.4vh,28px);
+}
+.act-index{
+  display:inline-block;
+  font-family:'Syne',sans-serif;
+  font-weight:700;
+  font-size:12px;letter-spacing:.3em;
+  color:var(--pink);
+  margin-bottom:16px;
+}
+.act h2{
+  font-size:clamp(42px,8.4vw,124px);
+  line-height:.9;
+  max-width:100%;
+  overflow-wrap:break-word;
+  text-wrap:balance;
+}
+.act-sub{
+  font-size:clamp(15px,1.8vw,21px);
+  font-weight:500;
+  color:var(--ink);
+  margin-bottom:16px;
+  max-width:26ch;
+  text-wrap:balance;
+}
+.act-opener-body .act-sub{margin-bottom:0;}
+.act-intro{
+  font-size:clamp(14px,1.45vw,17px);
+  color:var(--grey);
+  max-width:52ch;
+  font-weight:300;
+  line-height:1.7;
+}
+
+/* — sticky compact rail — */
+.act-rail{
+  position:sticky;
+  top:var(--nav-h);
+  z-index:20;
+  margin-bottom:clamp(26px,4.5vh,52px);
+  background:rgba(247,247,249,.78);
+  backdrop-filter:blur(16px) saturate(140%);
+  -webkit-backdrop-filter:blur(16px) saturate(140%);
+  border-top:1px solid var(--hair);
+  border-bottom:1px solid var(--hair);
+  overflow:hidden;
+}
+.act-rail-inner{
+  display:flex;align-items:center;gap:16px;
+  height:var(--rail-h);
+}
+.rail-index{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:.22em;
+  color:var(--pink);
+  padding-right:16px;border-right:1px solid var(--hair);
+}
+.rail-title{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(15px,2vw,22px);
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.rail-sub{
+  font-size:12px;color:var(--grey);margin-left:auto;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* — object list + connecting rail — */
+.object-list{position:relative;}
+
+.slot{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);
+  gap:clamp(22px,3.4vw,52px);
+  align-items:center;
+  padding:clamp(18px,3vh,38px) 0;
+}
+.slot + .slot{border-top:1px solid var(--hair-soft);}
+
+.slot-media{position:relative;}
+
+.particle-container{
+  position:relative;
+  width:100%;
+  aspect-ratio:1/1;
+  border:1px solid var(--hair);
+  border-radius:16px;
+  background:rgba(255,255,255,.62);
+  box-shadow:inset 0 0 40px rgba(0,0,0,.045), 0 18px 44px rgba(0,0,0,.05);
+  padding:0;
+  overflow:hidden;
+  cursor:pointer;
+  display:block;
+  transition:box-shadow .5s var(--ease),border-color .5s var(--ease),transform .5s var(--ease);
+}
+.particle-container:hover,.particle-container:focus-visible{
+  border-color:rgba(0,0,0,.22);
+  box-shadow:inset 0 0 40px rgba(0,0,0,.04), 0 26px 60px rgba(0,0,0,.12);
+}
+.particle-container canvas{
+  display:block;margin:0 auto;max-width:100%;height:auto;
+  transition:opacity .6s var(--ease);
+}
+.pc-poster{
+  position:absolute;inset:0;margin:auto;
+  width:62%;height:62%;
+  object-fit:contain;
+  opacity:.9;
+  pointer-events:none;
+}
+.pc-hint{
+  position:absolute;
+  left:14px;bottom:12px;
+  font-size:9.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--grey);
+  background:rgba(255,255,255,.7);
+  backdrop-filter:blur(6px);
+  border:1px solid var(--hair-soft);
+  border-radius:999px;
+  padding:5px 11px;
+  pointer-events:none;
+  transition:opacity .4s var(--ease);
+}
+.particle-container:hover .pc-hint{opacity:0;}
+
+/* story tooltip on hover */
+.story-tip{
+  position:absolute;
+  left:14px;right:14px;bottom:12px;
+  padding:14px 16px 15px;
+  border-radius:12px;
+  background:rgba(255,255,255,.82);
+  backdrop-filter:blur(14px) saturate(150%);
+  -webkit-backdrop-filter:blur(14px) saturate(150%);
+  border:1px solid var(--hair);
+  box-shadow:0 18px 44px rgba(0,0,0,.14);
+  pointer-events:none;
+  opacity:0;
+  transform:translateY(14px);
+  transition:opacity .42s var(--ease),transform .42s var(--ease);
+}
+.particle-container:hover .story-tip,
+.particle-container:focus-visible .story-tip{
+  opacity:1;transform:translateY(0);
+}
+.story-tip .tt-label{
+  display:block;
+  font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--pink);
+  margin-bottom:7px;
+}
+.story-tip .tt-text{
+  display:block;
+  font-size:clamp(12.5px,1.25vw,15px);
+  line-height:1.45;
+  font-weight:500;
+  color:var(--ink);
+}
+.story-tip .tt-cta{
+  display:block;margin-top:9px;
+  font-size:9.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);
+}
+
+/* — info card — */
+.info-card{
+  position:relative;
+  background:rgba(255,255,255,.6);
+  backdrop-filter:blur(20px) saturate(140%);
+  -webkit-backdrop-filter:blur(20px) saturate(140%);
+  border:1px solid var(--hair);
+  border-radius:16px;
+  box-shadow:0 22px 60px rgba(0,0,0,.06);
+  padding:clamp(20px,2.4vw,30px);
+}
+.card-meta{
+  display:flex;flex-wrap:wrap;align-items:center;gap:9px;
+  font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--grey);
+  margin-bottom:14px;
+}
+.card-meta .cat{color:var(--ink);}
+.card-meta .sep{width:3px;height:3px;border-radius:50%;background:var(--pink);}
+.info-card h3{
+  font-size:clamp(18px,2.05vw,27px);
+  line-height:1.06;
+  margin-bottom:13px;
+  text-wrap:balance;
+}
+.card-fn{
+  font-size:12.5px;
+  color:var(--ink);
+  font-weight:500;
+  padding-left:12px;
+  border-left:2px solid var(--pink);
+  margin-bottom:14px;
+  line-height:1.5;
+}
+.card-narrative{
+  font-size:clamp(13px,1.25vw,14.6px);
+  color:var(--grey);
+  line-height:1.68;
+  font-weight:300;
+}
+.card-foot{
+  margin-top:18px;padding-top:14px;
+  border-top:1px solid var(--hair-soft);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.card-foot .seq{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:.16em;color:var(--ink);
+}
+.card-foot .more{
+  font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--grey);
+  background:none;border:0;padding:0;cursor:pointer;font-family:inherit;
+  border-bottom:1px solid var(--hair);
+  transition:color .3s var(--ease),border-color .3s var(--ease);
+}
+.card-foot .more:hover{color:var(--pink);border-color:var(--pink);}
+
+/* — SVG flow rail inside each act — */
+.flow-rail{
+  position:absolute;
+  top:0;left:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:visible;
+}
+.flow-path{
+  fill:none;
+  stroke:rgba(0,0,0,.28);
+  stroke-width:1.4;
+  stroke-dasharray:none;
+}
+.flow-node{fill:var(--cream);stroke:var(--ink);stroke-width:1.6;}
+.flow-node-core{fill:var(--pink);}
+.flow-arrow{stroke:rgba(0,0,0,.32);stroke-width:1.4;fill:none;}
+
+/* — inter-act bridge — */
+.bridge{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  padding:clamp(20px,4vh,44px) 0;
+  margin:0 auto;
+  max-width:var(--maxw);
+  padding-left:clamp(16px,4vw,40px);
+  padding-right:clamp(16px,4vw,40px);
+}
+.bridge-line{
+  position:relative;
+  width:1px;height:clamp(44px,7vh,78px);
+  background:linear-gradient(rgba(0,0,0,.05),rgba(0,0,0,.34),rgba(0,0,0,.05));
+}
+.bridge-line::after{
+  content:"";position:absolute;left:-2px;width:5px;height:5px;border-radius:50%;
+  background:var(--pink);
+  animation:drop 2.6s var(--ease) infinite;
+}
+@keyframes drop{0%{top:-6px;opacity:0}20%{opacity:1}80%{opacity:1}100%{top:100%;opacity:0}}
+.bridge-caption{
+  font-size:10.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--grey);text-align:center;max-width:40ch;
+}
+
+/* ============================================================
+   5. MODAL
+   ============================================================ */
+.modal{position:fixed;inset:0;z-index:100;display:none;}
+.modal.is-open{display:block;}
+.modal-backdrop{
+  position:absolute;inset:0;
+  background:rgba(17,17,17,.34);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  animation:fadeIn .3s var(--ease);
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-panel{
+  position:relative;
+  z-index:1;
+  max-width:1020px;
+  margin:min(6vh,60px) auto;
+  width:calc(100% - 32px);
+  max-height:88vh;
+  overflow:auto;
+  background:rgba(252,252,253,.94);
+  backdrop-filter:blur(24px) saturate(150%);
+  -webkit-backdrop-filter:blur(24px) saturate(150%);
+  border:1px solid var(--hair);
+  border-radius:20px;
+  box-shadow:0 40px 120px rgba(0,0,0,.28);
+  animation:rise .45s var(--ease);
+}
+@keyframes rise{from{opacity:0;transform:translateY(26px) scale(.985)}to{opacity:1;transform:none}}
+.modal-close{
+  position:absolute;top:14px;right:14px;z-index:2;
+  width:40px;height:40px;border-radius:50%;
+  border:1px solid var(--hair);
+  background:rgba(255,255,255,.85);
+  font-size:19px;line-height:1;cursor:pointer;color:var(--ink);
+  transition:transform .3s var(--ease),background .3s var(--ease);
+}
+.modal-close:hover{transform:rotate(90deg);background:#fff;}
+.modal-body{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);
+  gap:clamp(20px,3vw,40px);
+  padding:clamp(20px,3vw,38px);
+}
+.modal-media{
+  position:relative;
+  aspect-ratio:1/1;
+  border:1px solid var(--hair);
+  border-radius:14px;
+  background:rgba(255,255,255,.7);
+  box-shadow:inset 0 0 40px rgba(0,0,0,.04);
+  overflow:hidden;
+}
+.modal-media canvas{display:block;margin:0 auto;max-width:100%;height:auto;}
+.modal-kicker{
+  font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--pink);
+  margin-bottom:12px;
+}
+.modal-info h3{font-size:clamp(22px,3vw,38px);line-height:1;margin-bottom:12px;text-wrap:balance;}
+.modal-meta{
+  display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;
+  font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);
+  margin-bottom:20px;
+}
+.modal-story{
+  border-left:2px solid var(--pink);
+  padding:2px 0 2px 14px;
+  margin-bottom:20px;
+}
+.modal-story .ms-label{
+  display:block;font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--pink);margin-bottom:6px;
+}
+.modal-story .ms-text{font-size:clamp(14px,1.5vw,17px);font-weight:500;line-height:1.5;}
+.modal-narrative{font-size:14px;color:var(--grey);line-height:1.72;font-weight:300;margin-bottom:22px;}
+.spec-table{
+  width:100%;border-collapse:collapse;margin-bottom:20px;
+  font-size:12.5px;
+}
+.spec-table th,.spec-table td{
+  text-align:left;padding:9px 0;border-bottom:1px solid var(--hair-soft);vertical-align:top;
+}
+.spec-table th{
+  width:38%;font-weight:600;color:var(--grey);letter-spacing:.02em;padding-right:14px;
+}
+.spec-table td{color:var(--ink);}
+.modal-subhead{
+  font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--grey);
+  margin:22px 0 10px;
+  padding-top:16px;
+  border-top:1px solid var(--hair-soft);
+}
+.modal-subhead:first-of-type{
+  margin-top:0;padding-top:0;border-top:0;
+}
+.reading-item{
+  font-size:12.5px;padding:9px 0;border-bottom:1px solid var(--hair-soft);
+}
+.reading-item b{display:block;font-weight:600;margin-bottom:2px;}
+.reading-item span{color:var(--grey);font-size:12px;}
+.label-note{
+  font-size:12px;color:var(--grey);font-style:italic;margin-top:6px;
+}
+.tag-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px;}
+.tag{
+  font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  border:1px solid var(--hair);border-radius:999px;padding:5px 11px;color:var(--grey);
+  background:rgba(255,255,255,.6);
+}
+
+/* ============================================================
+   6. FOOTER
+   ============================================================ */
+.site-footer{
+  position:relative;z-index:1;
+  border-top:1px solid var(--hair);
+  padding:clamp(46px,7vh,80px) 0 42px;
+  background:rgba(255,255,255,.35);
+}
+.footer-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(24px,4vw,56px);
+  margin-bottom:44px;
+}
+.footer-grid h4{
+  font-size:10.5px;letter-spacing:.22em;color:var(--grey);font-weight:700;margin-bottom:16px;
+}
+.footer-grid p{font-size:13px;color:var(--grey);line-height:1.7;font-weight:300;}
+.res-item{margin-bottom:14px;}
+.res-item b{display:block;font-size:13px;font-weight:600;margin-bottom:3px;}
+.res-item span{font-size:12px;color:var(--grey);display:block;line-height:1.55;}
+.res-item i{font-style:normal;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--pink);display:block;margin-bottom:4px;}
+.colophon{
+  display:flex;flex-wrap:wrap;gap:10px 26px;justify-content:space-between;
+  border-top:1px solid var(--hair-soft);padding-top:22px;
+  font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);
+}
+
+/* ============================================================
+   7. RESPONSIVE
+   ============================================================ */
+@media (max-width:1080px){
+  .cover-inner{grid-template-columns:1fr;gap:34px;}
+  .cover-body{grid-template-columns:1fr;gap:30px;}
+  .cover-grid{grid-template-columns:repeat(4,1fr);}
+}
+@media (max-width:1000px){
+  .slot{grid-template-columns:1fr;gap:22px;}
+  .modal-body{grid-template-columns:1fr;}
+  .act-opener-body{grid-template-columns:1fr;gap:18px;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:720px){
+  .cover-grid{grid-template-columns:repeat(2,1fr);gap:16px;}
+  .site-nav ul{gap:12px;}
+  .site-nav a{font-size:10px;letter-spacing:.1em;}
+  .rail-sub{display:none;}
+  .footer-grid{grid-template-columns:1fr;}
+  .act h2{font-size:clamp(42px,15vw,72px);}
+}
+
+/* ============================================================
+   8. REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+  .object-list{display:flex;flex-direction:column;}
+  .slot{opacity:1 !important;transform:none !important;}
+  .slot + .slot{border-top:1px solid var(--hair-soft);}
+  .act-rail{position:static;}
+  .orb{animation:none !important;}
+}
+</style>
+</head>
+
+<body>
+
+<!-- ============ BACKGROUND FIELD ============ -->
+<div class="orb-layer" aria-hidden="true">
+  <div class="orb orb--pink"  data-orb="0" style="width:26vw;height:26vw;left:-12vw;top:-9vw;"></div>
+  <div class="orb orb--cyan"  data-orb="1" style="width:23vw;height:23vw;right:-10vw;top:4vw;"></div>
+  <div class="orb orb--lime"  data-orb="2" style="width:21vw;height:21vw;left:-10vw;top:58vh;"></div>
+  <div class="orb orb--orange"data-orb="3" style="width:24vw;height:24vw;right:-11vw;top:74vh;"></div>
+</div>
+
+<!-- ============ NAV ============ -->
+<nav class="site-nav" aria-label="Exhibition sections">
+  <div class="nav-brand">Archive <span>&#8209; DScape</span></div>
+  <ul>
+    <li><a href="#records" data-nav="records">01 Records</a></li>
+    <li><a href="#systems" data-nav="systems">02 Systems</a></li>
+    <li><a href="#networks" data-nav="networks">03 Networks</a></li>
+  </ul>
+</nav>
+
+<main class="shell">
+
+  <!-- ============ COVER ============ -->
+  <header class="cover" id="cover">
+    <div class="wrap">
+      <div class="cover-head">
+        <span class="cover-kicker">Digital Scholarship &nbsp;·&nbsp; HKUST Library</span>
+        <h1>From Physical Relics<br />to <em>Networked Nodes</em></h1>
+      </div>
+      <div class="cover-body">
+        <div class="cover-text">
+          <p class="cover-sub">Eight objects discovered from the HKUST Library Storage Room, arranged as a three-act story: how data travelled before it could simply be requested.</p>
+          <div class="cover-meta">
+            <span class="chip">3 Acts</span>
+            <span class="chip">8 Objects</span>
+            <span class="chip">1990 — 2012</span>
+            <span class="chip">Edition 1.0.5-2</span>
+          </div>
+          <div class="scroll-hint"><span class="bar"></span><span>Scroll to begin — 8 objects, 3 acts</span></div>
+        </div>
+        <div class="cover-visual">
+          <div class="cover-grid" id="cover-grid"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ ACTS (rendered by script) ============ -->
+  <div id="acts"></div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div>
+          <h4>Curated by</h4>
+          <p><a href="https://library.hkust.edu.hk/ds">Digital Scholarship</a> © <a href="https://library.hkust.edu.hk/">HKUST Library</a></p>
+          <br/>
+          <p><a href="https://library.hkust.edu.hk/news-events/news/dscape-an-antiquarian-landscape"># What is DScape?</a></p>
+          <br/>
+          <h4>AI Assistance</h4>
+          <p>This curatorial archive was developed with the assistance of MiniMax-M3.1-Flash, DeepSeek-V4.1-Flash-1017, GPT-Image 2.5 Sunburst, and Qwen 3.6.</p> 
+          <br/>
+          <h4><a href="https://forms.cloud.microsoft/pages/responsepage.aspx?id=4vMXySKTJkmbs9rKcwQTyqchSPtacWtHn_7y-6vuXidUM0swRkxZVkdFSjk5S0lER1NXRzJHM0IyRC4u&origin=lprLink&route=shorturl">Contact Us</a></h4> 
+          </div>
+          <div class="tag-row" id="footer-tags"></div>
+                <div>
+          <h4>Readings</h4>
+          <div id="footer-resources"></div>
+        </div>
+      </div>
+      <div class="colophon">
+        <span><strong>Archive / DScape</strong></span>
+        <span>Version 1.0.5-2</span>
+        <span>Particle rendering: package-particlefx 2.0.2</span>
+        <span>Motion: GSAP 3.12.5 + ScrollTrigger</span>
+        <span>Type: Syne &amp; Space Grotesk</span>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<!-- ============ MODAL ============ -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-panel" id="modal-panel">
+    <button class="modal-close" data-close aria-label="Close object record">&times;</button>
+    <div class="modal-body">
+      <div class="modal-media" id="modal-media"></div>
+      <div class="modal-info" id="modal-info"></div>
+    </div>
+  </div>
+</div>
+
+<noscript>
+  <div style="padding:40px;text-align:center;font-family:'Space Grotesk',sans-serif">
+    This exhibition renders its objects with JavaScript. Please enable JavaScript to view the 8 object records.
+  </div>
+</noscript>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     DATA
+     ============================================================ */
+  const objects = [
+    {
+      id: 'item-01-aten-kvmp',
+      title: 'ATEN Master View CS-1732A',
+      category: 'Peripherals & Input',
+      era: 'Circa 2000–2005',
+      narrative: "The ATEN CS-1732A is a 2-port PS/2 and USB KVMP switch with a built-in 2-port USB hub and audio support, reaching up to 2048x1536 resolution. Tagged 'PC / LAPTOP' and 'HKUST LIBRARY,' it exemplifies the classic desktop KVM solution for managing multiple computers with a single console in early server rooms.",
+      image: "./public/images/01-aten-kvmp.png",
+      short: 'ATEN Master View KVMP',
+      year: '2000–05',
+      labelNotes: 'HKUST LIBRARY; PC / LAPTOP',
+      fn: 'Share one console across two machines.',
+      storyRole: 'One keyboard, two machines — the library terminals learned to share a single console.',
+      specs: { ports: '2', interfaces: 'PS/2, USB, VGA' },
+      tags: ['peripheral', 'kvm', 'library-hardware', 'usb', 'ps2'],
+      furtherReading: [
+        { title: 'USB Device Emulation and KVM Switching Mechanics', type: 'Paper', note: 'Understand how KVM switches emulate PS/2 and USB endpoints to the host machines.' }
+      ],
+      connections: ['item-08-lacie-nas']
+    },
+    {
+      id: 'item-02-floppy-disk-3-5',
+      title: '3.5" Floppy Disk (US MARC/COM.CP Format)',
+      category: 'Magnetic Storage',
+      era: 'May 1999',
+      narrative: "Manufactured by Professional Media Service, this 3.5-inch high-density floppy is labeled 'US MARC/COM.CP' and 'HKUST LIBRARY.' In the 1990s and early 2000s, libraries relied on such physical media to exchange machine-readable cataloging records between automated systems, serving as a crucial carrier during the early digital library era.",
+      image: "./public/images/02-floppy-disk.png",
+      short: '3.5" Floppy Disk',
+      year: '1999',
+      labelNotes: 'Order No. 8009974F; Format: US MARC/COM.CP',
+      fn: 'Exchanging library machine-readable cataloging data.',
+      storyRole: 'MARC records travelled between systems as one small, standardised, hand-carried disk.',
+      specs: { size: '3.5-inch', capacity: '1.44MB', density: 'High Density (HD)' },
+      tags: ['storage', 'magnetic-media', 'floppy-disk', 'library-cataloging'],
+      furtherReading: [],
+      connections: ['item-05-floppy-disk-5-25']
+    },
+    {
+      id: 'item-03-hp-dat-160',
+      title: 'HP DAT 160 Data Cartridge (C8011A)',
+      category: 'Tape Storage',
+      era: 'Circa 2007',
+      narrative: 'The HP DAT 160 belongs to the DDS-6 generation, offering 80GB native capacity and 160GB compressed. With a native transfer rate of roughly 6.9MB/s, it was widely used by small to medium enterprises and lab servers for nightly unattended backups via SCSI or USB interfaces.',
+      image: "./public/images/03-hp-dat-160.png",
+      short: 'HP DAT 160',
+      year: '2007',
+      labelNotes: 'HP DAT 160; C8011A; compressed capacity: 160GB',
+      fn: 'Server data backup and archiving.',
+      storyRole: 'Nightly backups, unattended: the server\'s safety net still lived on tape.',
+      specs: { format: 'DDS-6 / DAT-160', capacity: '80GB native / 160GB compressed', tapeLength: '150m', transferRate: '~6.9MB/s' },
+      tags: ['storage', 'backup', 'magnetic-media', 'tape'],
+      furtherReading: [],
+      connections: ['item-04-basf-reel']
+    },
+    {
+      id: 'item-04-basf-reel',
+      title: 'BASF 9-Track 1/2-inch Open Reel Tape (080305)',
+      category: 'Open Reel Tape',
+      era: 'Label date: 1993-01-25',
+      narrative: 'This professional-grade BASF half-inch 9-track open reel tape features a handwritten label documenting a 1993 shipment from Control Data Hong Kong Ltd, involving an export vessel to Brunei Darussalam. It represents the standard practice of batch processing, archiving, and cross-regional data transfer using tape drives in the mainframe era.',
+      image: "./public/images/04-basf-reel.png",
+      short: 'BASF 9-Track Reel',
+      year: '1993',
+      labelNotes: 'CONTROL DATA HONG KONG LTD; BRUNEI DARUSSALAM; EXPORT VESSEL',
+      fn: 'Mainframe offline batch backup.',
+      storyRole: 'Moving data before the internet meant moving the physical tape.',
+      specs: { format: '9-track half-inch magnetic tape' },
+      tags: ['storage', 'backup', 'magnetic-media', 'open-reel', 'mainframe'],
+      furtherReading: [],
+      connections: ['item-03-hp-dat-160']
+    },
+    {
+      id: 'item-05-floppy-disk-5-25',
+      title: '5.25" Floppy Disk (Library Database Reference Disk)',
+      category: 'Magnetic Storage',
+      era: 'Circa 1990s',
+      narrative: 'This 5.25-inch floppy disk features a textured black jacket with a central metal drive hub and an essential write-protect notch on the side, representing the standard magnetic storage format of the 1980s and early 1990s. Bound with the HKUST Library call number "QH 301 B5" and tagged for "Biological Abstracts/RRM," it preserves the physical workflow through which early digital bibliographic indexes were installed and queried locally on workstation terminals.',
+      image: "./public/images/05-silverplatter-floppy.png",
+      short: '5.25" Floppy Disk',
+      year: '1990s',
+      labelNotes: 'Biological Abstracts/RRM; Install Disk; Call No. QH 301 B5; HKUST Library',
+      fn: 'Offline reference and database installation medium for library information systems.',
+      storyRole: 'The bibliographic index arrived on a disk you carried to the terminal yourself.',
+      specs: { mediaType: 'Magnetic Disk', size: '5.25-inch', capacity: '360KB (DD) / 1.2MB (HD)' },
+      tags: ['storage', 'magnetic-media', 'floppy-disk', '5.25-inch', 'library-database'],
+      furtherReading: [],
+      connections: ['item-02-floppy-disk-3-5']
+    },
+    {
+      id: 'item-06-innopac-cd',
+      title: 'Software Disc (InnoPAC / SilverPlatter Folio)',
+      category: 'Optical Storage',
+      era: 'Copyright 1997',
+      narrative: "This blue disc is the installation and manual medium for Release 11 of Innovative Interfaces' InnoPAC integrated library system. Its presence, stacked with the sleeve of Release 10, reflects the software distribution model of the era, where libraries periodically received physical optical discs to update their systems.",
+      image: "./public/images/06-innopac-cd.png",
+      short: 'InnoPAC CD-ROM',
+      year: '1997',
+      labelNotes: 'InnoPAC User Manual Release 11; P/N 28373',
+      fn: 'Installation disc for integrated library system.',
+      storyRole: 'Releases 10 and 11 crossed the building on a disc, never on a download.',
+      specs: { format: 'CD-ROM', release: 'InnoPAC Release 11', part: '28373' },
+      tags: ['storage', 'optical-media', 'cd-rom', 'software', 'library-system'],
+      furtherReading: [],
+      connections: ['item-05-floppy-disk-5-25']
+    },
+    {
+      id: 'item-07-planet-camera',
+      title: 'PLANET Network Camera (ICA-107 Series)',
+      category: 'Embedded Network Device',
+      era: 'Circa 2007–2010',
+      narrative: 'The PLANET ICA-107 features a built-in microprocessor and CMOS sensor, using MPEG-4 compression to support 30fps VGA streaming with 802.11n and PoE. Compact and supporting UPnP and motion detection, it allowed regular users and small businesses to set up independent web-based video surveillance without dedicated capture cards.',
+      image: "./public/images/07-planet-camera.png",
+      short: 'PLANET Network Camera',
+      year: '2007–10',
+      labelNotes: 'PLANET; 30fps Wired/Wireless',
+      fn: 'Budget IP surveillance solution.',
+      storyRole: 'The lab\'s first watch came online — video over IP, not down a coax cable.',
+      specs: { sensor: 'CMOS', encoding: 'MPEG-4', interfaces: '10/100Base-TX, 802.11b/g/n, PoE' },
+      tags: ['network', 'embedded', 'camera', 'surveillance', 'poe'],
+      furtherReading: [],
+      connections: []
+    },
+    {
+      id: 'item-08-lacie-nas',
+      title: 'LaCie d2 Network 2 (Single-Drive NAS)',
+      category: 'Network Attached Storage',
+      era: 'Circa 2010–2012',
+      narrative: 'The LaCie d2 Network 2 represents the evolution from direct-attached external hard drives to dedicated personal cloud appliances. Housed in a signature fanless, ribbed aluminum chassis, it served as a single-drive Gigabit NAS for small businesses and laboratories. Equipped with USB 2.0 and eSATA expansion ports alongside Ethernet, it supported centralized client backups, remote access, and direct USB drive mode, bridging the gap between local storage and networked home/office infrastructure.',
+      image: "./public/images/08-lacie.png",
+      short: 'LaCie d2 NAS',
+      year: '2010–12',
+      labelNotes: 'LaCie d2 Network 2; aluminum enclosure; fanless design',
+      fn: 'Dedicated network-attached storage (NAS) for centralized file sharing and client backups.',
+      storyRole: 'Every workstation now pointed at one shared volume out on the network.',
+      specs: { driveBay: '1 x 3.5-inch SATA', capacity: '1TB / 1.5TB / 2TB', interfaces: 'Gigabit Ethernet (10/100/1000), USB 2.0 (Type B), eSATA', chassis: 'Ribbed aluminum, fanless passive cooling', maxTransferRate: '~68 MB/s' },
+      tags: ['nas', 'network-storage', 'lacie', 'ethernet', 'esata', 'usb2'],
+      furtherReading: [
+        { title: 'NAS and Network Protocol Fundamentals (SMB/NFS/DLNA)', type: 'Technical Overview', note: 'Explores how single-drive NAS appliances integrated file sharing services and client backup management.' }
+      ],
+      connections: ['item-01-aten-kvmp']
+    }
+  ];
+
+  const sections = [
+    {
+      id: 'records', index: '01', title: 'RECORDS',
+      subline: 'Physical media carrying the early digital catalog.',
+      intro: 'Before cloud storage, data moved physically. From massive mainframe reels to small floppy disks, these carriers transported early cataloging records and database references across institutions.',
+      items: ['item-04-basf-reel', 'item-05-floppy-disk-5-25', 'item-02-floppy-disk-3-5'],
+      transition: 'Physical carriers become running systems',
+      blobs: [['blob--pink', '10%', '6%', '30vw'], ['blob--lime', '62%', '46%', '26vw']]
+    },
+    {
+      id: 'systems', index: '02', title: 'SYSTEMS',
+      subline: 'The hardware and software running the library.',
+      intro: 'Building the digital library required localized infrastructure. Installation discs updated core systems, KVM switches managed terminal access, and DAT tapes ensured nightly server backups.',
+      items: ['item-06-innopac-cd', 'item-01-aten-kvmp', 'item-03-hp-dat-160'],
+      transition: 'Isolated machines become shared infrastructure',
+      blobs: [['blob--orange', '8%', '10%', '28vw'], ['blob--blue', '58%', '54%', '30vw']]
+    },
+    {
+      id: 'networks', index: '03', title: 'NETWORKS',
+      subline: 'Transitioning from local hardware to connected infrastructure.',
+      intro: 'The dawn of the network era changed everything. IP cameras watched over the lab, while early NAS devices centralized files, bridging isolated workstations and shared digital spaces.',
+      items: ['item-07-planet-camera', 'item-08-lacie-nas'],
+      transition: 'The archive closes where the network opens',
+      blobs: [['blob--pink', '70%', '8%', '30vw'], ['blob--blue', '14%', '52%', '24vw']]
+    }
+  ];
+
+  const archiveMeta = {
+    title: 'HKUST Library DScape Archive',
+    version: '1.5.0',
+    curator: 'DScape'
+  };
+
+  const generalResources = [
+    { title: 'Computer Organization and Design', author: 'Patterson & Hennessy', type: 'Book', note: 'Chapter 5 discusses the memory hierarchy, contextualizing hard drives and tapes as secondary/tertiary storage.' },
+    { title: 'The Essential Guide to Computer Data Storage: From Floppy to DVD', author: 'Andrei Khurshudov', type: 'Book', note: 'Covers magnetic and optical recording principles and interface trade-offs.' }
+  ];
+
+  const byId = {};
+  objects.forEach(function (o) { byId[o.id] = o; });
+
+  /* ============================================================
+     FALLBACK OBJECT ART
+     The archive photographs (/images/*.png) are not present in this
+     build, so each object also carries a vector "plate" rendering
+     that is used as the particle source when no photograph loads.
+     ============================================================ */
+  function svgPlate(inner, defs) {
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">' +
+      (defs ? '<defs>' + defs + '</defs>' : '') + inner + '</svg>';
+  }
+
+  function ribs(y0, y1, gap, x0, x1, color) {
+    let s = '';
+    for (let y = y0; y <= y1; y += gap) {
+      s += '<line x1="' + x0 + '" y1="' + y + '" x2="' + x1 + '" y2="' + y + '" stroke="' + color + '" stroke-width="7" stroke-linecap="round"/>';
+    }
+    return s;
+  }
+
+  const PLATES = {
+    'item-04-basf-reel': function () {
+      return svgPlate(
+        '<circle cx="256" cy="256" r="212" fill="#141414"/>' +
+        '<circle cx="256" cy="256" r="212" fill="none" stroke="#00D0FF" stroke-width="7"/>' +
+        '<circle cx="256" cy="256" r="158" fill="#0A0A0A" stroke="#39FF14" stroke-width="5"/>' +
+        '<circle cx="256" cy="256" r="158" fill="none" stroke="#39FF14" stroke-width="2" opacity=".45"/>' +
+        '<circle cx="256" cy="256" r="108" fill="none" stroke="#39FF14" stroke-width="2" opacity=".3"/>' +
+        '<g fill="#6A6A6A">' +
+        '<rect x="249" y="96" width="14" height="160" rx="7"/>' +
+        '<rect x="249" y="96" width="14" height="160" rx="7" transform="rotate(120 256 256)"/>' +
+        '<rect x="249" y="96" width="14" height="160" rx="7" transform="rotate(240 256 256)"/>' +
+        '</g>' +
+        '<circle cx="256" cy="256" r="52" fill="#F7F7F9" stroke="#111111" stroke-width="9"/>' +
+        '<circle cx="256" cy="256" r="17" fill="#111111"/>' +
+        '<path d="M256 414 L256 470" stroke="#FFD700" stroke-width="9" stroke-linecap="round"/>'
+      );
+    },
+    'item-05-floppy-disk-5-25': function () {
+      return svgPlate(
+        '<rect x="72" y="58" width="368" height="396" rx="10" fill="#171717"/>' +
+        '<rect x="72" y="58" width="368" height="396" rx="10" fill="none" stroke="#FFD700" stroke-width="6"/>' +
+        '<rect x="112" y="86" width="288" height="126" rx="6" fill="#3A3A3A"/>' +
+        '<rect x="112" y="86" width="288" height="42" fill="#0F0F0F"/>' +
+        '<rect x="112" y="232" width="288" height="16" fill="#0F0F0F"/>' +
+        '<circle cx="256" cy="336" r="78" fill="#D6D6D6" stroke="#111111" stroke-width="9"/>' +
+        '<circle cx="256" cy="336" r="24" fill="#111111"/>' +
+        '<circle cx="256" cy="336" r="78" fill="none" stroke="#00D0FF" stroke-width="3" opacity=".55"/>' +
+        '<rect x="330" y="252" width="34" height="72" rx="4" fill="#F7F7F9" stroke="#111111" stroke-width="4"/>' +
+        '<rect x="96" y="248" width="118" height="54" rx="4" fill="#FF8C00"/>' +
+        '<rect x="106" y="264" width="70" height="9" rx="4" fill="#111111" opacity=".65"/>' +
+        '<rect x="106" y="280" width="46" height="9" rx="4" fill="#111111" opacity=".45"/>'
+      );
+    },
+    'item-02-floppy-disk-3-5': function () {
+      return svgPlate(
+        '<rect x="86" y="74" width="340" height="364" rx="20" fill="#1B1B1B"/>' +
+        '<rect x="86" y="74" width="340" height="364" rx="20" fill="none" stroke="#00D0FF" stroke-width="6"/>' +
+        '<rect x="152" y="90" width="208" height="116" rx="6" fill="#9AA3AD"/>' +
+        '<rect x="152" y="90" width="208" height="46" fill="#7C858F"/>' +
+        '<rect x="152" y="150" width="208" height="14" fill="#B9C1C9"/>' +
+        '<rect x="116" y="238" width="280" height="126" rx="8" fill="#F7F7F9"/>' +
+        '<rect x="136" y="258" width="176" height="17" rx="4" fill="#FF007F"/>' +
+        '<rect x="136" y="288" width="124" height="12" rx="4" fill="#A8A8A8"/>' +
+        '<rect x="136" y="314" width="160" height="12" rx="4" fill="#A8A8A8"/>' +
+        '<rect x="136" y="340" width="92" height="12" rx="4" fill="#A8A8A8"/>' +
+        '<rect x="386" y="392" width="36" height="42" rx="4" fill="#39FF14"/>'
+      );
+    },
+    'item-06-innopac-cd': function () {
+      return svgPlate(
+        '<circle cx="256" cy="256" r="206" fill="#111111"/>' +
+        '<circle cx="256" cy="256" r="206" fill="url(#plateCd)"/>' +
+        '<circle cx="256" cy="256" r="206" fill="none" stroke="#FFFFFF" stroke-width="4" opacity=".5"/>' +
+        '<path d="M256 50 A206 206 0 0 1 462 256" fill="none" stroke="#FFD700" stroke-width="13" opacity=".9"/>' +
+        '<path d="M462 256 A206 206 0 0 1 256 462" fill="none" stroke="#FF007F" stroke-width="13" opacity=".9"/>' +
+        '<path d="M256 462 A206 206 0 0 1 50 256" fill="none" stroke="#00D0FF" stroke-width="13" opacity=".9"/>' +
+        '<path d="M50 256 A206 206 0 0 1 256 50" fill="none" stroke="#39FF14" stroke-width="13" opacity=".9"/>' +
+        '<circle cx="256" cy="256" r="52" fill="#F7F7F9" stroke="#111111" stroke-width="7"/>' +
+        '<circle cx="256" cy="256" r="52" fill="none" stroke="#FF8C00" stroke-width="4" opacity=".8"/>',
+        '<linearGradient id="plateCd" x1="0" y1="0" x2="1" y2="1">' +
+        '<stop offset="0%" stop-color="#00D0FF"/><stop offset="45%" stop-color="#111111"/>' +
+        '<stop offset="70%" stop-color="#FF007F"/><stop offset="100%" stop-color="#111111"/>' +
+        '</linearGradient>'
+      );
+    },
+    'item-01-aten-kvmp': function () {
+      return svgPlate(
+        '<rect x="44" y="158" width="424" height="196" rx="16" fill="#151515"/>' +
+        '<rect x="44" y="158" width="424" height="196" rx="16" fill="none" stroke="#39FF14" stroke-width="6"/>' +
+        '<rect x="80" y="206" width="92" height="104" rx="9" fill="#FF8C00"/>' +
+        '<rect x="196" y="206" width="92" height="104" rx="9" fill="#FF8C00"/>' +
+        '<rect x="98" y="226" width="56" height="20" rx="4" fill="#111111" opacity=".55"/>' +
+        '<rect x="214" y="226" width="56" height="20" rx="4" fill="#111111" opacity=".55"/>' +
+        '<circle cx="352" cy="238" r="30" fill="#00D0FF"/>' +
+        '<circle cx="352" cy="238" r="12" fill="#111111"/>' +
+        '<rect x="300" y="292" width="130" height="18" rx="9" fill="#6A6A6A"/>' +
+        '<circle cx="112" cy="186" r="9" fill="#39FF14"/>' +
+        '<circle cx="146" cy="186" r="9" fill="#FF007F"/>' +
+        '<circle cx="180" cy="186" r="9" fill="#FFD700"/>' +
+        '<rect x="404" y="190" width="36" height="20" rx="5" fill="#333333"/>'
+      );
+    },
+    'item-03-hp-dat-160': function () {
+      return svgPlate(
+        '<rect x="88" y="104" width="336" height="300" rx="24" fill="#1A1A1A"/>' +
+        '<rect x="88" y="104" width="336" height="300" rx="24" fill="none" stroke="#00D0FF" stroke-width="6"/>' +
+        '<rect x="122" y="140" width="268" height="126" rx="10" fill="#F7F7F9"/>' +
+        '<rect x="142" y="162" width="150" height="20" rx="4" fill="#111111"/>' +
+        '<rect x="142" y="196" width="120" height="13" rx="4" fill="#A8A8A8"/>' +
+        '<rect x="142" y="220" width="170" height="13" rx="4" fill="#A8A8A8"/>' +
+        '<rect x="142" y="244" width="96" height="13" rx="4" fill="#A8A8A8"/>' +
+        '<circle cx="256" cy="336" r="44" fill="none" stroke="#FF8C00" stroke-width="8"/>' +
+        '<circle cx="256" cy="336" r="17" fill="#FF8C00"/>' +
+        '<rect x="118" y="300" width="52" height="18" rx="5" fill="#39FF14"/>'
+      );
+    },
+    'item-07-planet-camera': function () {
+      return svgPlate(
+        '<rect x="58" y="140" width="316" height="224" rx="28" fill="#151515"/>' +
+        '<rect x="58" y="140" width="316" height="224" rx="28" fill="none" stroke="#00D0FF" stroke-width="6"/>' +
+        '<circle cx="212" cy="252" r="84" fill="#0B0B0B" stroke="#FF8C00" stroke-width="10"/>' +
+        '<circle cx="212" cy="252" r="46" fill="#111111" stroke="#6A6A6A" stroke-width="5"/>' +
+        '<circle cx="190" cy="230" r="16" fill="#F7F7F9" opacity=".85"/>' +
+        '<rect x="320" y="172" width="38" height="38" rx="8" fill="#39FF14"/>' +
+        '<rect x="320" y="228" width="38" height="20" rx="6" fill="#333333"/>' +
+        '<path d="M300 140 L300 58" stroke="#111111" stroke-width="16" stroke-linecap="round"/>' +
+        '<circle cx="300" cy="52" r="15" fill="#FF007F"/>' +
+        '<rect x="58" y="196" width="46" height="70" rx="10" fill="#FF8C00"/>' +
+        '<rect x="70" y="212" width="22" height="38" rx="6" fill="#FFD700"/>' +
+        '<rect x="58" y="300" width="316" height="18" rx="9" fill="#6A6A6A"/>'
+      );
+    },
+    'item-08-lacie-nas': function () {
+      return svgPlate(
+        '<rect x="132" y="56" width="248" height="400" rx="18" fill="#DFE3E8"/>' +
+        ribs(92, 300, 26, 156, 356, '#A9B1BA') +
+        '<rect x="132" y="56" width="248" height="400" rx="18" fill="none" stroke="#111111" stroke-width="6"/>' +
+        '<rect x="132" y="56" width="248" height="40" rx="18" fill="#111111" opacity=".08"/>' +
+        '<rect x="176" y="352" width="58" height="40" rx="7" fill="#111111"/>' +
+        '<rect x="252" y="352" width="52" height="40" rx="7" fill="#6A6A6A"/>' +
+        '<circle cx="340" cy="372" r="13" fill="#39FF14"/>' +
+        '<rect x="176" y="292" width="160" height="14" rx="7" fill="#111111" opacity=".35"/>'
+      );
+    }
+  };
+
+  function svgToDataUri(svg) {
+    const bytes = new TextEncoder().encode(svg);
+    let bin = '';
+    for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return 'data:image/svg+xml;base64,' + btoa(bin);
+  }
+
+  const plateCache = {};
+  function plateUri(id) {
+    if (!plateCache[id]) {
+      const make = PLATES[id];
+      plateCache[id] = make ? svgToDataUri(make()) : '';
+    }
+    return plateCache[id];
+  }
+
+  /* Resolve the particle source: prefer the real archive photograph,
+     fall back to the vector plate when it cannot be fetched.
+     Probing happens over `fetch` rather than <img>, and stops probing
+     entirely once one photograph is known to be missing — if the first
+     object has no photograph, the whole /images/ directory is absent
+     and one request is enough to learn that. */
+  let archivePhotosMissing = false;
+  let probeQueue = Promise.resolve();
+
+  function probeArchivePhoto(obj, fallback) {
+    const candidates = [obj.image];
+    if (obj.image && /\.png$/i.test(obj.image)) candidates.push(obj.image.replace(/\.png$/i, '.png'));
+
+    return new Promise(function (resolve) {
+      let i = 0;
+      (function tryNext() {
+        if (i >= candidates.length) {
+          archivePhotosMissing = true;
+          resolve(fallback);
+          return;
+        }
+        const url = candidates[i++];
+        if (!url) { tryNext(); return; }
+        fetch(url, { method: 'GET', cache: 'no-store' })
+          .then(function (res) {
+            if (!res.ok) { tryNext(); return; }
+            const probe = new Image();
+            probe.onload = function () { resolve(probe.naturalWidth > 0 ? url : fallback); };
+            probe.onerror = function () { tryNext(); };
+            probe.src = url;
+          })
+          .catch(function () { tryNext(); });
+      })();
+    });
+  }
+
+  /* Fit an image into a square canvas preserving its aspect ratio
+     (letterbox / pillarbox). Returns a data URI. */
+  function fitToSquare(dataUrl) {
+    return new Promise(function (resolve) {
+      const img = new Image();
+      img.onload = function () {
+        const S = 512;
+        const c = document.createElement('canvas');
+        c.width = S; c.height = S;
+        const ctx = c.getContext('2d');
+        ctx.clearRect(0, 0, S, S);
+        const scale = Math.min(S / img.naturalWidth, S / img.naturalHeight);
+        const w = img.naturalWidth * scale;
+        const h = img.naturalHeight * scale;
+        const x = (S - w) / 2;
+        const y = (S - h) / 2;
+        ctx.drawImage(img, x, y, w, h);
+        resolve(c.toDataURL());
+      };
+      img.onerror = function () { resolve(dataUrl); };
+      img.src = dataUrl;
+    });
+  }
+
+  function resolveSource(obj) {
+    const fallback = plateUri(obj.id);
+    if (archivePhotosMissing) return Promise.resolve(fallback);
+
+    /* Probes run one at a time: as soon as one photograph is missing we
+       know the whole /images/ directory is absent, and the remaining
+       objects fall back without touching the network at all. */
+    const run = probeQueue.then(function () {
+      if (archivePhotosMissing) return fallback;
+      return probeArchivePhoto(obj, fallback).then(function (src) {
+        /* If the source is a real photograph (not an SVG plate), fit it
+           into a square canvas to preserve aspect ratio. */
+        if (/^data:image\/svg\+xml/i.test(src)) return src;
+        return fitToSquare(src);
+      });
+    });
+    probeQueue = run.then(function () {}, function () {});
+    return run;
+  }
+
+  /* ============================================================
+     DOM BUILD
+     ============================================================ */
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function el(tag, cls, html) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (html != null) n.innerHTML = html;
+    return n;
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function buildCover() {
+    const grid = document.getElementById('cover-grid');
+    const frag = document.createDocumentFragment();
+
+    objects.forEach(function (o) {
+      const item = el('div', 'overview-item');
+      const btn = el('button', 'ov-btn');
+      btn.type = 'button';
+      btn.setAttribute('data-object', o.id);
+      btn.setAttribute('aria-label', 'Open catalogue record for ' + o.title);
+
+      const media = el('div', 'particle-container');
+      media.setAttribute('data-particle', o.id);
+      media.setAttribute('data-size', 'small');
+      btn.appendChild(media);
+
+      const meta = el('div', 'ov-meta');
+      meta.appendChild(el('div', 'ov-title', esc(o.short || o.title)));
+      meta.appendChild(el('div', 'ov-era', esc(o.year || o.era)));
+      item.appendChild(btn);
+      item.appendChild(meta);
+      frag.appendChild(item);
+    });
+
+    grid.appendChild(frag);
+  }
+
+  function buildActs() {
+    const host = document.getElementById('acts');
+    const frag = document.createDocumentFragment();
+
+    sections.forEach(function (sec, si) {
+      /* --- act --- */
+      const act = el('section', 'act');
+      act.id = sec.id;
+      act.setAttribute('aria-labelledby', 'h-' + sec.id);
+
+      sec.blobs.forEach(function (b) {
+        const blob = el('div', 'blob ' + b[0]);
+        blob.style.width = b[3];
+        blob.style.height = b[3];
+        blob.style.left = b[1];
+        blob.style.top = b[2];
+        act.appendChild(blob);
+      });
+
+      const wrap = el('div', 'wrap');
+
+      /* --- opener --- */
+      const opener = el('div', 'act-opener');
+      opener.appendChild(el('span', 'act-index', 'ACT ' + sec.index));
+      const h2 = el('h2', '', esc(sec.title));
+      h2.id = 'h-' + sec.id;
+      opener.appendChild(h2);
+
+      const openBody = el('div', 'act-opener-body');
+      openBody.appendChild(el('p', 'act-sub', esc(sec.subline)));
+      openBody.appendChild(el('p', 'act-intro', esc(sec.intro)));
+      opener.appendChild(openBody);
+      wrap.appendChild(opener);
+
+      /* --- sticky rail --- */
+      const rail = el('div', 'act-rail');
+      const railIn = el('div', 'act-rail-inner');
+      railIn.appendChild(el('span', 'rail-index', sec.index));
+      railIn.appendChild(el('span', 'rail-title', esc(sec.title)));
+      railIn.appendChild(el('span', 'rail-sub', esc(sec.subline)));
+      rail.appendChild(railIn);
+      wrap.appendChild(rail);
+
+      /* --- object list --- */
+      const list = el('div', 'object-list');
+      list.setAttribute('data-list', sec.id);
+
+      sec.items.forEach(function (id, oi) {
+        const o = byId[id];
+        const slot = el('article', 'slot');
+        slot.setAttribute('data-id', o.id);
+
+        /* media */
+        const mediaWrap = el('div', 'slot-media');
+        const pc = el('button', 'particle-container');
+        pc.type = 'button';
+        pc.setAttribute('data-object', o.id);
+        pc.setAttribute('data-particle', o.id);
+        pc.setAttribute('data-size', 'large');
+        pc.setAttribute('aria-label', 'Open catalogue record for ' + o.title + '. Hover to read its role in the story.');
+        pc.addEventListener('click', function (e) { openModal(o.id); }, true);
+
+        const tip = el('span', 'story-tip');
+        tip.appendChild(el('span', 'tt-label', 'Role in the story'));
+        tip.appendChild(el('span', 'tt-text', esc(o.storyRole)));
+        tip.appendChild(el('span', 'tt-cta', 'Click to open the full record'));
+        pc.appendChild(tip);
+        pc.appendChild(el('span', 'pc-hint', 'Hover · Click'));
+        mediaWrap.appendChild(pc);
+
+        /* info card */
+        const card = el('div', 'info-card');
+        const meta = el('div', 'card-meta');
+        meta.appendChild(el('span', 'cat', esc(o.category)));
+        meta.appendChild(el('span', 'sep'));
+        meta.appendChild(el('span', '', esc(o.era)));
+        card.appendChild(meta);
+
+        const h3 = el('h3', 'stagger', esc(o.title));
+        card.appendChild(h3);
+        card.appendChild(el('p', 'card-fn stagger', esc(o.fn)));
+        card.appendChild(el('p', 'card-narrative stagger', esc(o.narrative)));
+
+        const foot = el('div', 'card-foot');
+        foot.appendChild(el('span', 'seq', String(oi + 1).padStart(2, '0') + ' / ' + String(sec.items.length).padStart(2, '0')));
+        const more = el('button', 'more', 'Open record');
+        more.type = 'button';
+        more.setAttribute('data-object', o.id);
+        foot.appendChild(more);
+        card.appendChild(foot);
+
+        slot.appendChild(mediaWrap);
+        slot.appendChild(card);
+        list.appendChild(slot);
+      });
+
+      wrap.appendChild(list);
+      act.appendChild(wrap);
+      frag.appendChild(act);
+
+      /* --- bridge to the next act --- */
+      if (si < sections.length - 1) {
+        const bridge = el('div', 'bridge');
+        bridge.appendChild(el('span', 'bridge-line'));
+        bridge.appendChild(el('span', 'bridge-caption', esc(sec.transition)));
+        frag.appendChild(bridge);
+      }
+    });
+
+    host.appendChild(frag);
+  }
+
+  function buildFooter() {
+    const res = document.getElementById('footer-resources');
+    generalResources.forEach(function (r) {
+      const item = el('div', 'res-item');
+      item.appendChild(el('i', '', esc(r.type)));
+      item.appendChild(el('b', '', esc(r.title)));
+      item.appendChild(el('span', '', esc(r.author) + ' — ' + esc(r.note)));
+      res.appendChild(item);
+    });
+
+    const tags = document.getElementById('footer-tags');
+    const seen = {};
+    objects.forEach(function (o) { o.tags.forEach(function (t) { seen[t] = true; }); });
+    Object.keys(seen).forEach(function (t) { tags.appendChild(el('span', 'tag', esc(t))); });
+  }
+
+  /* ============================================================
+     PARTICLE CANVAS LIFECYCLE
+     ============================================================ */
+  /* One ParticleCanvas per CONTAINER (not per object id): the same object
+     appears in the cover grid, in its act slot and in the modal, and each
+     of those needs its own canvas. The resolved image source is shared. */
+  const sourceUrls = new Map();    // id -> resolved source url
+  const sourceProbes = new Map();  // id -> Promise<string>
+
+  function sourceFor(obj) {
+    if (sourceUrls.has(obj.id)) return Promise.resolve(sourceUrls.get(obj.id));
+    if (!sourceProbes.has(obj.id)) {
+      const p = resolveSource(obj).then(function (src) {
+        sourceUrls.set(obj.id, src);
+        sourceProbes.delete(obj.id);
+        return src;
+      });
+      sourceProbes.set(obj.id, p);
+    }
+    return sourceProbes.get(obj.id);
+  }
+
+  function particleSize(container) {
+    const w = container.clientWidth || 300;
+    const isSmall = container.getAttribute('data-size') === 'small';
+    if (isSmall) return Math.max(90, Math.min(180, Math.round(w)));
+    return Math.max(240, Math.min(620, Math.round(w)));
+  }
+
+  function mountParticles(container) {
+    const id = container.getAttribute('data-particle');
+    if (!id || container._pfc) return;
+
+    const obj = byId[id];
+    if (!obj) return;
+
+    const fallback = plateUri(id);
+
+    function build(src) {
+      if (container._pfc) return;
+      if (!window.ParticleCanvas || !window.ParticleCanvas.createParticleCanvas) {
+        renderPoster(container, fallback);
+        return;
+      }
+      const size = particleSize(container);
+      let inst;
+      try {
+        inst = window.ParticleCanvas.createParticleCanvas(container, {
+          imageSrc: src,
+          width: size,
+          height: size,
+          particleGap: container.getAttribute('data-size') === 'small' ? 3 : 4,
+          particleShape: 'circle',
+          filter: 'none',
+          mouseForce: 30,
+          noise: 10,
+          gravity: 0.08,
+          clickStrength: 100,
+          vortexMode: false
+        });
+      } catch (err) {
+        renderPoster(container, fallback);
+        return;
+      }
+      container._pfc = inst;
+      const canvas = inst.canvas;
+      if (canvas) canvas.style.visibility = 'visible';
+    }
+
+    sourceFor(obj).then(build);
+  }
+
+  function renderPoster(container, uri) {
+    if (!uri) return;
+    if (container.querySelector('.pc-poster')) return;
+    const img = new Image();
+    img.className = 'pc-poster';
+    img.alt = '';
+    img.src = uri;
+    container.appendChild(img);
+  }
+
+  function setActive(container, active) {
+    const inst = container._pfc;
+    const canvas = container.querySelector('canvas');
+    if (!inst || !canvas) return;
+    if (active) {
+      canvas.style.visibility = 'visible';
+      inst.startAnimation();
+    } else {
+      canvas.style.visibility = 'hidden';
+      inst.stopAnimation();
+    }
+  }
+
+  function observeParticles() {
+    const nodes = Array.prototype.slice.call(document.querySelectorAll('[data-particle]'));
+
+    const io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        const c = entry.target;
+        if (entry.isIntersecting) {
+          mountParticles(c);
+          setActive(c, true);
+        } else {
+          setActive(c, false);
+        }
+      });
+    }, { rootMargin: '150% 0px', threshold: 0 });
+
+    nodes.forEach(function (n) { io.observe(n); });
+  }
+
+  function handleResize() {
+    document.querySelectorAll('[data-particle]').forEach(function (container) {
+      const inst = container._pfc;
+      if (!inst || !inst.canvas) return;
+      const size = particleSize(container);
+      if (inst.getConfig().width !== size) {
+        inst.updateConfig({ width: size, height: size });
+      }
+    });
+    layoutRails();
+  }
+
+  /* ============================================================
+     CONNECTING RAILS — faint SVG paths between objects in a section
+     ============================================================ */
+
+  /* The rail is rebuilt whenever the layout changes, so the
+     scroll-driven "draw" is (re)attached here rather than once at
+     boot — otherwise the path would be rebuilt with no dash state. */
+  function wireRail(svg) {
+    if (svg._railTween) { svg._railTween.kill(); svg._railTween = null; }
+    const path = svg.querySelector('.flow-path');
+    if (!path) return;
+
+    const gsap = window.gsap;
+    if (!gsap || !window.ScrollTrigger || reduceMotion) {
+      path.style.strokeDasharray = 'none';
+      path.style.strokeDashoffset = '0';
+      return;
+    }
+    const len = path.getTotalLength();
+    gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
+    svg._railTween = gsap.to(path, {
+      strokeDashoffset: 0, ease: 'none',
+      scrollTrigger: {
+        trigger: svg.closest('.object-list'),
+        start: 'top 72%', end: 'bottom 85%', scrub: 1
+      }
+    });
+  }
+
+  function layoutRails() {
+    document.querySelectorAll('.object-list').forEach(function (list) {
+      const slots = Array.prototype.slice.call(list.querySelectorAll('.slot'));
+      if (!slots.length) return;
+
+      const lr = list.getBoundingClientRect();
+      const listW = list.offsetWidth;
+      const listH = list.offsetHeight;
+      if (!listW || !listH) return;
+
+      const twoCol = window.matchMedia('(min-width: 1001px)').matches;
+      const anchorX = Math.round(listW * (twoCol ? 0.30 : 0.5));
+
+      const mediaOf = function (slot) {
+        return slot.querySelector('.particle-container');
+      };
+
+      const anchors = slots.map(function (slot) {
+        const m = mediaOf(slot);
+        const r = m.getBoundingClientRect();
+        return {
+          x: anchorX,
+          y: Math.round(r.top - lr.top + r.height / 2)
+        };
+      });
+
+      let svg = list.querySelector('.flow-rail');
+      if (!svg) {
+        svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('class', 'flow-rail');
+        svg.setAttribute('aria-hidden', 'true');
+        list.insertBefore(svg, list.firstChild);
+      }
+      svg.setAttribute('width', listW);
+      svg.setAttribute('height', listH);
+      svg.setAttribute('viewBox', '0 0 ' + listW + ' ' + listH);
+
+      /* build a soft vertical spline through the anchors */
+      let d = 'M ' + anchors[0].x + ' ' + anchors[0].y;
+      for (let i = 1; i < anchors.length; i++) {
+        const a = anchors[i - 1], b = anchors[i];
+        const midY = (a.y + b.y) / 2;
+        d += ' C ' + a.x + ' ' + midY + ', ' + b.x + ' ' + midY + ', ' + b.x + ' ' + b.y;
+      }
+
+      const last = anchors[anchors.length - 1];
+      let nodes = '';
+      anchors.forEach(function (a) {
+        nodes += '<circle class="flow-node" cx="' + a.x + '" cy="' + a.y + '" r="6"></circle>';
+        nodes += '<circle class="flow-node-core" cx="' + a.x + '" cy="' + a.y + '" r="2.4"></circle>';
+      });
+      const arrow = '<path class="flow-arrow" d="M ' + (last.x - 6) + ' ' + (last.y + 12) +
+        ' L ' + last.x + ' ' + (last.y + 24) + ' L ' + (last.x + 6) + ' ' + (last.y + 12) + '"></path>';
+
+      svg.innerHTML =
+        '<path class="flow-path" d="' + d + '"></path>' +
+        nodes + arrow;
+
+      wireRail(svg);
+    });
+  }
+
+  /* ============================================================
+     MODAL
+     ============================================================ */
+  const modal = document.getElementById('modal');
+  const modalMedia = document.getElementById('modal-media');
+  const modalInfo = document.getElementById('modal-info');
+  let lastFocus = null;
+  let modalInstance = null;
+
+  function openModal(id) {
+    const o = byId[id];
+    if (!o) return;
+    lastFocus = document.activeElement;
+
+    modalMedia.innerHTML = '';
+    modalInfo.innerHTML = '';
+
+    const media = el('div', 'particle-container');
+    media.setAttribute('data-particle', o.id);
+    media.setAttribute('data-size', 'modal');
+    media.setAttribute('aria-hidden', 'true');
+    modalMedia.appendChild(media);
+
+    const kicker = el('div', 'modal-kicker', esc(o.category) + ' &nbsp;/&nbsp; ' + esc(o.era));
+    modalInfo.appendChild(kicker);
+    const h3 = el('h3', '', esc(o.title));
+    h3.id = 'modal-title';
+    modalInfo.appendChild(h3);
+
+    const meta = el('div', 'modal-meta');
+    meta.appendChild(el('span', '', esc(o.fn)));
+    modalInfo.appendChild(meta);
+
+    const story = el('div', 'modal-story');
+    story.appendChild(el('span', 'ms-label', 'Role in the story'));
+    story.appendChild(el('span', 'ms-text', esc(o.storyRole)));
+    modalInfo.appendChild(story);
+
+    modalInfo.appendChild(el('p', 'modal-narrative', esc(o.narrative)));
+
+    /* specs */
+    const specKeys = Object.keys(o.specs || {});
+    if (specKeys.length) {
+      modalInfo.appendChild(el('div', 'modal-subhead', 'Technical record'));
+      const t = el('table', 'spec-table');
+      t.innerHTML = '<tbody>' + specKeys.map(function (k) {
+        return '<tr><th>' + esc(k.replace(/([A-Z])/g, ' $1')) + '</th><td>' + esc(o.specs[k]) + '</td></tr>';
+      }).join('') + '</tbody>';
+      modalInfo.appendChild(t);
+    }
+
+    /* label notes */
+    if (o.labelNotes) {
+      modalInfo.appendChild(el('div', 'modal-subhead', 'Inscription'));
+      modalInfo.appendChild(el('p', 'label-note', esc(o.labelNotes)));
+    }
+
+    /* further reading */
+    if (o.furtherReading && o.furtherReading.length) {
+      modalInfo.appendChild(el('div', 'modal-subhead', 'Further reading'));
+      o.furtherReading.forEach(function (r) {
+        const item = el('div', 'reading-item');
+        item.appendChild(el('b', '', esc(r.title)));
+        item.appendChild(el('span', '', esc(r.type) + ' — ' + esc(r.note)));
+        modalInfo.appendChild(item);
+      });
+    }
+
+    /* related */
+    if (o.connections && o.connections.length) {
+      modalInfo.appendChild(el('div', 'modal-subhead', 'Connected in the archive'));
+      const row = el('div', 'tag-row');
+      o.connections.forEach(function (cid) {
+        const c = byId[cid];
+        if (!c) return;
+        const b = el('button', 'tag', esc(c.title.split('(')[0].trim()));
+        b.type = 'button';
+        b.style.cursor = 'pointer';
+        b.addEventListener('click', function () { closeModal(); setTimeout(function () { openModal(cid); }, 180); });
+        row.appendChild(b);
+      });
+      modalInfo.appendChild(row);
+    }
+
+    /* tags */
+    const tagRow = el('div', 'tag-row');
+    o.tags.forEach(function (t) { tagRow.appendChild(el('span', 'tag', esc(t))); });
+    modalInfo.appendChild(tagRow);
+
+    modal.hidden = false;
+    modal.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+
+    /* mount the modal's own particle field */
+    sourceFor(o).then(function (src) {
+      if (!modal.classList.contains('is-open')) return;
+      const target = modalMedia.querySelector('[data-particle]');
+      if (!target) return;
+      try {
+        if (window.ParticleCanvas && window.ParticleCanvas.createParticleCanvas) {
+          const size = Math.max(240, Math.min(460, Math.round(modalMedia.clientWidth || 420)));
+          modalInstance = window.ParticleCanvas.createParticleCanvas(target, {
+            imageSrc: src,
+            width: size,
+            height: size,
+            particleGap: 3,
+            particleShape: 'circle',
+            filter: 'none',
+            mouseForce: 26,
+            noise: 9,
+            gravity: 0.07,
+            clickStrength: 90,
+            vortexMode: false
+          });
+          target._pfc = modalInstance;
+        } else {
+          renderPoster(target, src);
+        }
+      } catch (err) {
+        renderPoster(target, src);
+      }
+    });
+
+    const closeBtn = modal.querySelector('.modal-close');
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function closeModal() {
+    modal.classList.remove('is-open');
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    const target = modalMedia.querySelector('[data-particle]');
+    if (target) {
+      if (target._pfc && target._pfc.destroy) target._pfc.destroy();
+      target._pfc = null;
+    }
+    if (modalInstance && modalInstance.destroy) { modalInstance.destroy(); }
+    modalInstance = null;
+    modalMedia.innerHTML = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  function trapFocus(e) {
+    if (e.key !== 'Tab') return;
+    const f = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  document.addEventListener('click', function (e) {
+    const opener = e.target.closest ? e.target.closest('[data-object]') : null;
+    if (opener) {
+      e.preventDefault();
+      openModal(opener.getAttribute('data-object'));
+      return;
+    }
+    if (e.target.closest && e.target.closest('[data-close]')) closeModal();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+    if (modal.classList.contains('is-open')) trapFocus(e);
+  });
+
+  /* ============================================================
+     GSAP SCROLL CHOREOGRAPHY
+     ============================================================ */
+  function initMotion() {
+    const hasGsap = !!(window.gsap && window.ScrollTrigger);
+    if (!hasGsap) {
+      document.querySelectorAll('.slot,.act-opener > *,.info-card .stagger')
+        .forEach(function (n) { n.style.opacity = '1'; n.style.transform = 'none'; });
+      return;
+    }
+    const gsap = window.gsap;
+    gsap.registerPlugin(window.ScrollTrigger);
+
+    if (reduceMotion) {
+      document.querySelectorAll('.slot,.act-opener > *,.info-card .stagger')
+        .forEach(function (n) { n.style.opacity = '1'; n.style.transform = 'none'; });
+      return;
+    }
+
+    /* --- floating orbs --- */
+    const orbs = Array.prototype.slice.call(document.querySelectorAll('.orb'));
+    const drift = [
+      { x: 70, y: 50 }, { x: -80, y: 40 }, { x: 50, y: -70 }, { x: -60, y: -40 }
+    ];
+    orbs.forEach(function (orb, i) {
+      gsap.to(orb, {
+        x: drift[i].x, y: drift[i].y,
+        duration: 12 + i * 3,
+        yoyo: true, repeat: -1, ease: 'sine.inOut'
+      });
+    });
+
+    /* --- cover parallax --- */
+    gsap.to('.cover-grid', {
+      y: 90, opacity: 0.15, ease: 'none',
+      scrollTrigger: { trigger: '.cover', start: 'top top', end: 'bottom top', scrub: 1 }
+    });
+
+    /* --- act openers --- */
+    gsap.utils.toArray('.act-opener').forEach(function (opener) {
+      const kids = opener.querySelectorAll(':scope > *');
+      gsap.from(kids, {
+        y: 46, opacity: 0, duration: 0.95, stagger: 0.12, ease: 'power3.out',
+        scrollTrigger: { trigger: opener, start: 'top 78%' }
+      });
+      const inner = opener.querySelectorAll('.act-sub,.act-intro');
+      gsap.from(inner, {
+        y: 24, opacity: 0, duration: 0.8, stagger: 0.1, delay: 0.15, ease: 'power3.out',
+        scrollTrigger: { trigger: opener, start: 'top 78%' }
+      });
+    });
+
+    /* --- slots + info card stagger --- */
+    gsap.utils.toArray('.slot').forEach(function (slot) {
+      gsap.from(slot, {
+        y: 64, opacity: 0, duration: 1, ease: 'power2.out',
+        scrollTrigger: { trigger: slot, start: 'top 86%' }
+      });
+      const texts = slot.querySelectorAll('.info-card .stagger');
+      gsap.from(texts, {
+        y: 20, opacity: 0, duration: 0.62, stagger: 0.09, delay: 0.28, ease: 'power2.out',
+        scrollTrigger: { trigger: slot, start: 'top 82%' }
+      });
+    });
+
+    /* --- the connecting rails draw themselves as you scroll ---
+       (attached in layoutRails(), which rebuilds the SVG geometry) */
+
+    /* --- the field changes colour as the story advances --- */
+    const palettes = [
+      ['#FF007F', '#00D0FF', '#39FF14', '#FF8C00'],
+      ['#FF8C00', '#FFD700', '#00D0FF', '#39FF14'],
+      ['#00D0FF', '#FF007F', '#39FF14', '#FFD700']
+    ];
+    document.querySelectorAll('.act').forEach(function (act, i) {
+      const pal = palettes[i % palettes.length];
+      orbs.forEach(function (orb, oi) {
+        gsap.to(orb, {
+          backgroundColor: pal[oi % pal.length],
+          ease: 'none',
+          scrollTrigger: { trigger: act, start: 'top 70%', end: 'bottom 30%', scrub: 1 }
+        });
+      });
+    });
+
+    window.ScrollTrigger.refresh();
+  }
+
+  /* --- nav active state --- */
+  function initNav() {
+    const links = Array.prototype.slice.call(document.querySelectorAll('[data-nav]'));
+    const acts = Array.prototype.slice.call(document.querySelectorAll('.act'));
+    if (!('IntersectionObserver' in window)) return;
+
+    const io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.id;
+        links.forEach(function (l) {
+          l.classList.toggle('is-active', l.getAttribute('data-nav') === id);
+        });
+      });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+
+    acts.forEach(function (a) { io.observe(a); });
+  }
+
+  /* ============================================================
+     BOOT
+     ============================================================ */
+  function init() {
+    buildCover();
+    buildActs();
+    buildFooter();
+
+    observeParticles();
+    initMotion();
+    initNav();
+
+    /* rails need final layout */
+    requestAnimationFrame(function () {
+      layoutRails();
+      requestAnimationFrame(function () {
+        layoutRails();
+        if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+      });
+    });
+
+    let rAF = null;
+    window.addEventListener('resize', function () {
+      if (rAF) cancelAnimationFrame(rAF);
+      rAF = requestAnimationFrame(function () {
+        handleResize();
+        if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+      });
+    });
+
+    /* fonts can shift layout — re-measure once they land */
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { layoutRails(); });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>

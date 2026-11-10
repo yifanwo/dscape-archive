@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DScape / Archive</title>
+
+  <!-- Google Fonts: Syne (Display) & Space Grotesk (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+
+  <!-- External CDN Libraries: package-particlefx & GSAP + ScrollTrigger -->
+  <script src="https://cdn.jsdelivr.net/npm/package-particlefx@2.0.2/dist/particlefx.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <style>
+    :root {
+      --bg-color: #F7F7F9;
+      --text-main: #111111;
+      --text-muted: #666666;
+      --neon-pink: #FF007F;
+      --neon-orange: #FF8C00;
+      --neon-blue: #00D0FF;
+      --neon-lime: #39FF14;
+      --neon-yellow: #FFD700;
+      --glass-bg: rgba(255, 255, 255, 0.6);
+      --glass-border: rgba(0, 0, 0, 0.1);
+      --grid-line: rgba(17, 17, 17, 0.07);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      overflow-x: hidden;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Syne', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+    }
+
+    p, a {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Accessibility Focus States */
+    a:focus-visible,
+    button:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2px solid var(--text-main);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+
+    /* Structural Retro-Techno Background Grid Overlay */
+    .retro-grid-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+
+    /* Global & Section Blurred Gradient Blobs */
+    .ambient-blobs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      mix-blend-mode: multiply;
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: -1;
+      will-change: transform, background-color;
+    }
+
+    .blob-1 {
+      width: 48vw;
+      height: 48vw;
+      max-width: 650px;
+      max-height: 650px;
+      background: var(--neon-pink);
+      top: -8%;
+      left: -6%;
+    }
+
+    .blob-2 {
+      width: 44vw;
+      height: 44vw;
+      max-width: 600px;
+      max-height: 600px;
+      background: var(--neon-blue);
+      top: 15%;
+      right: -8%;
+    }
+
+    .blob-3 {
+      width: 40vw;
+      height: 40vw;
+      max-width: 540px;
+      max-height: 540px;
+      background: var(--neon-lime);
+      bottom: -10%;
+      left: 18%;
+    }
+
+    .blob-4 {
+      width: 38vw;
+      height: 38vw;
+      max-width: 520px;
+      max-height: 520px;
+      background: var(--neon-orange);
+      bottom: 8%;
+      right: 12%;
+    }
+
+    /* Top Minimal Navigation */
+    header.site-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2.5rem;
+      background: rgba(247, 247, 249, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .nav-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--neon-pink);
+      box-shadow: 0 0 10px var(--neon-pink);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      transition: all 0.25s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--text-main);
+      background: rgba(17, 17, 17, 0.07);
+    }
+
+    /* Content Wrapper above Blurred Blobs */
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ==========================================
+       1. COVER SECTION (100svh)
+       ========================================== */
+    .cover-section {
+      position: relative;
+      z-index: 1;
+      min-height: 100svh;
+      width: 100%;
+      padding: 5.5rem 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .cover-header {
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .cover-title-group {
+      max-width: 820px;
+    }
+
+    .cover-eyebrow {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--glass-border);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+    }
+
+    .cover-title {
+      font-size: clamp(2rem, 4.2vw, 4rem);
+      line-height: 0.98;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .cover-meta {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.35rem;
+    }
+
+    .cover-subtitle {
+      font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .cover-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* 4x2 Grid of Small Particle Canvases */
+    .overview-grid {
+      max-width: 1400px;
+      width: 100%;
+      margin: 1.25rem auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 1rem;
+      flex: 1;
+      min-height: 360px;
+    }
+
+    .overview-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.58);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 0.65rem;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .overview-item:hover {
+      transform: translateY(-4px);
+      border-color: rgba(17, 17, 17, 0.3);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .overview-canvas-box {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      min-height: 135px;
+      background: rgba(255, 255, 255, 0.78);
+      border-radius: 10px;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .overview-canvas-box canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+      object-fit: contain;
+    }
+
+    .overview-caption {
+      padding-top: 0.55rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .overview-name {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .overview-era {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .overview-role-tooltip {
+      position: absolute;
+      top: 0.6rem;
+      left: 0.6rem;
+      right: 0.6rem;
+      background: rgba(17, 17, 17, 0.88);
+      color: #FFFFFF;
+      font-size: 0.7rem;
+      padding: 0.4rem 0.6rem;
+      border-radius: 8px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .overview-item:hover .overview-role-tooltip,
+    .overview-item:focus-visible .overview-role-tooltip {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cover-footer {
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* ==========================================
+       2. EXHIBITION SECTIONS (x3)
+       Sticky Stage & Revolving Reel Mechanic
+       ========================================== */
+    .exhibition-section {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .sticky-stage {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 5.25rem 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    /* Section Header Pinned Top/Left */
+    .section-header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: end;
+      gap: 2rem;
+      padding-bottom: 1.15rem;
+      border-bottom: 1px solid rgba(17, 17, 17, 0.12);
+      position: relative;
+      z-index: 3;
+    }
+
+    .section-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .section-act-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .section-title {
+      font-size: clamp(2.4rem, 5vw, 4.5rem);
+      line-height: 0.92;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+    }
+
+    .section-subline {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-top: 0.25rem;
+    }
+
+    .section-intro {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      max-width: 580px;
+      line-height: 1.55;
+    }
+
+    /* Sequence Progress Pills & Connecting Line */
+    .section-progress {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .step-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.65);
+      color: var(--text-muted);
+      transition: all 0.25s ease;
+    }
+
+    .step-pill.active {
+      background: var(--text-main);
+      color: #FFFFFF;
+      border-color: var(--text-main);
+      transform: scale(1.08);
+    }
+
+    .step-connector {
+      width: 24px;
+      height: 2px;
+      background: rgba(17, 17, 17, 0.18);
+    }
+
+    /* Revolving Reel Container */
+    .reel-container {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      min-height: 280px;
+      margin-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .reel-slot {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: stretch;
+      gap: 2rem;
+      opacity: 0;
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
+
+    .reel-slot.is-first {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* LEFT: 60% Particle Container */
+    .particle-container {
+      width: 60%;
+      height: 100%;
+      min-height: 260px;
+      position: relative;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      box-shadow:
+        inset 0 2px 18px rgba(0, 0, 0, 0.045),
+        0 12px 32px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+
+    .particle-canvas-mount {
+      width: 100%;
+      height: 100%;
+      min-height: 220px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .particle-canvas-mount canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+      object-fit: contain;
+    }
+
+    .particle-badge-bar {
+      position: absolute;
+      top: 1rem;
+      left: 1.25rem;
+      right: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .particle-seq-tag {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(17, 17, 17, 0.06);
+      color: var(--text-main);
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid rgba(17, 17, 17, 0.08);
+    }
+
+    .particle-interact-hint {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.85);
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid var(--glass-border);
+    }
+
+    .particle-story-callout {
+      position: absolute;
+      bottom: 1rem;
+      left: 1.25rem;
+      right: 1.25rem;
+      background: rgba(17, 17, 17, 0.88);
+      color: #FFFFFF;
+      padding: 0.65rem 1rem;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .particle-container:hover .particle-story-callout,
+    .particle-container:focus-within .particle-story-callout {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* RIGHT: 40% Glassmorphism Info Card */
+    .info-card {
+      width: 40%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 20px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+      padding: 2.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+    }
+
+    .info-card-top {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .info-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .info-category {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(17, 17, 17, 0.08);
+      color: var(--text-main);
+    }
+
+    .info-era {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0.28rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .info-title {
+      font-size: clamp(1.35rem, 2.2vw, 2rem);
+      line-height: 1.1;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .info-narrative {
+      font-size: 0.98rem;
+      line-height: 1.65;
+      color: var(--text-main);
+      margin-top: 0.25rem;
+    }
+
+    .info-card-bottom {
+      margin-top: 1.5rem;
+      padding-top: 1.15rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .info-id-code {
+      font-family: monospace;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background: rgba(0, 0, 0, 0.05);
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+    }
+
+    /* Footer */
+    footer.site-footer {
+      position: relative;
+      z-index: 1;
+      padding: 3rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      .overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+      }
+      .section-header {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+      .reel-slot {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .particle-container,
+      .info-card {
+        width: 100%;
+      }
+      .particle-container {
+        height: 55%;
+        min-height: 280px;
+      }
+      .info-card {
+        height: 45%;
+        padding: 1.25rem;
+      }
+    }
+
+    /* ==========================================
+       REDUCED MOTION ACCESSIBILITY
+       ========================================== */
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+      .sticky-stage {
+        height: auto !important;
+        overflow: visible !important;
+        padding: 4rem 2rem !important;
+      }
+      .reel-container {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2.5rem !important;
+        height: auto !important;
+      }
+      .reel-slot {
+        position: relative !important;
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        height: 620px !important;
+      }
+    }
+
+    body.reduced-motion .sticky-stage {
+      height: auto !important;
+      overflow: visible !important;
+      padding: 4rem 2rem !important;
+    }
+    body.reduced-motion .reel-container {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 2.5rem !important;
+      height: auto !important;
+    }
+    body.reduced-motion .reel-slot {
+      position: relative !important;
+      opacity: 1 !important;
+      transform: none !important;
+      pointer-events: auto !important;
+      height: 620px !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Retro-Techno Structural Grid Overlay -->
+  <div class="retro-grid-overlay" aria-hidden="true"></div>
+
+  <!-- Soft Blurred Neon Gradient Blobs -->
+  <div class="ambient-blobs" aria-hidden="true">
+    <div class="blob blob-1" id="blob-1"></div>
+    <div class="blob blob-2" id="blob-2"></div>
+    <div class="blob blob-3" id="blob-3"></div>
+    <div class="blob blob-4" id="blob-4"></div>
+  </div>
+
+  <!-- Semantic Navigation -->
+  <header class="site-nav" role="banner">
+    <a href="#cover" class="nav-brand">
+      <span class="nav-dot" aria-hidden="true"></span>
+      <span>DScape . Archive</span>
+    </a>
+    <nav aria-label="Exhibition Sections">
+      <ul class="nav-links">
+        <li><a href="#cover">00. Overview</a></li>
+        <li><a href="#section-records">01. Records</a></li>
+        <li><a href="#section-systems">02. Systems</a></li>
+        <li><a href="#section-networks">03. Networks</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ==========================================
+         COVER SECTION
+         ========================================== -->
+    <section id="cover" class="cover-section" aria-labelledby="cover-heading">
+      <div class="cover-header">
+        <div class="cover-title-group">
+          <span class="cover-eyebrow">Digital Scholarship, HKUST Library</span>
+          <h1 id="cover-heading" class="cover-title">From Physical Relics to Networked Nodes</h1>
+        </div>
+        <div class="cover-meta">
+          <p class="cover-subtitle">Interactive Particle Archive</p>
+          <p class="cover-hint">Hover to scatter · Scroll to explore</p>
+        </div>
+      </div>
+
+      <!-- 4x2 Grid of 8 Small Particle Canvases -->
+      <div class="overview-grid" id="overview-grid" role="list" aria-label="Overview of 8 Hardware Artifacts">
+        <!-- Populated dynamically from objects const -->
+      </div>
+
+      <div class="cover-footer">
+        <span>3 Acts · 1993 – 2012</span>
+        <span>Scroll Down to Enter Exhibition ↓</span>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 1: RECORDS
+         ========================================== -->
+    <section id="section-records" class="exhibition-section" data-section-index="1" aria-labelledby="title-records">
+      <div class="sticky-stage">
+        <div class="section-header">
+          <div class="section-title-block">
+            <span class="section-act-label">Act I · Physical Distribution</span>
+            <h2 id="title-records" class="section-title">RECORDS</h2>
+            <p class="section-subline">Physical media carrying the early digital catalog.</p>
+          </div>
+          <p class="section-intro">
+            Before cloud storage, data moved physically. From massive mainframe reels to small floppy disks, these carriers transported early cataloging records and database references across institutions.
+          </p>
+          <div class="section-progress" aria-label="Section 1 Object Progress">
+            <span class="step-pill active" data-step="0">01</span>
+            <span class="step-connector"></span>
+            <span class="step-pill" data-step="1">02</span>
+            <span class="step-connector"></span>
+            <span class="step-pill" data-step="2">03</span>
+          </div>
+        </div>
+
+        <div class="reel-container" id="reel-records">
+          <!-- Populated dynamically: item-04, item-05, item-02 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 2: SYSTEMS
+         ========================================== -->
+    <section id="section-systems" class="exhibition-section" data-section-index="2" aria-labelledby="title-systems">
+      <div class="sticky-stage">
+        <div class="section-header">
+          <div class="section-title-block">
+            <span class="section-act-label">Act II · Local Infrastructure</span>
+            <h2 id="title-systems" class="section-title">SYSTEMS</h2>
+            <p class="section-subline">The hardware and software running the library.</p>
+          </div>
+          <p class="section-intro">
+            Building the digital library required localized infrastructure. Installation discs updated core systems, KVM switches managed terminal access, and DAT tapes ensured nightly server backups.
+          </p>
+          <div class="section-progress" aria-label="Section 2 Object Progress">
+            <span class="step-pill active" data-step="0">04</span>
+            <span class="step-connector"></span>
+            <span class="step-pill" data-step="1">05</span>
+            <span class="step-connector"></span>
+            <span class="step-pill" data-step="2">06</span>
+          </div>
+        </div>
+
+        <div class="reel-container" id="reel-systems">
+          <!-- Populated dynamically: item-06, item-01, item-03 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 3: NETWORKS
+         ========================================== -->
+    <section id="section-networks" class="exhibition-section" data-section-index="3" aria-labelledby="title-networks">
+      <div class="sticky-stage">
+        <div class="section-header">
+          <div class="section-title-block">
+            <span class="section-act-label">Act III · Connected Era</span>
+            <h2 id="title-networks" class="section-title">NETWORKS</h2>
+            <p class="section-subline">Transitioning from local hardware to connected infrastructure.</p>
+          </div>
+          <p class="section-intro">
+            The dawn of the network era changed everything. IP cameras watched over the lab, while early NAS devices centralized files, bridging isolated workstations and shared digital spaces.
+          </p>
+          <div class="section-progress" aria-label="Section 3 Object Progress">
+            <span class="step-pill active" data-step="0">07</span>
+            <span class="step-connector"></span>
+            <span class="step-pill" data-step="1">08</span>
+          </div>
+        </div>
+
+        <div class="reel-container" id="reel-networks">
+          <!-- Populated dynamically: item-07, item-08 -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer
+  class="site-footer"
+  role="contentinfo"
+  style="
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:2rem;
+  "
+>
+  <div style="max-width:60%;">
+    # This curatorial archive was developed with the assistance of Gemini 4
+    Argon, DeepSeek-V4.1-Flash-1017, GPT-Image 2.5 Sunburst, and Qwen 3.6.
+  </div>
+
+  <div style="text-align:right;">
+    # <a href="https://library.hkust.edu.hk/news-events/news/dscape-an-antiquarian-landscape" style="color:inherit;">DScape</a>
+    /
+    <a href="https://library.hkust.edu.hk/ds" style="color:inherit;">Digital Scholarship</a>
+    /
+    <a href="https://library.hkust.edu.hk/" style="color:inherit;">HKUST Library</a>
+  </div>
+</footer>
+
+  <script>
+    // =========================================================================
+    // 1. REQUIRED OBJECTS DATA CONST
+    // =========================================================================
+    const objects = [
+      { id: "item-01-aten-kvmp", title: "ATEN Master View CS-1732A", category: "Peripherals & Input", era: "Circa 2000–2005", narrative: "The ATEN CS-1732A is a 2-port PS/2 and USB KVMP switch with a built-in 2-port USB hub and audio support, reaching up to 2048x1536 resolution. Tagged 'PC / LAPTOP' and 'HKUST LIBRARY,' it exemplifies the classic desktop KVM solution for managing multiple computers with a single console in early server rooms.", image: "./public/images/01-aten-kvmp.jpg" },
+      { id: "item-02-floppy-disk-3-5", title: "3.5\" Floppy Disk (US MARC/COM.CP Format)", category: "Magnetic Storage", era: "May 1999", narrative: "Manufactured by Professional Media Service, this 3.5-inch high-density floppy is labeled 'US MARC/COM.CP' and 'HKUST LIBRARY.' In the 1990s and early 2000s, libraries relied on such physical media to exchange machine-readable cataloging records between automated systems, serving as a crucial carrier during the early digital library era.", image: "./public/images/02-floppy-disk.jpg" },
+      { id: "item-03-hp-dat-160", title: "HP DAT 160 Data Cartridge (C8011A)", category: "Tape Storage", era: "Circa 2007", narrative: "The HP DAT 160 belongs to the DDS-6 generation, offering 80GB native capacity and 160GB compressed. With a native transfer rate of roughly 6.9MB/s, it was widely used by small to medium enterprises and lab servers for nightly unattended backups via SCSI or USB interfaces.", image: "./public/images/03-hp-dat-160.jpg" },
+      { id: "item-04-basf-reel", title: "BASF 9-Track 1/2-inch Open Reel Tape (080305)", category: "Open Reel Tape", era: "Label date: 1993-01-25", narrative: "This professional-grade BASF half-inch 9-track open reel tape features a handwritten label documenting a 1993 shipment from Control Data Hong Kong Ltd, involving an export vessel to Brunei Darussalam. It represents the standard practice of batch processing, archiving, and cross-regional data transfer using tape drives in the mainframe era.", image: "./public/images/04-basf-reel.jpg" },
+      { id: "item-05-floppy-disk-5-25", title: "5.25\" Floppy Disk (Library Database Reference Disk)", category: "Magnetic Storage", era: "Circa 1990s", narrative: "This 5.25-inch floppy disk features a textured black jacket with a central metal drive hub and an essential write-protect notch on the side, representing the standard magnetic storage format of the 1980s and early 1990s. Bound with the HKUST Library call number 'QH 301 B5' and tagged for 'Biological Abstracts/RRM,' it preserves the physical workflow through which early digital bibliographic indexes were installed and queried locally on workstation terminals.", image: "./public/images/05-silverplatter-floppy.jpg" },
+      { id: "item-06-innopac-cd", title: "Software Disc (InnoPAC / SilverPlatter Folio)", category: "Optical Storage", era: "Copyright 1997", narrative: "This blue disc is the installation and manual medium for Release 11 of Innovative Interfaces' InnoPAC integrated library system. Its presence, stacked with the sleeve of Release 10, reflects the software distribution model of the era, where libraries periodically received physical optical discs to update their systems.", image: "./public/images/06-innopac-cd.jpg" },
+      { id: "item-07-planet-camera", title: "PLANET Network Camera (ICA-107 Series)", category: "Embedded Network Device", era: "Circa 2007–2010", narrative: "The PLANET ICA-107 features a built-in microprocessor and CMOS sensor, using MPEG-4 compression to support 30fps VGA streaming with 802.11n and PoE. Compact and supporting UPnP and motion detection, it allowed regular users and small businesses to set up independent web-based video surveillance without dedicated capture cards.", image: "./public/images/07-planet-camera.jpg" },
+      { id: "item-08-lacie-nas", title: "LaCie d2 Network 2 (Single-Drive NAS)", category: "Network Attached Storage", era: "Circa 2010–2012", narrative: "The LaCie d2 Network 2 represents the evolution from direct-attached external hard drives to dedicated personal cloud appliances. Housed in a signature fanless, ribbed aluminum chassis, it served as a single-drive Gigabit NAS for small businesses and laboratories. Equipped with USB 2.0 and eSATA expansion ports alongside Ethernet, it supported centralized client backups, remote access, and direct USB drive mode, bridging the gap between local storage and networked home/office infrastructure.", image: "./public/images/08-lacie.jpg" }
+    ];
+
+    const curatorialRoles = {
+      "item-04-basf-reel": "Moving data before the internet meant moving the physical tape (1993).",
+      "item-05-floppy-disk-5-25": "The early localized digital reference workflow (1990s).",
+      "item-02-floppy-disk-3-5": "The standardized exchange of MARC cataloging records (1999).",
+      "item-06-innopac-cd": "The physical optical software distribution model (1997).",
+      "item-01-aten-kvmp": "Managing multiple localized servers and workstations (2000–2005).",
+      "item-03-hp-dat-160": "Securing local library servers with nightly unattended backups (2007).",
+      "item-07-planet-camera": "Extending the local network to physical lab surveillance (2007–2010).",
+      "item-08-lacie-nas": "Centralized networked storage replacing isolated local drives (2010–2012)."
+    };
+
+    // Embedded Chroma-Keyed Transparent WebP Data URIs (Works offline & via file:// without CORS errors)
+    const embeddedImages = {"item-01-aten-kvmp": "data:image/webp;base64,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", "item-02-floppy-disk-3-5": "data:image/webp;base64,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", "item-03-hp-dat-160": "data:image/webp;base64,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", "item-04-basf-reel": "data:image/webp;base64,UklGRtISAABXRUJQVlA4WAoAAAAQAAAAhgAAhgAAQUxQSKsEAAABoAVJtmnbGmvz2rZt27Zt27Zt27Zt2/a7trmxxvOaq+ecjz8RMQH0P3ojUuZKbQZNXLRq69ZViyYPblY2bThDN0aiupMOvAyyZf9PW4aWiaiNyLUW/mSyjf4zo/K71Bepyc4fDPh0ai6Hyoy8y78y7NUOkVTlrXuesT+Oj6cib4sHjP9tWjzVGNVuspxfhoZVSpqDLO/jWoYyQg77wVJvTaiIbFdY9g/NDAU4uv1gBa4KL13ETazGm2klS32DVfmlulSF37E6g/0Meer6WKnTXbJ0CbJiV3vk6G2ycte4ZehpsoJXe4g8YZ1QzYKs5MWuqV+Dz4sAlfWzok8yM8/GyfyRlT4NJsZD/kvgPsSKn40yilW/EqRMUH3pTpQBiPKclX/9Jb+OZd8K1uMG2yqamjCr2BT+CevycQR7hrM+J9mS9JtGfGnsWMo63W2ISxPQCpcWt4r1esEtKrlfM9xY1DTW7f0QYiJ80A63EtOaZQy+uXrx4s330tz3CjmFd21osagOIiJnkppLPkjBzUWkMsECK3MZ9KfDtbwvwy2ngAGMfSwTWfd2+4LHGa0ZV6B+dHWR0OSX4LY4rCUykV4XJNHhNkK9/n4rMllvwcCvMpJ49wqk0WHCk8C1QB+zkJ0h9gNdJJHGcxyzOtkb/SFOILKIZIw7n+wubsJwcRF1cF5Eso1W4vQTMRanA9mf1AfzcFIJp6WdMK/DAtAqGGZeaMV4CDOWEIshmXEthPXDZINwPQPiShaSMepTBwQtQWpoIR/MWsJsC+RLZaEWTH+QgjiBBmSxLUwDkHgwz4uT1T4w5UDCB1EWkOWhignhl2a8YkIHUNbJUxckFqNutjYYZgBIdphV1vrAbAJpDLPAWhuYVy6MGTBTrNWC4ewQjocwg60Vw5kEkZthO1hLjfM2LMIynIrWIgRguCdAMj9OJmvGM5wP0e3bwLDBSNZoPw4vs62MifPMEDAFiBvZFPMx4+4igY2Rvhe0JdRRBh4hIi0Sv81mQ6idjFxRhPsjEn8qKyzSEUYOxhBBO6E4MNgjJts9hjYTCOmCxXy+oIAIo34w9nuPkPRobG4r4fpz8Qa+YfR1JNTxExozP55RM1Uog8gRJX/Pg37GbySGJknwW9+rxw8/mCylL5qgPJLIvI0Eux7qpq4oGqaZd2GFJQ3oZQaJ36kVM4MNZbSyj2x0XNFJeTuosUYuOGxx39JHZbK3tjYuOGxyntOEWYLszm/qYadhGy3Tgi812R/jlQ5GE2IDDdwJA2FsVF4gP2HGeKq6EYRaPKC2k14Y6q+0d0kI17FeYcFyhBz2nLr6EHbsB6paaIBR0pdq2u4m+AyvVHQ8HEmY4aV6jkcgKdM9Us3xCCRpomtq2RGapI28TyXzPCSxZ5qpCn8vg+Ru+EUNr0qR9GkvqeBwPFJgyDEB2X4McJMac1yU61RGUqan81t53rdzkUqjTv4uh296DFJtotnf8QJLkpKK44x7j/V1TkpSddgW502YWz2jkcqN1ENuITydltdByjfSdt/72Q7/mSG5XKRLb+4uS89/sua7s3lQqYikXXfCwg26jpq5aNGiRQvH92tWOk0Y+l89AFZQOCAADgAAEDsAnQEqhwCHAD55MpRHJKKiISxXPRiQDwloAMgeLn53+TPeGbv8L+Tf9O99u1P3L76flF2B6IvUT4r/c/cZ9JfRH92/uB/pd+tXWy8wH7D/td7rv+y/Wb3Sf5L1AP6Z/mesh9An9l/TP/cb4OP3D/cP2sv//nOv956zvh350PlspBvj2N8AJ2faBYN+CWk70APGHzqahnlc///3AfuD///dIdS8dS2KuTzCRpGkfIiLEyhXzI8qmh73SOUC4COOJ+GWgC8o+7/Rr6dLHGPVupaXlZLb90ecQicq5gi0PzmKlKw9pFm20zKnE7yrTql7e8KwQu4aF9AkLKs/qxPtvT3x8OHBF5N9hfBAkZ8S37Yo+1rT6h2SHSf/R97DOhjzvbYZi+zXnJrXORBwjxUfTHvVIcY+ETD51lYsd//u3G6Gg4hJfPFMInHDDLfOLq2QHA8q1Q1+wDu/rc3pGzwdmzxATphaC3BE/g4JU/M+Ha2n+o4XTh5siGhg5N61NgqD3jPX5KKw3AcmZxep9Fp2b+CzneMfDlzd4iU0OdYQW2riGBg9qedhEGgHZdxFScTtXL2N3VEDxW1XelTxUDl28rzzDCmwIqZyXCv0m3Wi3X/73b4XNCLnshaiBvGBr1m/kAD+sBs3KffvHv3jmGz5+XqfL1PKBAzbAHXR+Rqrn6zv+4lEYeb9dI4mSwrtWhx+EKsv9OgjtaO/dYYnMpBTVj2CEG/mJg5tjXfcufZyRSF5YqLQTfF87vo5gsX88Zfx7bCi6rDwBnQ6q3K+znlj4fHJUtiJ/nvulUpL1sevadgF66dcCJ0wOj4hNVIajIMfvNAQIxEZuKdKqKf7tAjPOD7P+s3kBV/eOWGLMLBGwIb19HAaMdzOlpsewVP+onoxSMPjnf27YenT/Vko0MH7FqHIhqZrPYr5XFzipWF+WzVe0Zsarduz7hspJrIL/N3Eu8Eb96N9S8bf/7fhqiYfwppvuP0zBvCOv+lFk8dSirLgjTDzeeRkYN0R4teTMlYjhNZJijPHjZDweMg5CE51Nwcz5Xmn4Hv2vszAouKLOy6mSIQU4oucA8vqaqpMaiml3LSs769JfdhFl6Bmm5bKW/N97SVLyfZc9Du5NEpL/i2atn+GfUM0+ywac1aasHZsHNQe8xHsY3OEogKUh5/XZexQhcEJ3kgQC0piYrdpSUivAQZ+4Bm/TFq5RYPi20Uw+UwfNNeHVxjorrx767ZbLwgikEHoap/gneZUyiucfdxeVvKAtf7SyFiAydafmXkH5ytAO7RNRh17tJ1+Ttaoa/uaD+XDslZsF0IUgl04Oc2GL1i4zTK/RgAoKUKs+GomTeZJeVEeyI9k9OmU20oQBP8KSysZ5VUNM1Rwym5PF8Zd5lrVyQXlQru12DAy0Rq0JA2sJfAHO8dD2SJBZy1KNcGyBD587w2upNVbS1ISTOeD6BDaAXpt8UAHZuIeA0EyHxOZwjYyX233UtXF1xvl/Ccbz8BqHfHXAu2f8YMHSTI998xfnsFYQ1i2YDj5fujYMdqaTZer90aplaUdBSglyk+4AnuuzxlNkAXUs9StBKc/kbcQe5RBFbfTmUSbTnpYVjmcMYeACUy99xPlB/knzxQIxSVodpAJzjyInUsVjkRvh/AJ4Sw1h+NSQaDw+i61NfN9IlvFdwrKIb41JpMaiTzmCfh5asyqzhZ3peDTLvvuiUA/CjMNEMG3XBNvs9uSRsTSMrKr+acMGEnqYk6y6rszg0DhSGH4ov2UpMHclTNhi3hhMzHIarWouop4aCmhaCPCBk5xPUQhxgXNNS9N8Zs+XPMAY1OWCxEr3n3dgeoXG+OD1PoDaN7mcX9VOkCzlNwnyxqwXtbhusc2yC4X85aDaayQv5J1gyraBpBS6ekgFqBfru/ePv79JvSepePbCA3QLIWfhoiNSSoKLoX7r8JiF+Bqbb8WkuKdFO+dDCBiZTXPauIF+7xJqh9oALSWgd36img9pGoxYZvHDQDJCqxQbEpZ+opq7MR5a+3EO9aeJgAyFdFbqnYB0l7BG7IBE07zHIMddB4s8LXQtiZJ27bJ3JymFEaGfEiDItOD4Yoqwinc2xK/7mmsbgIZUAbqQN5fuRLqUOF3ylyp04CqPZf6kKdVbLbMpcqeUQenQYXu77LkemudU6CkC1WEdxxhNveRRdvUrMN/61IwWrgMM/SUKJ3rt698+laGJxQgVjaiGNhHHJnX7SqVM/Iz0hdQQ/fuElEHsGmz9AdLs0TPMe6TPKzPJKX/PxxIZwQ6NfuqmKSqNdQPDs8f+vQAxxkKkEDaBahaR8BnXcx+RAC/BgH21X3EjJqQ6m9AjZdItRnSpqTjjZo3sEQz7IzR7Ip3w6cWYv7BIbufCsNY4i/OrBgbot5AvgX+0k95nZtgRJXluIBpBQIuH/u4XbLPB5OFdeJ68kYSxk6cgqohKL0B6yaHtI6pz5ZxQviDzNJ74rgZ/njEwGUspZfTerJXulwP+HZBueLH4bE/XCn5LUlDM3iOfK5K8Ix23rFA31wCzSDGiNTcy8r6J44mSr62OHGiE08YZiRZF0Dqt261eZTiEmFgwz8SLmzy/SXRUoCac79l1Gdym/3rqH69k9EhcmNkiBzjDqYtPeFm6r5vaaMaUujJ5ubEmpjsPyeZ5UZm6Gudr9EkQNGLU51y7IyKzF92u203jsxLtlvBmYfRk3d2NCRUefWQBI29nF2TwR7VWjZ8ozF4cD2ihpfG70lkuoGJ6bPhiABmHhkOcZjqXC9JFtp8qQj7ndQqkg1dpS67A6fX97ooy5zvBrtemlghgbWUp9plb4nw52vQd6e/woG0wWLRCv/gRF8RkHXIOALKPA/27poDM0ESA2vD2vzHMmoVwYGO6ZlmXX5Vpw+u9+n95ecSqai9ImN1yeyAeJwJlUmhkZMOpucEWitbmjXwQSh7+srn8ExDgLz1TCAKxG7JZskLos6y1KQ4keYFW6d2wZavQC9T0J4UivjHH1c9Qc0r4gV5RdROEBYsHUZEIJVB85q4rtQzrVAiI133UQ3gWY8ULR8Zsu3P0cAstptemfp/FNWo7F0JnPtr7pHZDG2wxPECgvR3HwLVtB6B7B2UVnL9srt6hqHnqlshl7Jn9b8CsO8RfAXd/7aLXsysVkdAnfIr+iK6mK4a8HQDAAFSt5rlUes9ffoXU/AjYE6lRdRSsD4CfHz+mak6t57Ra/iUvI/lQjjBv3/i3TjunRgPhnVZh0DHR18geS3D5ZATCU2pVU5er8FGWXSHloR2NXA5VcXQgLBLItvKb1g2NqFooIcDIzNBmGWBx1CZDisn/iq0OygItm8gZmagaL/RnGsUTzTLD8VmtYFTChcHBg10D7TNi7v6gm89Tzs7l3eOm0dd+9i8Z7YrV/zCa66N3jEAxUEMpiqVqMQrfe2/2CtnBlPszKAf5R7baSUBdgyw+tqm2MGTEhQRV89hn4YEoqeFGY0al3p3eoiNrPdPAs1TMePCkBM+kS1pk+PLZrXC4uwO3Y03j6m1ZIn9n6M7nHmJ96yRsldruvOFAMPqEk1g5eHi0Ytqkq95t19DUKIlYlQ2p0LkyheKzEQSBSdr9GptCvJc/yX9Zv9WQrHTv5SYY65oMJ2cbSWnNoDk47HGgedmAKZn4UUzi8HyqBJPkP3+RDLPnhg8iVg6Al1ruM0F/WrOVMYDCWDsCJrIgeycENwLKci4ttrJWdmT3ktAjgPjm0buwvAkYPKUUGttWiS2wDEoQlAo3g8Q6wKzoxiA+nd5KjYg0AF6zQqqKDYAOlVV2oO92bmWushNJwBbSARTETr5sBsed8PhZdE2lHee+Kbmg4zcZcEGmBUqSrA/QQDdDoRQaEgqXoBp+9d4S8ByDd/y8mkd6vMUiCIiwF3oxG+zqBBBwsVDZKyitXV2uNMGM1AJStVHKlHgQAuYsHS1MxSgBdvIja/03kFFdbJCt5tyJbkJwyOU/hsiZp3mrql95R6l50gqizvjQqvH1SWkRmh2d9i5JjyCfdgrvR75zxbZX8qRaCsKSMBUtRxfpvdeSf3hZilAHmzD7C6jU/XtOZEwFq/xX2sX/mxl6XLWJoblVWe4xijYEjOtd4uwa0FsKtZHRDZdagDJaHBV2xELOAmNOtgA5X+BOLapfdjPAdskZwIXcCDBAaGPq+vt3zKjNJx8mtoYGqv7px0teXTMNYrZI1mkbv5WA+RawZkVzALj6QOMoaN2skOhV+pA7tmJyk9CvvEzbG2SottnlDvOzkEXCCVbusy/skQeYRwvUPloq93i2FBDG5uvGJpg3w0XB5jl/RutrEdwsWG3uRHYsTtW/6HfmQl3KhoNqV0GJZbl1gYhxhaAo2ROb9KPVgYaOnaAUMlPEpgMVhB2iCifvQdnrgXDm2yJQ2ht0Yqlt7HQwF/DiUR24gW9HrNIRkcwpDWTHT/AztqFGtpEd6vhDWk7pj0k8UCiJTmPSAT6XSIKctSqBrgT/QhU/hcY+xoEkvHGFLgG+n3wDat7FRQhxYTB0m3J/Z8TZ0lQu+o0qyCNPue76KKaGW1xg8g3dUOlSkUTpwEwdMhp/geaXvJqWi6ndGo/1LoRgrgCs8IX9Zir9M5NrTjZu7cG7e6jWZaRDhXnpomOiPv+lM8qAolAT4ZnzHu5zHU9kExBONIvdUrzTjiEcfS8/LRrBifUVFD5kyu2o/EPqDvGRUeWfhSM858bvlp02OZFa/3mj4IzYeboFjbIhXaJB7tRCrOSsp1T8GsgpxAAAAAIkaQ8AAAAAAA=", "item-05-floppy-disk-5-25": "data:image/webp;base64,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", "item-06-innopac-cd": "data:image/webp;base64,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", "item-07-planet-camera": "data:image/webp;base64,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", "item-08-lacie-nas": "data:image/webp;base64,UklGRnILAABXRUJQVlA4WAoAAAAQAAAAhgAAhgAAQUxQSL4CAAABkATbtmk7+75v27aNXqymbdu2bdv2Z2zbxlds4/vEuGffFXUiYgLof3c911Itxqyf3ihYX7NMQqv0WnTiRbH4+pOk1n6K1hhVG735+gfx48U3Z1W21BLfK+IX5u7vl6inEQanxa++t6KxqxY0EGosPDmspAF3yar48tnaJi6s3VCNEKLw9MgSBlwp99T05dM1jZ15eqA2IUTBsSEJeuxQtgRfPlhSw5YX5a4kQojc3d2DFD4oWx4hRPGt6RWMmVDuSvXli6Rm7hxQhnRCiML1tgzkcCDEagYyeMi3A6E4FoQkHQiZ7iDsM5Yvk4cL9vJl8HDUAoRjKJyzB2GXCQiZ7iCk6EB44AvCegLhoQ8IawiEh77yZfKwgeTP4CHTC4R0AxDO24NwwAKEQyiccwBhmyEIOV4gJBMIT31AWEvyZ/LwyB+EdSR/Bg8PfUDYog/CZUcQjliCcMAMhGsuICTpQLjvC0IqgfAiEISNBMI9HxC2GYBwzg6E0zYg7DEBIdMDhDQC4WUgCGsJhBeBICQrINx0A+G4OQgnrEC46gzCNn0QXviDsJFAeBcIwkYC4b4XCEdMQTjvAMIVFPYagfDMD4T1BMKHcBCEPwjnFAyeJRAEy9wJg3OrBtQKVgD46m4dCHkGIOQbgbBagSCjhkIAPO9hTNJzkDfVgRhkIC2UWJTuYiViUrJHbfUJgNxx1sTnLXmKU4KI013SXCxPvPaV5GknQ+JVv4UUhQsciFfngTlCxv0JxKsy/L2Q8UE9HTFrL2TMHWdF7EpxIIIYdlDfnfo64tj4pspyp1gR06bd9+WraKcvce5Qf91TddxpoBD3hhWmZv2yvEkWpIm68D7HCn/FgUjSUKfGm978pHt1FNJYs8oL7v5Y4Rx70mK9xJEXir7rWDxpt3f77blfe9pBn7TduuaUpOS5za3p/31WUDggjggAAPAqAJ0BKocAhwA+eTaWR6SjIiEplKx4kA8JQBpVRx/YPxN2aPoX5Ffkr1OfCfc3KY+jGd7+L/QT/wvUg8xH8W/pH7R+0l+gHug/2/qAf0TqQPQA/QD0zPYw/bL0gv//mku2v48Pj0to4zqc7yfjVKX/Yf9326Gm/1r/e+D7/bezdMp/k9Hnpz3nx43+t/aH0f/Sn/X/uvub/3f/nnZLreqZ/7DIztcZjr28mfVO2oPDqmXFTtrRWekjhMCwml+ax9bx6iG8riVFCh/uGtCJqBoMwXj3Dtb3LBB/+UJsc4f5adAP4iFGLnTuWVJuPjhE2qrkR7AfSMWTjB5B+Gz6p1HN7srpVEdF3rPLaXQUiSRnXQ7rj9gsLCpl5mzznVkjj+1JIzrW6RVBr9/JqH//smDf/+8+ILsLKmQjIV3/CpN4GESi3bVUwUrLJ9AgP5jswvgghthcgHcLc1x/chDi1GAA/vytHH4IJb9BFzFHvgy1kUlOdyn3F3DbzT3vszqV+bxCMI2MBbdkEOLjZ8GyEBwYV4/E7kgGc7NXlbxGztd5J7e6lct/Q5ysfvQ71zWn8iY4d0IP65HdROpOnc20Ma0uz6e7b05y6u4ygEELH9Hp6znij6nuF5PXLRmKLmb//w1R96cmySAaqqzcfrqdDf78FdEtjP5eKk8++GUTLHVhxc2vSZed/r1Drhl3/yYgnbznC2Ou3Rs+r5zWcymwcyV2WRK4PUprzXgxFB2Z9RMRwq/7NE8jueB08qBmjQJsG4M9DXsWewzeLUqEOd0FAq5Dtg5jQMShleOOhHP4deh5gBuK9g5acD7l5kerDW8s0fsePzFz+0dS95NZQLnpPDyU1+fCPf+VhSEXe/Cq1QCZ2Rf3POO8wOGtZkNqW9r4jh4+JoSy8NYlSJScfNZDINJ0MZfD6jE7w9PZx8V+foiFZ7VbUmgi13C6jc1PCblzgo17lOmBL6SmG9BntJ9moym/fIWEAgevOTplXq3UMuSs0Bix5iVoB0FmmAs+vmMYy+0tDWoGcnTBY5ShJqP5UynaPslhMCH8r9c8hJ/dbCxRcs+hqT6NTtDD6CgX+FA7WC2fvBT4yYMXN8ScGEk96NfMNXxMB0VjxX36I9qq5N2KnDN5gRP/jlMtr0CQIx3qg5eZji1OTI6tZQJxKJ4KE+PovMKP2CuI5Svehq5hro/oqJ3Va+0DcZqpB7Q9fqC1di0uuH2f8i9wEEygcTBFPQAbNzT9o5OZoODxJP+Ir3UQZTKGqmntPBJd6v/8xRvgkXGb301Bvhnix7UcAIR90ZLRWHrvKeXENmwLZaoTE0ivjTxtKaaO88iWMR5SmDstw9KnvOMmB1ifMuqu00/OXJc+BHYpCmDy9nRHN8ru/ndnEalNcJS4vuSr74fTBizK6FNnKx8eNMUVagdSqISgb6NNNk1r5nlhMadOGxm8562PdpwVUYcXnTE5V1jVWyR1mbBhujqiySKLdNrU5XlsuiszXQ7G13oYssmzrUjGlakds/HI8EvMTUBnIRLGDF+z/vuQpa1IhlQ1d2bMzXtHbkSn3cE/wxSibK+sMx9N4oSEX/2IctrzFw1HwSykJl1K+W+xLXazusWWl0ORmm0WiWjudnCK9lp1aJkpsqb+sDkq1ZW8VQUI2OXQF1NAY0NKBelKJmXascBAlHO/a0eFas1aX6okWy4i5IV0GYpWDpaEzptVapTF5MxiD5kN2bFG/EK1uSCwaLO9WgpSi7urAj382vUbF9a0egyEAqm2MiBN6lAJ0S+MJ1kZqw6XaNczXmw+Xx3P6wv+wh1OdKylZU2+92Ig/iUU88dxWNYcnxCEZvP3PC0qDJ0ZGJERzEnzshhoFnDmq7JjyTRbMrl+E1cukoi5NaHfraeP+poQ6CvywCLbTAceyMo7tdgIOxQb6lrS1HGOtuqKU7FLPBmbUaDMY+9Wj+8VaGGTYhbbUdRsQe/yN9jcrUxM4fJBMbnB5T7rEsb4B2XvtgXLXVk65CzmJE7XYbrDR/gn2mHIX0T8+WktoM6IL5G3bNo/3y2CtoZIqKxzN5RdTcxel+QO0DybOKw5Tcxqan1EcINhxAkDDerFQ1MpaAvfkwddN6QEJzqEWjsIHW99QKoV43vrlKnHw0zgyaCi3JjL9JDh+Z1vtqYkId5LLitIrvkE/Vxor2s1oTm6UnjQDTQ+DP2UFtawiQzUsOHe5zj5qvIxiNnN/bsEOGxrbm9ttxzIBdH30MdQCjAhSxpr7ef5c2+9kknxpghH1tT8+wsHZpVGE14TqQjw0GBzqcQV+cGNW40OZlrsuZw3xj1U5scVGlLa06kYLL+m2VH+FNp/l09YFp6WL+hkm8NvbqO3EpHp1W9TJTqGKiZrQi5nnvxjZyh/v3U4IuYrCyqHMCREiRhiBWUjJyB7zbIs16zphgfBSP5uYAZlU8/rI2L6frOVVjKgXlFdfi3H/tcT//9+xvoVcDnuTLVLwn/qLLcaxIjA06w0h3bj/pdecRZupXf63/tC0TimG8zT2km0T+S3Ciuf7R+1Dd7c6Oww3OW0on9On6M2a7cSCpqEnL8nmb0aZISBhSMcP7kZ1f8HV5IdDWgHtnMtRq2dUmYCx+qP+w0tcTnj3DNrLa036hswXRUBmZxt01xYv9u93V4frHxwp2+Id06uRqA6kVyyt6chhPoF7pLrp+j7ucjl58ZPbWCFmPqZNXFo2gNA8Fi/nbrj5nl+LC2vm3kYAv/Q4SBNquTZmxYpc6kglINYj3/xwsDp/Js0bf8JL1lZYSPrbfhtTD6USOog/uwSUKtAbJk8Af3iwz7GPpfi7RucZO6zYwm6o4az+yMl2iT2fqmyU2GVe7EKycBbhftDd9Ajtn1P/qS//MuIXG9A1hDPoGsXo+VURf8qoxxvDKIWOTTh/VCGgwAAAA=="};
+
+    const objectMap = {};
+    objects.forEach((obj) => {
+      objectMap[obj.id] = obj;
+    });
+
+    // Curatorial Sequence Definition (Non-numerical order)
+    const curatorialSequence = [
+      // Section 1: RECORDS
+      { id: "item-04-basf-reel", sectionId: "section-records", reelId: "reel-records", seqNum: "01" },
+      { id: "item-05-floppy-disk-5-25", sectionId: "section-records", reelId: "reel-records", seqNum: "02" },
+      { id: "item-02-floppy-disk-3-5", sectionId: "section-records", reelId: "reel-records", seqNum: "03" },
+      // Section 2: SYSTEMS
+      { id: "item-06-innopac-cd", sectionId: "section-systems", reelId: "reel-systems", seqNum: "04" },
+      { id: "item-01-aten-kvmp", sectionId: "section-systems", reelId: "reel-systems", seqNum: "05" },
+      { id: "item-03-hp-dat-160", sectionId: "section-systems", reelId: "reel-systems", seqNum: "06" },
+      // Section 3: NETWORKS
+      { id: "item-07-planet-camera", sectionId: "section-networks", reelId: "reel-networks", seqNum: "07" },
+      { id: "item-08-lacie-nas", sectionId: "section-networks", reelId: "reel-networks", seqNum: "08" }
+    ];
+
+    // =========================================================================
+    // 2. DOM GENERATION: COVER 4x2 GRID & EXHIBITION REEL SLOTS
+    // =========================================================================
+    const overviewGrid = document.getElementById("overview-grid");
+
+    curatorialSequence.forEach((seqItem) => {
+      const obj = objectMap[seqItem.id];
+      if (!obj) return;
+
+      const overviewCard = document.createElement("a");
+      overviewCard.href = `#${seqItem.sectionId}`;
+      overviewCard.className = "overview-item";
+      overviewCard.setAttribute("role", "listitem");
+      overviewCard.setAttribute("data-object-id", obj.id);
+      overviewCard.setAttribute("aria-label", `${seqItem.seqNum}. ${obj.title} (${obj.era})`);
+
+      overviewCard.innerHTML = `
+        <div class="overview-role-tooltip">${curatorialRoles[obj.id] || obj.category}</div>
+        <div class="overview-canvas-box" data-canvas-mount="${obj.id}" data-canvas-type="overview"></div>
+        <div class="overview-caption">
+          <span class="overview-name">${seqItem.seqNum}. ${obj.title}</span>
+          <span class="overview-era">${obj.era}</span>
+        </div>
+      `;
+      overviewGrid.appendChild(overviewCard);
+
+      const reelContainer = document.getElementById(seqItem.reelId);
+      const slotIndexInSection = reelContainer.children.length;
+
+      const slotArticle = document.createElement("article");
+      slotArticle.className = `reel-slot ${slotIndexInSection === 0 ? "is-first" : ""}`;
+      slotArticle.setAttribute("data-object-id", obj.id);
+      slotArticle.setAttribute("data-slot-index", slotIndexInSection);
+
+      slotArticle.innerHTML = `
+        <div class="particle-container" tabindex="0" aria-label="Interactive particle visualization of ${obj.title}">
+          <div class="particle-badge-bar">
+            <span class="particle-seq-tag">OBJECT ${seqItem.seqNum} // ${obj.id.toUpperCase()}</span>
+            <span class="particle-interact-hint">Hover / Play</span>
+          </div>
+          <div class="particle-canvas-mount" data-canvas-mount="${obj.id}" data-canvas-type="reel"></div>
+          <div class="particle-story-callout">
+            <span><strong>Curatorial Context:</strong> ${curatorialRoles[obj.id] || ""}</span>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-top">
+            <div class="info-meta-row info-stagger">
+              <span class="info-category">${obj.category}</span>
+              <span class="info-era">${obj.era}</span>
+            </div>
+            <h3 class="info-title info-stagger">${obj.title}</h3>
+            <p class="info-narrative info-stagger">${obj.narrative}</p>
+          </div>
+          <div class="info-card-bottom info-stagger">
+            <span>DScape v 1.0.5-3</span>
+            <span class="info-id-code">${obj.id}</span>
+          </div>
+        </div>
+      `;
+      reelContainer.appendChild(slotArticle);
+    });
+
+    // =========================================================================
+    // 3. PARTICLE CANVAS LIFECYCLE & INTERSECTION OBSERVER
+    // =========================================================================
+    function getCreateParticleCanvasFn() {
+      if (typeof window.createParticleCanvas === "function") return window.createParticleCanvas;
+      if (window.ParticleFX && typeof window.ParticleFX.createParticleCanvas === "function") {
+        return window.ParticleFX.createParticleCanvas;
+      }
+      if (window.particlefx && typeof window.particlefx.createParticleCanvas === "function") {
+        return window.particlefx.createParticleCanvas;
+      }
+      return null;
+    }
+
+    // Built-in interactive particle engine ensuring 100% reliability on all browsers & file:// protocol
+    function createFallbackParticleCanvas(container, config) {
+      container.innerHTML = "";
+      const canvas = document.createElement("canvas");
+      canvas.style.width = "100%";
+      canvas.style.height = "100%";
+      canvas.style.display = "block";
+      container.appendChild(canvas);
+
+      const ctx = canvas.getContext("2d");
+      let particles = [];
+      let animId = null;
+      const mouse = { x: -9999, y: -9999, radius: 45 };
+
+      const img = new Image();
+
+      function initParticles() {
+        const rect = container.getBoundingClientRect();
+        const w = Math.max(220, Math.floor(rect.width || 380));
+        const h = Math.max(160, Math.floor(rect.height || 260));
+        canvas.width = w;
+        canvas.height = h;
+
+        const offscreen = document.createElement("canvas");
+        offscreen.width = w;
+        offscreen.height = h;
+        const octx = offscreen.getContext("2d");
+
+        const scale = Math.min(w / img.width, h / img.height) * 0.82;
+        const drawW = img.width * scale;
+        const drawH = img.height * scale;
+        const offsetX = (w - drawW) / 2;
+        const offsetY = (h - drawH) / 2;
+
+        octx.drawImage(img, offsetX, offsetY, drawW, drawH);
+        const imgData = octx.getImageData(0, 0, w, h).data;
+
+        particles = [];
+        const gap = config.particleGap || 4;
+        for (let y = 0; y < h; y += gap) {
+          for (let x = 0; x < w; x += gap) {
+            const idx = (y * w + x) * 4;
+            const alpha = imgData[idx + 3];
+            if (alpha > 45) {
+              const r = imgData[idx];
+              const g = imgData[idx + 1];
+              const b = imgData[idx + 2];
+              particles.push({
+                ox: x,
+                oy: y,
+                x: x + (Math.random() - 0.5) * 16,
+                y: y + (Math.random() - 0.5) * 16,
+                vx: 0,
+                vy: 0,
+                color: `rgba(${r},${g},${b},${(alpha / 255).toFixed(2)})`,
+                size: Math.max(1.8, gap * 0.6)
+              });
+            }
+          }
+        }
+      }
+
+      function render() {
+        if (canvas.style.visibility === "hidden") {
+          animId = requestAnimationFrame(render);
+          return;
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const distSq = dx * dx + dy * dy;
+          const maxDistSq = mouse.radius * mouse.radius;
+          if (distSq < maxDistSq && distSq > 0.01) {
+            const dist = Math.sqrt(distSq);
+            const force = (mouse.radius - dist) / mouse.radius;
+            p.vx -= (dx / dist) * force * 3.8;
+            p.vy -= (dy / dist) * force * 3.8;
+          }
+          p.vx += (p.ox - p.x) * 0.12;
+          p.vy += (p.oy - p.y) * 0.12;
+          p.vx *= 0.78;
+          p.vy *= 0.78;
+          p.x += p.vx;
+          p.y += p.vy;
+
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        animId = requestAnimationFrame(render);
+      }
+
+      canvas.addEventListener("mousemove", (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+      });
+      canvas.addEventListener("mouseleave", () => {
+        mouse.x = -9999;
+        mouse.y = -9999;
+      });
+
+      img.onload = () => {
+        initParticles();
+        render();
+      };
+      img.src = config.imageSrc;
+
+      window.addEventListener("resize", () => {
+        if (img.complete && img.naturalWidth > 0) initParticles();
+      });
+
+      return { canvas, stop: () => cancelAnimationFrame(animId) };
+    }
+
+    function mountObjectParticleCanvas(targetEl) {
+      if (targetEl.dataset.particleMounted === "true") {
+        const existingCanvas = targetEl.querySelector("canvas");
+        if (existingCanvas) existingCanvas.style.visibility = "visible";
+        return;
+      }
+
+      const objId = targetEl.getAttribute("data-object-id");
+      const obj = objectMap[objId];
+      if (!obj) return;
+
+      const mountNode = targetEl.querySelector("[data-canvas-mount]");
+      if (!mountNode) return;
+
+      targetEl.dataset.particleMounted = "true";
+
+      const resolvedSrc = embeddedImages[obj.id] || obj.image;
+
+      const particleConfig = {
+        imageSrc: resolvedSrc,
+        width: '100%',
+        height: '100%',
+        particleGap: 8,
+        particleShape: 'circle',
+        filter: 'none'
+      };
+
+      const createParticleCanvasFn = getCreateParticleCanvasFn();
+      if (createParticleCanvasFn) {
+        try {
+          const instance = createParticleCanvasFn(mountNode, particleConfig);
+          targetEl._particleInstance = instance;
+          setTimeout(() => {
+            const c = mountNode.querySelector("canvas");
+            if (!c || c.width === 0 || c.height === 0) {
+              createFallbackParticleCanvas(mountNode, particleConfig);
+            }
+          }, 250);
+        } catch (err) {
+          createFallbackParticleCanvas(mountNode, particleConfig);
+        }
+      } else {
+        createFallbackParticleCanvas(mountNode, particleConfig);
+      }
+    }
+
+    // IntersectionObserver with 1.5 viewport heights rootMargin (`150% 0px 150% 0px`)
+    const canvasLifecycleObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const el = entry.target;
+          if (entry.isIntersecting) {
+            mountObjectParticleCanvas(el);
+            const canvas = el.querySelector("canvas");
+            if (canvas) canvas.style.visibility = "visible";
+          } else {
+            const canvas = el.querySelector("canvas");
+            if (canvas) canvas.style.visibility = "hidden";
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "150% 0px 150% 0px",
+        threshold: 0.01
+      }
+    );
+
+    document.querySelectorAll(".overview-item, .reel-slot").forEach((el) => {
+      canvasLifecycleObserver.observe(el);
+    });
+
+    // =========================================================================
+    // 4. GSAP & SCROLLTRIGGER TIMELINES + REDUCED MOTION CHECK
+    // =========================================================================
+    gsap.registerPlugin(ScrollTrigger);
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReducedMotion) {
+      document.body.classList.add("reduced-motion");
+      document.querySelectorAll(".overview-item, .reel-slot").forEach((el) => {
+        mountObjectParticleCanvas(el);
+      });
+    } else {
+      gsap.to("#blob-1", {
+        x: "12vw",
+        y: "10vh",
+        scale: 1.12,
+        duration: 9,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+      gsap.to("#blob-2", {
+        x: "-10vw",
+        y: "14vh",
+        scale: 0.9,
+        duration: 11,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+      gsap.to("#blob-3", {
+        x: "10vw",
+        y: "-12vh",
+        scale: 1.15,
+        duration: 10,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+      gsap.to("#blob-4", {
+        x: "-12vw",
+        y: "-8vh",
+        scale: 1.08,
+        duration: 12,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      const sectionThemes = [
+        { id: "#section-records", b1: "#FF007F", b2: "#FF8C00", b3: "#FFD700" },
+        { id: "#section-systems", b1: "#00D0FF", b2: "#39FF14", b3: "#FF007F" },
+        { id: "#section-networks", b1: "#39FF14", b2: "#00D0FF", b3: "#FFD700" }
+      ];
+
+      sectionThemes.forEach((theme) => {
+        ScrollTrigger.create({
+          trigger: theme.id,
+          start: "top 60%",
+          end: "bottom 40%",
+          onEnter: () => {
+            gsap.to("#blob-1", { backgroundColor: theme.b1, duration: 1.2 });
+            gsap.to("#blob-2", { backgroundColor: theme.b2, duration: 1.2 });
+            gsap.to("#blob-3", { backgroundColor: theme.b3, duration: 1.2 });
+          },
+          onEnterBack: () => {
+            gsap.to("#blob-1", { backgroundColor: theme.b1, duration: 1.2 });
+            gsap.to("#blob-2", { backgroundColor: theme.b2, duration: 1.2 });
+            gsap.to("#blob-3", { backgroundColor: theme.b3, duration: 1.2 });
+          }
+        });
+      });
+
+      document.querySelectorAll(".exhibition-section").forEach((sectionEl) => {
+        const stage = sectionEl.querySelector(".sticky-stage");
+        const slots = Array.from(sectionEl.querySelectorAll(".reel-slot"));
+        const pills = Array.from(sectionEl.querySelectorAll(".step-pill"));
+        const numSlots = slots.length;
+
+        slots.forEach((slot, i) => {
+          const staggerItems = slot.querySelectorAll(".info-stagger");
+          if (i === 0) {
+            gsap.set(slot, { opacity: 1, x: 0, pointerEvents: "auto" });
+            gsap.set(staggerItems, { opacity: 1, y: 0 });
+          } else {
+            gsap.set(slot, { opacity: 0, x: 100, pointerEvents: "none" });
+            gsap.set(staggerItems, { opacity: 0, y: 20 });
+          }
+        });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionEl,
+            pin: stage,
+            scrub: 1,
+            start: "top top",
+            end: () => `+=${window.innerHeight * numSlots}`,
+            onUpdate: (self) => {
+              const p = self.progress;
+              const activeIdx = Math.min(numSlots - 1, Math.floor(p * numSlots));
+              pills.forEach((pill, idx) => {
+                pill.classList.toggle("active", idx === activeIdx);
+              });
+              slots.forEach((slot, idx) => {
+                slot.style.pointerEvents = idx === activeIdx ? "auto" : "none";
+                if (idx === activeIdx) {
+                  mountObjectParticleCanvas(slot);
+                }
+              });
+            }
+          }
+        });
+
+        tl.to({}, { duration: 100 });
+
+        if (numSlots === 3) {
+          const s0 = slots[0];
+          const s1 = slots[1];
+          const s2 = slots[2];
+
+          tl.to(s0, { opacity: 0, x: -100, duration: 10, ease: "power2.inOut" }, 28)
+            .fromTo(s1, { opacity: 0, x: 100 }, { opacity: 1, x: 0, duration: 10, ease: "power2.out" }, 33)
+            .fromTo(
+              s1.querySelectorAll(".info-stagger"),
+              { opacity: 0, y: 20 },
+              { opacity: 1, y: 0, duration: 6, stagger: 1.5, ease: "power2.out" },
+              38
+            );
+
+          tl.to(s1, { opacity: 0, x: -100, duration: 10, ease: "power2.inOut" }, 61)
+            .fromTo(s2, { opacity: 0, x: 100 }, { opacity: 1, x: 0, duration: 10, ease: "power2.out" }, 66)
+            .fromTo(
+              s2.querySelectorAll(".info-stagger"),
+              { opacity: 0, y: 20 },
+              { opacity: 1, y: 0, duration: 6, stagger: 1.5, ease: "power2.out" },
+              71
+            );
+        } else if (numSlots === 2) {
+          const s0 = slots[0];
+          const s1 = slots[1];
+
+          tl.to(s0, { opacity: 0, x: -100, duration: 12, ease: "power2.inOut" }, 44)
+            .fromTo(s1, { opacity: 0, x: 100 }, { opacity: 1, x: 0, duration: 12, ease: "power2.out" }, 50)
+            .fromTo(
+              s1.querySelectorAll(".info-stagger"),
+              { opacity: 0, y: 20 },
+              { opacity: 1, y: 0, duration: 7, stagger: 1.8, ease: "power2.out" },
+              56
+            );
+        }
+      });
+    }
+  </script>
+</body>
+</html>

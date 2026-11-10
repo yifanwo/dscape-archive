@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DScape Archive</title>
+  <meta name="description" content="DScape Archive — an interactive 3D archive of library's digital relics.">
+  <meta name="theme-color" content="#f6f1e7">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%234d5a3d'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23f6f1e7' stroke-width='1.6'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap" rel="stylesheet">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+  <style>
+    :root { --bg: #f6f1e7; --panel: #fbf8f1; --line: #e7e0d1; --ink: #1b1a17; --muted: #6d685d; --sage: #4d5a3d; --sage-ink: #ffffff; --sage-tint: #e9ebdc; --chip: #efeadd; --shadow: 60, 48, 28; --ease: cubic-bezier(.22, .8, .24, 1); --serif: "Newsreader", "Iowan Old Style", Georgia, serif; --sans: "Nunito Sans", "Segoe UI", system-ui, sans-serif; color-scheme: light; }
+    .hero[data-light="dusk"] { --bg: #14170f; --panel: #1b1f15; --line: #2d3324; --ink: #f2ecdf; --muted: #a8a392; --sage: #a9b98a; --sage-ink: #14170f; --sage-tint: #283020; --chip: #262b1d; --shadow: 0, 0, 0; color-scheme: dark; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; overflow: hidden; background: var(--bg); color: var(--ink); font-family: var(--sans); font-optical-sizing: auto; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    button, input { font: inherit; color: inherit; }
+    button { background: none; border: 0; padding: 0; cursor: pointer; }
+    img { display: block; max-width: 100%; -webkit-user-drag: none; }
+    p, h1, h2, ul { margin: 0; }
+    ul { padding: 0; list-style: none; }
+    a { color: inherit; }
+    :focus-visible { outline: 2px solid var(--sage); outline-offset: 2px; }
+    ::selection { background: var(--sage-tint); color: var(--ink); }
+    .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .icon { width: 20px; height: 20px; display: block; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .icon-sm { width: 15px; height: 15px; }
+    .icon-18 { width: 18px; height: 18px; }
+    .hero { position: relative; height: 100vh; height: 100dvh; overflow: hidden; display: grid; grid-template-columns: 220px minmax(0, 1fr) clamp(320px, 29vw, 380px); background: var(--bg); color: var(--ink); user-select: none; transition: background-color .6s var(--ease), color .6s var(--ease), grid-template-columns .6s var(--ease); }
+    .hero.focus { grid-template-columns: 0px minmax(0, 1fr) 0px; }
+    #gl { position: absolute; inset: 0; z-index: 5; width: 100%; height: 100%; display: block; pointer-events: none; }
+    .side, .main, .info { min-width: 0; min-height: 0; }
+    .side { display: flex; flex-direction: column; padding: 22px 12px 16px 24px; border-right: 1px solid var(--line); overflow-y: auto; scrollbar-width: none; transition: transform .6s var(--ease), opacity .6s var(--ease), border-color .6s var(--ease); }
+    .side::-webkit-scrollbar { display: none; }
+    .hero.focus .side { overflow: hidden; opacity: 0; transform: translateX(-18px); pointer-events: none; }
+    .brand { font-family: var(--serif); font-weight: 500; font-size: 26px; letter-spacing: -0.01em; line-height: 1.05; }
+    .nav { display: flex; flex-direction: column; gap: 2px; margin: 18px 0 12px; }
+    .nav button { display: flex; flex-direction: column; align-items: flex-start; width: 100%; text-align: left; padding: 8px 10px; border-radius: 8px; font-weight: 600; font-size: 14.5px; line-height: 1.2; transition: background-color .35s var(--ease), color .6s var(--ease); }
+    .nav button small { font-size: 12px; font-weight: 400; color: var(--muted); margin-top: 3px; }
+    .nav button:hover { background: var(--chip); }
+    .nav button[aria-current="page"], .nav button[aria-current="page"]:hover { background: var(--sage-tint); }
+    .featured { margin-top: auto; background: var(--sage-tint); border-radius: 10px; padding: 12px 14px; transition: background-color .6s var(--ease), color .6s var(--ease); }
+    .eyebrow { font-size: 9.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+    .featured img { width: 84px; height: 68px; object-fit: contain; margin: 8px auto; }
+    .featured-title { font-family: var(--serif); font-weight: 500; font-size: 17px; line-height: 1.15; letter-spacing: -0.01em; }
+    .featured-cat { margin-top: 3px; font-size: 11.5px; color: var(--muted); }
+    .textlink { display: inline-block; margin-top: 6px; font-size: 12.5px; font-weight: 600; text-underline-offset: 3px; }
+    .side-footer { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; user-select: text; }
+    .credit-line { font-size: 10.5px; line-height: 1.42; color: var(--muted); }
+    .footer-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .footer-tags a { font-size: 10.5px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: var(--chip); color: var(--ink); text-decoration: none; border: 1px solid transparent; transition: background-color .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease); }
+    .footer-tags a:hover { border-color: var(--sage); background: var(--sage-tint); }
+    .main { display: grid; grid-template-rows: auto minmax(0, 1fr); padding: 48px 18px 14px 26px; position: relative; }
+    .tabs { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; align-items: stretch; padding-bottom: 2px; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab[hidden] { display: none !important; }
+    .tab { flex: 0 0 auto; min-width: 130px; max-width: 176px; padding: 8px 8px 11px; display: grid; justify-items: center; align-content: center; gap: 1px; text-align: center; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; transition: transform .35s var(--ease), background-color .35s var(--ease), border-color .35s var(--ease), color .6s var(--ease); }
+    .tab:hover { transform: translateY(-2px); }
+    .tab[aria-selected="true"] { background: var(--sage-tint); border-color: var(--sage); }
+    .tab img { width: 58px; height: 52px; object-fit: contain; margin-bottom: 3px; }
+    .tab-name { font-family: var(--serif); font-weight: 500; font-size: 15.5px; line-height: 1.15; letter-spacing: -0.01em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .tab-era { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 12.5px; color: var(--muted); line-height: 1.2; }
+    .empty { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); z-index: 6; margin: 0; color: var(--muted); font-size: 13.5px; pointer-events: none; }
+    .stage { position: relative; min-height: 0; touch-action: none; cursor: grab; border-radius: 12px; }
+    .stage:active { cursor: grabbing; }
+    .stage button, .stage a { cursor: pointer; }
+    .ground { position: absolute; left: 50%; bottom: 15%; width: min(62%, 460px); height: 44px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(var(--shadow), .22), transparent); pointer-events: none; }
+    .loader { position: absolute; inset: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--muted); font-size: 12.5px; pointer-events: none; transition: opacity .35s var(--ease); }
+    .loader.is-done { opacity: 0; visibility: hidden; }
+    .ring { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--line); border-top-color: var(--sage); animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .hint { position: absolute; top: 8px; right: 0; z-index: 6; display: flex; align-items: center; gap: 6px; margin: 0; color: var(--muted); font-size: 11.5px; pointer-events: none; transition: opacity .6s var(--ease); }
+    .hint.is-gone { opacity: 0; }
+    .rail { position: absolute; left: 0; top: 50%; transform: translateY(-50%); z-index: 6; display: grid; gap: 9px; }
+    .rail button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel); color: var(--ink); display: grid; place-items: center; transition: background-color .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease), transform .2s var(--ease); }
+    .rail button:hover { transform: translateY(-1px); }
+    .rail button:active { transform: scale(.96); }
+    .rail button.on { background: var(--sage); color: var(--sage-ink); border-color: var(--sage); }
+    .turn { position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%); z-index: 6; display: flex; align-items: center; gap: 2px; padding: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; transition: background-color .6s var(--ease), border-color .6s var(--ease), color .6s var(--ease); }
+    .turn button { min-width: 36px; height: 36px; padding: 0 8px; border-radius: 999px; display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+    .turn button:hover { background: var(--sage-tint); }
+    .caption { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: min(92%, 560px); margin: 0; text-align: center; font-family: var(--serif); font-style: italic; font-weight: 400; font-size: clamp(16px, 1.55vw, 20px); line-height: 1.25; z-index: 6; pointer-events: none; }
+    .info { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 16px; padding: 13px 26px 14px 0; position: relative; transition: transform .6s var(--ease), opacity .6s var(--ease); }
+    .hero.focus .info { overflow: hidden; opacity: 0; transform: translateX(18px); pointer-events: none; }
+    .tools { display: flex; align-items: center; gap: 8px; position: relative; z-index: 6; }
+    .brand-phone, .icon-btn.search-toggle { display: none; }
+    .search { flex: 1; min-width: 0; height: 32px; display: flex; align-items: center; gap: 8px; padding: 0 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; color: var(--muted); transition: background-color .6s var(--ease), border-color .6s var(--ease), color .6s var(--ease); }
+    .search:focus-within { border-color: var(--sage); color: var(--ink); }
+    .search input { flex: 1; min-width: 0; height: 100%; border: 0; padding: 0; background: transparent; font-size: 11.5px; outline: none; }
+    .search input::placeholder { color: var(--muted); font-size: 11.5px; }
+    .icon-btn { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border-radius: 8px; transition: background-color .35s var(--ease), color .6s var(--ease); }
+    .icon-btn:hover, .search-toggle[aria-expanded="true"] { background: var(--sage-tint); }
+    .detail { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 22px 20px 16px; overflow-y: auto; min-height: 0; scrollbar-width: thin; scrollbar-color: var(--line) transparent; transition: background-color .6s var(--ease), border-color .6s var(--ease), box-shadow .4s var(--ease), color .6s var(--ease), transform .6s var(--ease); }
+    .detail.is-highlighted { border-color: var(--sage); box-shadow: 0 0 0 2px var(--sage-tint); }
+    .detail article { display: flex; flex-direction: column; align-items: flex-start; user-select: text; }
+    .detail h1 { font-family: var(--serif); font-weight: 500; font-size: clamp(40px, 4.2vw, 54px); line-height: 1; letter-spacing: -0.02em; margin-top: 8px; overflow-wrap: anywhere; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .tags li { font-size: 11.5px; padding: 6px 13px; border-radius: 999px; background: var(--chip); transition: background-color .6s var(--ease); }
+    .narrative { margin-top: 16px; font-size: 13.5px; line-height: 1.55; text-wrap: pretty; }
+    .detail h2 { width: 100%; font-family: var(--serif); font-weight: 400; font-size: 21px; border-top: 1px solid var(--line); margin-top: 22px; padding-top: 14px; }
+    .specs { width: 100%; margin-top: 6px; }
+    .spec { display: grid; grid-template-columns: 22px 88px minmax(0, 1fr); column-gap: 16px; align-items: center; font-size: 13px; padding: 7px 0; }
+    .spec span { color: var(--muted); }
+    .spec b { font-weight: 600; overflow-wrap: anywhere; }
+    .notes { display: flex; gap: 10px; align-items: flex-start; margin-top: 10px; font-size: 13.5px; line-height: 1.45; }
+    .notes .icon { flex: none; margin-top: 1px; color: var(--muted); }
+    .closeup { margin-top: 20px; align-self: flex-start; width: auto; display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px 6px 6px; border: 1px solid var(--line); border-radius: 999px; text-align: left; background: var(--bg); transition: border-color .35s var(--ease), background-color .35s var(--ease), color .6s var(--ease), transform .2s var(--ease); }
+    .closeup:hover { border-color: var(--sage); transform: translateY(-1px); }
+    .closeup[aria-pressed="true"] { border-color: var(--sage); background: var(--sage-tint); }
+    .lens { width: 38px; height: 38px; flex: none; border-radius: 50%; background-repeat: no-repeat; background-size: var(--lens-zoom, 200%); background-position: var(--lens-pos, 50% 50%); background-color: var(--chip); border: 1px solid var(--line); }
+    .closeup-title { font-family: var(--serif); font-weight: 500; font-size: 15px; line-height: 1.15; white-space: nowrap; }
+    .closeup-sub { display: block; font-family: var(--sans); font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 1px; }
+    .record-modal { position: fixed; inset: 0; z-index: 50; background: rgba(20, 23, 15, 0.56); backdrop-filter: blur(5px); display: grid; place-items: center; padding: 20px; }
+    .record-modal[hidden] { display: none !important; }
+    .record-dialog { width: min(740px, 100%); max-height: 86dvh; overflow-y: auto; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; padding: 26px 28px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28); user-select: text; }
+    .record-dialog-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+    .record-dialog-title { font-family: var(--serif); font-size: clamp(24px, 2.8vw, 34px); font-weight: 500; line-height: 1.1; margin-top: 6px; }
+    .record-close-btn { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); font-size: 12.5px; font-weight: 600; }
+    .record-close-btn:hover { border-color: var(--sage); background: var(--sage-tint); }
+    .record-grid { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 22px; margin-top: 18px; align-items: start; }
+    .record-preview-box { background: var(--bg); border-radius: 10px; padding: 16px; display: grid; place-items: center; border: 1px solid var(--line); }
+    .record-preview-box img { max-height: 160px; object-fit: contain; }
+    .record-meta-table { display: grid; grid-template-columns: 115px minmax(0, 1fr); row-gap: 7px; column-gap: 12px; font-size: 13px; margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--line); }
+    .record-meta-table dt { color: var(--muted); }
+    .record-meta-table dd { margin: 0; font-weight: 600; }
+    .record-conn-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .record-conn-btn { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); font-size: 12.5px; font-weight: 600; }
+    .record-conn-btn:hover { border-color: var(--sage); background: var(--sage-tint); }
+    @media (max-width: 640px) { .record-grid { grid-template-columns: 1fr; } }
+    .enter { animation: rise .6s var(--ease) both; }
+    .leave { animation: leave .2s var(--ease) forwards; }
+    @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    @keyframes leave { to { opacity: 0; transform: translateY(-6px); } }
+    @media (max-width: 1100px) { .hero { grid-template-columns: minmax(0, 1fr) clamp(280px, 36vw, 340px); } .hero.focus { grid-template-columns: minmax(0, 1fr) 0px; } .side { display: none; } .main { padding-left: 20px; } }
+    @media (max-width: 760px) { .hero, .hero.focus { display: flex; flex-direction: column; height: 100dvh; } .info { display: contents; } .hero.focus .info { transform: none; opacity: 1; overflow: visible; } .tools { order: 0; flex-wrap: wrap; padding: 12px 14px 6px; } .brand-phone { display: block; flex: 1; min-width: 0; font-size: clamp(18px, 5.2vw, 22px); } .search { display: none; flex: 1 0 100%; height: 36px; order: 5; } .tools.is-searching .search { display: flex; } .icon-btn.search-toggle { display: grid; } .main { order: 1; flex: 1 1 auto; padding: 6px 12px 8px; } .tabs { gap: 8px; } .tab { flex: 0 0 172px; width: 172px; max-width: none; min-width: 0; grid-template-columns: 58px minmax(0, 1fr); grid-template-rows: auto auto; justify-items: start; align-content: center; column-gap: 8px; text-align: left; padding: 8px; } .tab:hover { transform: none; } .tab img { grid-row: 1 / span 2; margin: 0; } .tab-name, .tab-era { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; -webkit-line-clamp: unset; } .rail button { width: 34px; height: 34px; } .rail .icon { width: 16px; height: 16px; } .turn { bottom: 30px; } .caption { font-size: 15px; width: min(86%, 420px); } .hint { display: none; } .ground { bottom: 17%; height: 30px; } .detail { order: 2; z-index: 7; max-height: 40dvh; border-radius: 16px 16px 0 0; border: 0; border-top: 1px solid var(--line); overscroll-behavior: contain; } .hero.focus .detail { transform: translateY(110%); pointer-events: none; } .detail h1 { font-size: 40px; } }
+    @media (max-height: 620px) and (min-width: 1101px) { .side { padding-top: 12px; } .main { padding-top: 16px; } .nav { margin-top: 12px; } .featured img, .featured-cat { display: none; } .featured-title { margin-top: 8px; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } }
+  </style>
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true">
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.25"/><path d="M15.8 15.8 20.5 20.5"/></symbol>
+    <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 11.5V7.2a1.35 1.35 0 0 1 2.7 0V11"/><path d="M10.7 10.4V5.7a1.35 1.35 0 0 1 2.7 0V11"/><path d="M13.4 11V7.6a1.35 1.35 0 0 1 2.7 0V13.2c0 2.7-1.4 5.3-4.4 5.3h-.8c-1.7 0-2.8-.8-3.6-2L5.6 14a1.35 1.35 0 0 1 2.1-1.7L8.8 13.6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M6 12h12"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.25"/><path d="M12 3.2v2.1M12 18.7v2.1M3.2 12h2.1M18.7 12h2.1M5.5 5.5l1.5 1.5M17 17l1.5 1.5M18.5 5.5 17 7M7 17l-1.5 1.5"/></symbol>
+    <symbol id="i-ccw" viewBox="0 0 24 24"><path d="M7.2 8.2A6.6 6.6 0 1 1 6 16.2"/><path d="M7.4 4.2v4.3H3.2"/></symbol>
+    <symbol id="i-cw" viewBox="0 0 24 24"><path d="M16.8 8.2A6.6 6.6 0 1 0 18 16.2"/><path d="M16.6 4.2v4.3h4.2"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 5.2 15.8 12 9 18.8"/></symbol>
+    <symbol id="i-note" viewBox="0 0 24 24"><path d="M7 4.5h7.2L18 8.2V19a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V5.5a1 1 0 0 1 1-1z"/><path d="M14 4.6V8.4h3.8"/><path d="M8.5 12.6h7M8.5 16h4.6"/></symbol>
+    <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 6.5V11M15 6.5V11"/><path d="M7.8 11h8.4v2.4a4.2 4.2 0 0 1-8.4 0V11z"/><path d="M12 17.6V21"/></symbol>
+    <symbol id="i-cable" viewBox="0 0 24 24"><path d="M8 8h2.6a3.2 3.2 0 0 1 3.2 3.2v1.6A3.2 3.2 0 0 0 17 16H8"/><circle cx="7" cy="8" r="1.3"/><circle cx="7.2" cy="16" r="1.3"/></symbol>
+    <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M4 8.5h16v7H4z"/><path d="M8 8.5v2.8M12 8.5v4M16 8.5v2.8"/></symbol>
+    <symbol id="i-stack" viewBox="0 0 24 24"><path d="M4.8 8.6 12 5.2l7.2 3.4L12 12 4.8 8.6z"/><path d="M4.8 12.2 12 15.6l7.2-3.4"/><path d="M4.8 15.6 12 19l7.2-3.4"/></symbol>
+    <symbol id="i-disc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.4"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-waves" viewBox="0 0 24 24"><path d="M3.2 9c1.8 0 1.8-2.1 3.8-2.1S8.8 9 10.8 9s2-2.1 4-2.1 2 2.1 4 2.1 1.8-2.1 3.6-2.1"/><path d="M3.2 15c1.8 0 1.8-2.1 3.8-2.1s1.8 2.1 3.8 2.1 2-2.1 4-2.1 2 2.1 4 2.1 1.8-2.1 3.6-2.1"/></symbol>
+    <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M5 16.6a7 7 0 1 1 14 0"/><path d="M12 16.2 15.3 10.8"/></symbol>
+    <symbol id="i-lens" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.3"/><path d="M12 5v2M12 17v2M5 12h2M17 12h2"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24"><path d="M7 4.8h10v14.4H7z"/><path d="M7 8.4h10M7 12h10M7 15.6h10"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24"><rect x="4.8" y="5.5" width="14.4" height="5" rx="1.2"/><rect x="4.8" y="13.5" width="14.4" height="5" rx="1.2"/><path d="M8 8h.1M8 16h.1"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M4.5 8.2 12 4.6l7.5 3.6L12 11.8 4.5 8.2z"/><path d="M4.5 8.2V16L12 19.6 19.5 16V8.2"/><path d="M12 11.8v7.8"/></symbol>
+  </svg>
+
+  <section class="hero" id="hero" data-light="day">
+    <canvas id="gl" aria-hidden="true"></canvas>
+    <aside class="side">
+      <p class="brand">DScape Archive</p>
+      <nav class="nav" aria-label="Archive">
+        <button type="button" data-nav="home">Home</button>
+        <button type="button" data-nav="all" aria-current="page">All Objects</button>
+        <button type="button" data-nav="magnetic">Magnetic Media<small>4 items</small></button>
+        <button type="button" data-nav="optical">Optical Media<small>1 item</small></button>
+        <button type="button" data-nav="peripherals">Peripherals<small>1 item</small></button>
+        <button type="button" data-nav="network">Network Devices<small>2 items</small></button>
+      </nav>
+      <div class="featured">
+        <p class="eyebrow">Featured Object</p>
+        <img id="featured-img" alt="" width="84" height="68">
+        <p class="featured-title" id="featured-title"></p>
+        <p class="featured-cat" id="featured-cat"></p>
+        <a class="textlink" href="#record" data-action="record">View Record</a>
+      </div>
+      <div class="side-footer">
+        <p class="credit-line">*This curatorial archive was developed with assistance from Grok 4.7, Gemini 4 Argon, DeepSeek-V4.1-Flash-1017, GPT-Image 2.5 Sunburst, and Qwen 3.6.</p>
+        <div class="footer-tags" aria-label="External Links">
+          <a href="https://library.hkust.edu.hk/news-events/news/dscape-an-antiquarian-landscape" target="_blank" rel="noopener noreferrer">#DScape</a>
+          <a href="">v1.0.3</a>
+          <a href="https://library.hkust.edu.hk/ds" target="_blank" rel="noopener noreferrer">Digital Scholarship</a>
+          <a href="https://library.hkust.edu.hk/" target="_blank" rel="noopener noreferrer">HKUST Library</a>
+        </div>
+      </div>
+    </aside>
+
+    <section class="main">
+      <div class="tabs" id="tabs" role="tablist" aria-label="Archive objects"></div>
+      <div id="stage" class="stage" tabindex="0" aria-label="3D specimen. Drag to turn, scroll or pinch to zoom. Arrow keys rotate, plus and minus zoom, zero or double-click returns home.">
+        <p class="empty" id="empty" hidden>No objects match this search.</p>
+        <div class="ground" aria-hidden="true"></div>
+        <div class="loader" id="loader" role="status">
+          <span class="ring" aria-hidden="true"></span>
+          Loading specimen…
+        </div>
+        <p class="hint" id="hint"><svg class="icon" aria-hidden="true"><use href="#i-hand"/></svg> Drag to turn · scroll to zoom</p>
+        <div class="rail">
+          <button type="button" id="zoom-in" aria-label="Zoom in"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
+          <button type="button" id="zoom-out" aria-label="Zoom out"><svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg></button>
+          <button type="button" id="expand" aria-label="Expand view" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-expand"/></svg></button>
+          <button type="button" id="light" aria-label="Toggle light" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        </div>
+        <div class="turn">
+          <button type="button" id="turn-ccw" aria-label="Turn counter-clockwise"><svg class="icon" aria-hidden="true"><use href="#i-ccw"/></svg></button>
+          <button type="button" id="turn-360" aria-label="Turn 360 degrees">360°</button>
+          <button type="button" id="turn-cw" aria-label="Turn clockwise"><svg class="icon" aria-hidden="true"><use href="#i-cw"/></svg></button>
+        </div>
+        <p class="caption" id="caption"></p>
+      </div>
+    </section>
+
+    <section class="info">
+      <div class="tools" id="tools">
+        <p class="brand brand-phone">DScape Archive</p>
+        <form class="search" role="search" id="search-form">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#i-search"/></svg>
+          <input id="q" type="search" placeholder="Search objects, specs, or era…" aria-label="Search objects, specs, or era" autocomplete="off">
+        </form>
+        <button type="button" class="icon-btn search-toggle" id="search-toggle" aria-label="Search" aria-expanded="false" aria-controls="q">
+          <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+        </button>
+      </div>
+      <div class="detail" id="detail">
+        <article id="record" aria-live="polite"></article>
+      </div>
+    </section>
+  </section>
+
+  <div class="record-modal" id="record-modal" hidden role="dialog" aria-modal="true" aria-labelledby="record-modal-title">
+    <div class="record-dialog" id="record-dialog"></div>
+  </div>
+
+  <script type="module">
+  import * as THREE from 'three';
+  import { TextureLoader } from 'three';
+  import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+  import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+  import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+  import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+  const ITEMS = [{"id": "item-01-aten-kvmp", "title": "ATEN Master View CS-1732A", "category": "Peripherals & Input", "era": "Circa 2000–2005", "dateStart": 2000, "dateEnd": 2005, "tags": ["peripheral", "kvm", "library-hardware", "usb", "ps2"], "citation": {"manufacturer": "ATEN", "model": "Master View CS-1732A", "partNumber": null}, "specs": {"ports": "2", "interfaces": ["PS/2", "USB", "VGA"]}, "labelNotes": "HKUST LIBRARY; PC / LAPTOP", "function": "Share one console across two machines.", "narrative": "The ATEN CS-1732A is a 2-port PS/2 and USB KVMP switch with a built-in 2-port USB hub and audio support, reaching up to 2048x1536 resolution. Tagged \"PC / LAPTOP\" and \"HKUST LIBRARY,\" it exemplifies the classic desktop KVM solution for managing multiple computers with a single console in early server rooms.", "media": {"thumbnail": "./public/01-aten-kvmp.png", "image": "./public/images/01-aten-kvmp.png", "layers": {"background": null, "midground": null, "foreground": null}, "model3d": null, "viewerConfig": null}, "furtherReading": [{"title": "USB Device Emulation and KVM Switching Mechanics", "type": "Paper", "note": "Understand how KVM switches emulate PS/2 and USB endpoints to the host machines."}], "connections": ["item-08-lacie-nas"]}, {"id": "item-02-floppy-disk-3-5", "title": "3.5\" Floppy Disk (US MARC/COM.CP Format)", "category": "Magnetic Storage", "era": "May 1999", "dateStart": 1999, "dateEnd": 1999, "tags": ["storage", "magnetic-media", "floppy-disk", "library-cataloging"], "citation": {"manufacturer": "Professional Media Service Corp.", "model": "3.5-inch High Density Floppy", "partNumber": "8009974F"}, "specs": {"size": "3.5-inch", "capacity": "1.44MB", "density": "High Density (HD)"}, "labelNotes": "Order No. 8009974F; Format: US MARC/COM.CP", "function": "Exchanging library machine-readable cataloging data.", "narrative": "Manufactured by Professional Media Service, this 3.5-inch high-density floppy is labeled \"US MARC/COM.CP\" and \"HKUST LIBRARY.\" In the 1990s and early 2000s, libraries relied on such physical media to exchange machine-readable cataloging records between automated systems, serving as a crucial carrier during the early digital library era.", "media": {"thumbnail": "./public/images/02-floppy-disk.png", "image": "./public/images/02-floppy-disk.png", "layers": {"background": null, "midground": null, "foreground": null}, "model3d": null, "viewerConfig": null}, "furtherReading": [], "connections": ["item-05-floppy-disk-5-25"]}, {"id": "item-03-hp-dat-160", "title": "HP DAT 160 Data Cartridge (C8011A)", "category": "Tape Storage", "era": "Circa 2007", "dateStart": 2007, "dateEnd": 2007, "tags": ["storage", "backup", "magnetic-media", "tape"], "citation": {"manufacturer": "HP", "model": "DAT 160", "partNumber": "C8011A"}, "specs": {"format": "DDS-6 / DAT-160", "capacity": "80GB native / 160GB compressed", "tapeLength": "150m", "transferRate": "~6.9MB/s"}, "labelNotes": "HP DAT 160; C8011A; compressed capacity: 160GB", "function": "Server data backup and archiving.", "narrative": "The HP DAT 160 belongs to the DDS-6 generation, offering 80GB native capacity and 160GB compressed. With a native transfer rate of roughly 6.9MB/s, it was widely used by small to medium enterprises and lab servers for nightly unattended backups via SCSI or USB interfaces.", "media": {"thumbnail": "./public/images/03-hp-dat-160.png", "image": "./public/images/03-hp-dat-160.png", "layers": {"background": null, "midground": null, "foreground": null}, "model3d": null, "viewerConfig": null}, "furtherReading": [], "connections": ["item-04-basf-reel"]}, {"id": "item-04-basf-reel", "title": "BASF 9-Track 1/2-inch Open Reel Tape (080305)", "category": "Open Reel Tape", "era": "Label date: 1993-01-25", "dateStart": 1993, "dateEnd": 1993, "tags": ["storage", "backup", "magnetic-media", "open-reel", "mainframe"], "citation": {"manufacturer": "BASF", "model": "9-Track 1/2-inch Open Reel Tape", "partNumber": "080305"}, "specs": {"format": "9-track half-inch magnetic tape"}, "labelNotes": "CONTROL DATA HONG KONG LTD; BRUNEI DARUSSALAM; EXPORT VESSEL", "function": "Mainframe offline batch backup.", "narrative": "This professional-grade BASF half-inch 9-track open reel tape features a handwritten label documenting a 1993 shipment from Control Data Hong Kong Ltd, involving an export vessel to Brunei Darussalam. It represents the standard practice of batch processing, archiving, and cross-regional data transfer using tape drives in the mainframe era.", "media": {"thumbnail": "./public/images/04-basf-reel.png", "image": "./public/images/04-basf-reel.png", "layers": {"background": null, "midground": null, "foreground": null}, "model3d": null, "viewerConfig": null}, "furtherReading": [], "connections": ["item-03-hp-dat-160"]}, {"id": "item-05-floppy-disk-5-25", "title": "5.25\" Floppy Disk (Library Database Reference Disk)", "category": "Magnetic Storage", "era": "Circa 1990s", "dateStart": 1990, "dateEnd": 1999, "tags": ["storage", "magnetic-media", "floppy-disk", "5.25-inch", "library-database"], "citation": {"manufacturer": "Unknown", "model": "5.25-inch Floppy Disk", "partNumber": null}, "specs": {"mediaType": "Magnetic Disk", "size": "5.25-inch", "capacity": "360KB (DD) / 1.2MB (HD)"}, "labelNotes": "Biological Abstracts/RRM; Install Disk; Call No. QH 301 B5; HKUST Library", "function": "Offline reference and database installation medium for library information systems.", "narrative": "This 5.25-inch floppy disk features a textured black jacket with a central metal drive hub and an essential write-protect notch on the side, representing the standard magnetic storage format of the 1980s and early 1990s. Bound with the HKUST Library call number \"QH 301 B5\" and tagged for \"Biological Abstracts/RRM,\" it preserves the physical workflow through which early digital bibliographic indexes were installed and queried locally on workstation terminals.", "media": {"thumbnail": "./public/images/05-silverplatter-floppy.png", "image": "./public/images/05-silverplatter-floppy.png", "layers": {"background": null, "midground": null, "foreground": null}, "model3d": null, "viewerConfig": null}, "furtherReading": [], "connections": ["item-02-floppy-disk-3-5"]}, {"id": "item-06-innopac-cd", "title": "Software Disc (InnoPAC / SilverPlatter Folio)", "category": "Optical Storage", "era": "Copyright 1997", "dateStart": 1997, "dateEnd": 1997, "tags": ["storage", "optical-media", "cd-rom", "software", "library-system"], "citation": {"manufacturer": "Innovative Interfaces Inc.", "model": "InnoPAC User Manual Release 11", "partNumber": "28373"}, "specs": {"format": "CD-ROM"}, "labelNotes": "InnoPAC User Manual Release 11; P/N 28373", "function": "Installation disc for integrated library system.", "narrative": "This blue disc is the installation and manual medium for Release 11 of Innovative Interfaces' InnoPAC integrated library system. Its presence, stacked with the sleeve of Release 10, reflects the software distribution model of the era, where libraries periodically received physical optical discs to update their systems.", "media": {"thumbnail": "./public/images/06-innopac-cd.png", "image": "./public/images/06-innopac-cd.png", "layers": {"background": null, "midground": null, "foreground": null}, "model3d": null, "viewerConfig": null}, "furtherReading": [], "connections": ["item-05-floppy-disk-5-25"]}, {"id": "item-07-planet-camera", "title": "PLANET Network Camera (ICA-107 Series)", "category": "Embedded Network Device", "era": "Circa 2007–2010", "dateStart": 2007, "dateEnd": 2010, "tags": ["network", "embedded", "camera", "surveillance", "poe"], "citation": {"manufacturer": "PLANET", "model": "ICA-107 Series", "partNumber": null}, "specs": {"sensor": "CMOS", "encoding": "MPEG-4", "interfaces": ["10/100Base-TX", "802.11b/g/n", "PoE"]}, "labelNotes": "PLANET; 30fps Wired/Wireless", "function": "Budget IP surveillance solution.", "narrative": "The PLANET ICA-107 features a built-in microprocessor and CMOS sensor, using MPEG-4 compression to support 30fps VGA streaming with 802.11n and PoE. Compact and supporting UPnP and motion detection, it allowed regular users and small businesses to set up independent web-based video surveillance without dedicated capture cards.", "media": {"thumbnail": "./public/images/07-planet-camera.png", "image": "./public/images/07-planet-camera.png", "layers": {"background": null, "midground": null, "foreground": null}, "model3d": null, "viewerConfig": null}, "furtherReading": [], "connections": []}, {"id": "item-08-lacie-nas", "title": "LaCie d2 Network 2 (Single-Drive NAS)", "category": "Network Attached Storage", "era": "Circa 2010–2012", "dateStart": 2010, "dateEnd": 2012, "tags": ["nas", "network-storage", "lacie", "ethernet", "esata", "usb2"], "citation": {"manufacturer": "LaCie", "model": "d2 Network 2", "partNumber": null}, "specs": {"driveBay": "1 x 3.5-inch SATA", "capacity": "1TB / 1.5TB / 2TB", "interfaces": ["Gigabit Ethernet (10/100/1000)", "USB 2.0 (Type B)", "eSATA"], "chassis": "Ribbed aluminum, fanless passive cooling", "maxTransferRate": "~68 MB/s"}, "labelNotes": "LaCie d2 Network 2; aluminum enclosure; fanless design", "function": "Dedicated network-attached storage (NAS) for centralized file sharing and client backups.", "narrative": "The LaCie d2 Network 2 represents the evolution from direct-attached external hard drives to dedicated personal cloud appliances. Housed in a signature fanless, ribbed aluminum chassis, it served as a single-drive Gigabit NAS for small businesses and laboratories. Equipped with USB 2.0 and eSATA expansion ports alongside Ethernet, it supported centralized client backups, remote access, and direct USB drive mode, bridging the gap between local storage and networked home/office infrastructure.", "media": {"thumbnail": "./public/images/08-lacie.png", "image": "./public/images/08-lacie.png", "layers": {"background": null, "midground": null, "foreground": null}, "model3d": null, "viewerConfig": null}, "furtherReading": [{"title": "NAS and Network Protocol Fundamentals (SMB/NFS/DLNA)", "type": "Technical Overview", "note": "Explores how single-drive NAS appliances integrated file sharing services and client backup management."}], "connections": ["item-01-aten-kvmp"]}];
+  const NAV = [
+    { id: 'home' },
+    { id: 'all' },
+    { id: 'magnetic', test: (it) => /magnetic|tape|reel/i.test(it.category) },
+    { id: 'optical', test: (it) => /optical/i.test(it.category) },
+    { id: 'peripherals', test: (it) => /peripheral/i.test(it.category) },
+    { id: 'network', test: (it) => /network/i.test(it.category) }
+  ];
+  const SPEC_LABEL = { ports: 'Ports', interfaces: 'Interfaces', size: 'Size', capacity: 'Capacity', density: 'Density', format: 'Format', tapeLength: 'Length', transferRate: 'Transfer', mediaType: 'Media', sensor: 'Sensor', encoding: 'Encoding', driveBay: 'Drive bay', chassis: 'Chassis', maxTransferRate: 'Max rate' };
+  const SPEC_ICON = { ports: 'i-plug', interfaces: 'i-cable', size: 'i-ruler', capacity: 'i-stack', density: 'i-waves', format: 'i-disc', tapeLength: 'i-ruler', transferRate: 'i-gauge', mediaType: 'i-disc', sensor: 'i-lens', encoding: 'i-film', driveBay: 'i-server', chassis: 'i-box', maxTransferRate: 'i-gauge' };
+  const hero = document.getElementById('hero');
+  const stage = document.getElementById('stage');
+  const tabsEl = document.getElementById('tabs');
+  const emptyEl = document.getElementById('empty');
+  const captionEl = document.getElementById('caption');
+  const loader = document.getElementById('loader');
+  const hint = document.getElementById('hint');
+  const article = document.getElementById('record');
+  const detail = document.getElementById('detail');
+  const tools = document.getElementById('tools');
+  const searchForm = document.getElementById('search-form');
+  const searchInput = document.getElementById('q');
+  const searchToggle = document.getElementById('search-toggle');
+  const featuredImg = document.getElementById('featured-img');
+  const featuredTitle = document.getElementById('featured-title');
+  const featuredCat = document.getElementById('featured-cat');
+  const lightBtn = document.getElementById('light');
+  const expandBtn = document.getElementById('expand');
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+  let navId = 'all';
+  let query = '';
+  let current = Math.max(0, ITEMS.findIndex((it) => it.id === 'item-03-hp-dat-160'));
+  let outgoing = -1;
+  let switchStart = 0;
+  let switchT = 1;
+  let switchDir = 1;
+  let infoGen = 0;
+  let hinted = false;
+  let lastInteract = performance.now();
+  let idleAmt = 0;
+  let homing = false;
+  let queue = 0;
+  let framed = false;
+  let viewW = 0;
+  let viewH = 0;
+  let cx = 0;
+  let cy = 0;
+  let px = 320;
+  let targetCx = 0;
+  let targetCy = 0;
+  let targetPx = 320;
+  let zoom = 1;
+  let zoomTarget = 1;
+  const vel = new THREE.Vector2();
+  const pts = new Map();
+  let drag = null;
+  let pinch = null;
+  const edgeMats = [];
+  const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.NeutralToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  const scene = new THREE.Scene();
+  scene.environmentIntensity = 0.95;
+  const camera = new THREE.PerspectiveCamera(26, 1, 0.02, 80);
+  camera.position.set(0, 0, 6);
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const room = new RoomEnvironment();
+  scene.environment = pmrem.fromScene(room, 0.04).texture;
+  room.traverse((obj) => {
+    if (obj.geometry) obj.geometry.dispose();
+    const mats = obj.material ? (Array.isArray(obj.material) ? obj.material : [obj.material]) : [];
+    mats.forEach((m) => m.dispose?.());
+  });
+  pmrem.dispose();
+  const keyLight = new THREE.DirectionalLight(0xfff4e2, 1.6);
+  keyLight.position.set(2.5, 4, 5);
+  const rimLight = new THREE.DirectionalLight(0xbfd8ff, 0.5);
+  rimLight.position.set(-4, 2, -3);
+  scene.add(keyLight, rimLight);
+  const envTarget = { v: 0.95 };
+  const keyI = { v: 1.6 };
+  const rimI = { v: 0.5 };
+  const expI = { v: 1.05 };
+  const keyColor = new THREE.Color('#fff4e2');
+  const rimColor = new THREE.Color('#bfd8ff');
+  const keyColorTarget = keyColor.clone();
+  const rimColorTarget = rimColor.clone();
+  const sideTarget = new THREE.Color('#e7e0d1');
+  const backTarget = new THREE.Color('#d9d2c3');
+  const draco = new DRACOLoader();
+  draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/');
+  const gltfLoader = new GLTFLoader();
+  gltfLoader.setDRACOLoader(draco);
+  gltfLoader.setMeshoptDecoder(MeshoptDecoder);
+  const textureLoader = new TextureLoader();
+  // Per-Object Close-Up Focal Points (pitch X, yaw Y, roll Z in radians, zoom multiplier, & 2D circular lens preview crop)
+  const homeQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.12, 0.75, 0, 'YXZ'));
+  const OBJECT_CLOSEUPS = {
+    'item-01-aten-kvmp':        { title: 'Switches & USB Console',    euler: [0.03, -0.14, 0], zoom: 2.35, lensSize: '250%', lensPos: '62% 62%' },
+    'item-02-floppy-disk-3-5':  { title: 'US MARC Label (7094)',      euler: [-0.06, 0.05, 0], zoom: 2.45, lensSize: '230%', lensPos: '52% 68%' },
+    'item-03-hp-dat-160':       { title: 'Helical Tape Spools',       euler: [-0.04, 0.06, 0], zoom: 2.45, lensSize: '250%', lensPos: '50% 62%' },
+    'item-04-basf-reel':        { title: 'STAN PROCESS Batch 3076',   euler: [0.10, -0.16, 0], zoom: 2.55, lensSize: '260%', lensPos: '66% 24%' },
+    'item-05-floppy-disk-5-25': { title: 'SilverPlatter & QH 301 B5', euler: [0.10, -0.06, 0], zoom: 2.40, lensSize: '240%', lensPos: '48% 18%' },
+    'item-06-innopac-cd':       { title: 'Folio Infobase & Hub',      euler: [-0.06, 0.14, 0], zoom: 2.35, lensSize: '240%', lensPos: '32% 68%' },
+    'item-07-planet-camera':    { title: 'CMOS Lens & PIR Triad',     euler: [0.05, 0.08, 0],  zoom: 2.40, lensSize: '240%', lensPos: '48% 34%' },
+    'item-08-lacie-nas':        { title: 'Blue Power Orb & Fins',     euler: [0.08, 0.24, 0],  zoom: 2.45, lensSize: '260%', lensPos: '32% 22%' }
+  };
+  let targetQuat = homeQuat.clone();
+  let featuredIndex = 0;
+  const axisY = new THREE.Vector3(0, 1, 0);
+  const axisX = new THREE.Vector3(1, 0, 0);
+  const spinQ = new THREE.Quaternion();
+  const rigs = ITEMS.map((_, index) => {
+    const pivot = new THREE.Group();
+    const spin = new THREE.Group();
+    const holder = new THREE.Group();
+    spin.quaternion.copy(homeQuat);
+    pivot.add(spin);
+    spin.add(holder);
+    return { index, pivot, spin, holder, ready: false, promise: null, image: null, front: null };
+  });
+  function cssColor(name, fallback) {
+    const v = getComputedStyle(hero).getPropertyValue(name).trim();
+    try { return new THREE.Color(v || fallback); }
+    catch { return new THREE.Color(fallback); }
+  }
+  function syncLightTargets() {
+    const dusk = hero.dataset.light === 'dusk';
+    envTarget.v = dusk ? 0.28 : 0.95;
+    keyI.v = dusk ? 2.6 : 1.6;
+    rimI.v = dusk ? 1.9 : 0.5;
+    expI.v = dusk ? 1.0 : 1.05;
+    keyColorTarget.set(dusk ? '#ffc98a' : '#fff4e2');
+    rimColorTarget.set('#bfd8ff');
+    sideTarget.copy(cssColor('--line', dusk ? '#2d3324' : '#e7e0d1'));
+    backTarget.copy(cssColor('--panel', dusk ? '#1b1f15' : '#fbf8f1'));
+  }
+  function paperFill() {
+    return getComputedStyle(hero).getPropertyValue('--panel').trim() || '#fbf8f1';
+  }
+  function paintTexture(image) {
+    const canvas = document.createElement('canvas');
+    canvas.width = image.width || image.naturalWidth || 4;
+    canvas.height = image.height || image.naturalHeight || 4;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = paperFill();
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0);
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+    tex.needsUpdate = true;
+    return tex;
+  }
+  function repaintFronts() {
+    rigs.forEach((rig) => {
+      if (!rig.image || !rig.front) return;
+      const prev = rig.front.map;
+      rig.front.map = paintTexture(rig.image);
+      rig.front.needsUpdate = true;
+      prev?.dispose?.();
+    });
+  }
+  function fitObject(root) {
+    root.updateWorldMatrix(true, true);
+    const sphere = new THREE.Sphere();
+    new THREE.Box3().setFromObject(root).getBoundingSphere(sphere);
+    root.position.sub(sphere.center);
+    return Math.max(sphere.radius, 1e-4);
+  }
+  async function buildCard(item, rig) {
+    const tex = await textureLoader.loadAsync(item.media.image);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const image = tex.image;
+    rig.image = image;
+    const aspect = (image.width || 1) / (image.height || 1);
+    const geo = new THREE.BoxGeometry(aspect, 1, 0.06);
+    geo.center();
+    const { side, back } = makeEdgeMaterials();
+    const front = new THREE.MeshStandardMaterial({ map: paintTexture(image), roughness: 0.9, metalness: 0 });
+    rig.front = front;
+    tex.dispose();
+    const mesh = new THREE.Mesh(geo, [side, side, side, side, front, back]);
+    mesh.castShadow = false;
+    return mesh;
+  }
+  function makeEdgeMaterials() {
+    const side = new THREE.MeshStandardMaterial({ color: sideTarget, roughness: 0.68, metalness: 0.05 });
+    const back = new THREE.MeshStandardMaterial({ color: backTarget, roughness: 0.88, metalness: 0.02 });
+    edgeMats.push(side, back);
+    return { side, back };
+  }
+  async function loadObject(item, rig) {
+    if (item.media.model3d) {
+      try {
+        const gltf = await gltfLoader.loadAsync(item.media.model3d);
+        return gltf.scene;
+      } catch (err) {
+        console.warn('model failed, using specimen card', item.id, err);
+      }
+    }
+    return buildCard(item, rig);
+  }
+  function ensure(index) {
+    const rig = rigs[index];
+    if (rig.promise) return rig.promise;
+    rig.promise = (async () => {
+      try {
+        const obj = await loadObject(ITEMS[index], rig);
+        rig.holder.add(obj);
+        const radius = fitObject(obj);
+        rig.holder.scale.setScalar(1 / radius);
+        rig.ready = true;
+      } catch (err) {
+        console.warn(err);
+        const { side, back } = makeEdgeMaterials();
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 0.06), [side, side, side, side, side, back]);
+        rig.holder.add(mesh);
+        rig.holder.scale.setScalar(1 / Math.sqrt(0.5));
+        rig.ready = true;
+      }
+      if (index === current || index === outgoing) mount(index);
+      syncLoader();
+    })();
+    return rig.promise;
+  }
+  function mount(index) {
+    const rig = rigs[index];
+    if (rig && rig.pivot.parent !== scene) scene.add(rig.pivot);
+  }
+  function unmount(index) {
+    const rig = rigs[index];
+    if (!rig) return;
+    scene.remove(rig.pivot);
+    rig.pivot.position.set(0, 0, 0);
+    rig.pivot.scale.setScalar(1);
+    rig.pivot.rotation.set(0, 0, 0);
+    setOpacity(rig, 1);
+  }
+  function setOpacity(rig, value) {
+    const opacity = clamp(value, 0, 1);
+    if (Math.abs((rig._opacity ?? 1) - opacity) < 0.01 && opacity !== 0 && opacity !== 1) return;
+    rig._opacity = opacity;
+    const fade = opacity < 0.995;
+    rig.holder.traverse((obj) => {
+      if (!obj.isMesh) return;
+      const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+      mats.forEach((m) => {
+        if (!m) return;
+        if (m.transparent !== fade) m.needsUpdate = true;
+        m.transparent = fade;
+        m.opacity = opacity;
+        m.depthWrite = !fade;
+      });
+    });
+  }
+  function activeSpin() { return rigs[current]?.spin || null; }
+  function applySpin(yaw, pitch) {
+    const spin = activeSpin();
+    if (!spin) return;
+    spin.quaternion.premultiply(spinQ.setFromAxisAngle(axisY, yaw));
+    spin.quaternion.premultiply(spinQ.setFromAxisAngle(axisX, pitch));
+  }
+  function captionFor(item) {
+    const words = (item.narrative || '').trim().split(/\s+/).filter(Boolean);
+    if (words.length >= 10) return words.slice(0, 10).join(' ') + '…';
+    if (words.length) return words.join(' ');
+    return `${item.citation.manufacturer} ${item.citation.model}`;
+  }
+  function nameOf(item) { return `${item.citation.manufacturer} ${item.citation.model}`; }
+  function matchesNav(item) {
+    const group = NAV.find((n) => n.id === navId);
+    if (!group || !group.test) return true;
+    return group.test(item);
+  }
+  function haystack(item) {
+    const specs = Object.entries(item.specs || {}).map(([k, v]) => `${k} ${Array.isArray(v) ? v.join(' ') : v}`).join(' ');
+    return [item.title, item.category, item.era, item.narrative, item.labelNotes, item.function, item.citation?.manufacturer, item.citation?.model, item.citation?.partNumber, (item.tags || []).join(' '), specs].join(' ').toLowerCase();
+  }
+  function matchesQuery(item) { return !query || haystack(item).includes(query); }
+  function isShown(index) {
+    const item = ITEMS[index];
+    return query ? matchesQuery(item) : matchesNav(item);
+  }
+  function syncLoader() {
+    const show = !rigs[current]?.ready;
+    loader.classList.toggle('is-done', !show);
+    loader.setAttribute('aria-hidden', String(!show));
+  }
+  function renderTabs() {
+    tabsEl.innerHTML = ITEMS.map((item, i) => `
+      <button type="button" class="tab" role="tab" id="tab-${item.id}" data-index="${i}"
+        aria-controls="record" aria-selected="${i === current ? 'true' : 'false'}" tabindex="${i === current ? '0' : '-1'}">
+        <img src="${esc(item.media.image)}" alt="" width="58" height="52">
+        <span class="tab-name">${esc(item.citation.manufacturer)}</span>
+        <span class="tab-era">${esc(item.era)}</span>
+      </button>`).join('');
+  }
+  function applyFilter() {
+    let shown = 0;
+    tabsEl.querySelectorAll('[role="tab"]').forEach((tab) => {
+      const i = Number(tab.dataset.index);
+      const ok = isShown(i);
+      tab.hidden = !ok;
+      if (ok) shown += 1;
+    });
+    emptyEl.hidden = shown !== 0;
+    if (!isShown(current)) {
+      const next = ITEMS.findIndex((_, i) => isShown(i));
+      if (next >= 0) select(next, Math.sign(next - current) || 1);
+      else {
+        unmount(current);
+        if (outgoing >= 0) unmount(outgoing);
+        captionEl.textContent = 'Nothing on the shelf matches.';
+      }
+    } else if (rigs[current]?.pivot.parent !== scene) {
+      mount(current);
+      syncLoader();
+    }
+  }
+  function updateTabState() {
+    tabsEl.querySelectorAll('[role="tab"]').forEach((tab) => {
+      const on = Number(tab.dataset.index) === current;
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+      tab.tabIndex = on ? 0 : -1;
+    });
+    const selected = tabsEl.querySelector('[aria-selected="true"]');
+    if (selected && !selected.hidden) {
+      selected.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: reduce.matches ? 'auto' : 'smooth' });
+    }
+  }
+  function recordHTML(item) {
+    const tags = (item.tags || []).slice(0, 3).map((tag) => `<li>${esc(String(tag).replace(/-/g, ' '))}</li>`).join('');
+    const specs = Object.entries(item.specs || {}).map(([key, value]) => {
+      const icon = SPEC_ICON[key] || 'i-box';
+      const label = SPEC_LABEL[key] || key;
+      const text = Array.isArray(value) ? value.join(', ') : String(value);
+      return `<div class="spec"><svg class="icon" aria-hidden="true"><use href="#${icon}"/></svg><span>${esc(label)}</span><b>${esc(text)}</b></div>`;
+    }).join('');
+    const cfg = OBJECT_CLOSEUPS[item.id] || { title: 'Detail View', lensSize: '200%', lensPos: '50% 45%' };
+    const pressed = zoomTarget > 2.0;
+    return `
+      <p class="eyebrow">${esc(item.category)}</p>
+      <h1 tabindex="-1">${esc(nameOf(item))}</h1>
+      <ul class="tags">${tags}</ul>
+      <p class="narrative">${esc(item.narrative)}</p>
+      <h2>Technical Specs</h2>
+      <div class="specs">${specs}</div>
+      <h2>Archival Notes</h2>
+      <div class="notes"><svg class="icon" aria-hidden="true"><use href="#i-note"/></svg><p>${esc(item.labelNotes)}</p></div>
+      <button type="button" class="closeup" data-action="closeup" aria-pressed="${pressed ? 'true' : 'false'}">
+        <span class="lens" style="background-image:url('${esc(item.media.image)}'); --lens-zoom:${cfg.lensSize}; --lens-pos:${cfg.lensPos};"></span>
+        <span>
+          <span class="closeup-title">Close-Up</span>
+          <span class="closeup-sub">${esc(cfg.title)}</span>
+        </span>
+        <svg class="icon icon-18" aria-hidden="true"><use href="#i-chevron"/></svg>
+      </button>`;
+  }
+  function showInfo(item) {
+    const gen = ++infoGen;
+    const kids = [...article.children];
+    const paint = () => {
+      if (gen !== infoGen) return;
+      article.innerHTML = recordHTML(item);
+      if (!reduce.matches) {
+        [...article.children].forEach((el, i) => {
+          el.classList.add('enter');
+          el.style.animationDelay = `${i * 45}ms`;
+        });
+      }
+    };
+    if (kids.length && !reduce.matches) {
+      kids.forEach((el) => el.classList.add('leave'));
+      window.setTimeout(paint, 200);
+    } else {
+      paint();
+    }
+  }
+  function showFeatured(item, idx) {
+    featuredIndex = idx ?? current;
+    featuredImg.src = item.media.image;
+    featuredImg.alt = '';
+    featuredTitle.textContent = nameOf(item);
+    featuredCat.textContent = item.category;
+  }
+  function select(next, dir) {
+    if (next === current && switchT >= 1 && !homing) return;
+    if (next < 0 || next >= ITEMS.length) return;
+    const prev = current;
+    current = next;
+    switchDir = dir || Math.sign(next - prev) || 1;
+    switchStart = performance.now();
+    switchT = reduce.matches ? 1 : 0;
+    outgoing = prev === next ? -1 : prev;
+    zoomTarget = 1;
+    targetQuat.copy(homeQuat);
+    vel.set(0, 0);
+    queue = 0;
+    homing = false;
+    markInteract();
+    mount(current);
+    if (outgoing >= 0 && outgoing !== current) mount(outgoing);
+    rigs.forEach((_, i) => {
+      if (i !== current && i !== outgoing) unmount(i);
+    });
+    if (switchT >= 1 && outgoing >= 0) {
+      unmount(outgoing);
+      outgoing = -1;
+      const rig = rigs[current];
+      rig.pivot.position.x = 0;
+      rig.pivot.scale.setScalar(1);
+      setOpacity(rig, 1);
+    }
+    updateTabState();
+    captionEl.textContent = captionFor(ITEMS[current]);
+    showFeatured(ITEMS[current], current);
+    showInfo(ITEMS[current]);
+    syncLoader();
+    ensure(current);
+  }
+  function visibleIndexes() {
+    const list = [];
+    ITEMS.forEach((_, i) => { if (isShown(i)) list.push(i); });
+    return list;
+  }
+  function moveTab(step) {
+    const list = visibleIndexes();
+    if (!list.length) return;
+    let pos = list.indexOf(current);
+    if (pos < 0) pos = 0;
+    const next = list[(pos + step + list.length) % list.length];
+    select(next, step);
+    tabsEl.querySelector(`[data-index="${next}"]`)?.focus();
+  }
+  function markInteract() {
+    lastInteract = performance.now();
+    if (!hinted) {
+      hinted = true;
+      hint.classList.add('is-gone');
+    }
+  }
+  function goHome() {
+    targetQuat.copy(homeQuat);
+    homing = true;
+    zoomTarget = 1;
+    queue = 0;
+    vel.set(0, 0);
+    markInteract();
+  }
+  function bumpZoom(factor) {
+    zoomTarget = clamp(zoomTarget * factor, 0.55, 3.4);
+    markInteract();
+  }
+  function toggleCloseup() {
+    const item = ITEMS[current];
+    const cfg = OBJECT_CLOSEUPS[item.id] || { euler: [0.04, 0.12, 0], zoom: 2.35 };
+    const toClose = zoomTarget <= 2.0;
+    if (toClose) {
+      const [ex, ey, ez] = cfg.euler;
+      targetQuat.setFromEuler(new THREE.Euler(ex, ey, ez, 'YXZ'));
+      zoomTarget = cfg.zoom;
+    } else {
+      targetQuat.copy(homeQuat);
+      zoomTarget = 1;
+    }
+    homing = true;
+    queue = 0;
+    vel.set(0, 0);
+    markInteract();
+  }
+  function setFocusMode(on) {
+    hero.classList.toggle('focus', on);
+    expandBtn.classList.toggle('on', on);
+    expandBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    document.querySelector('.side')?.setAttribute('aria-hidden', on ? 'true' : 'false');
+    if (window.matchMedia('(max-width: 760px)').matches) {
+      detail.setAttribute('aria-hidden', on ? 'true' : 'false');
+    }
+  }
+  function setLight(dusk) {
+    hero.dataset.light = dusk ? 'dusk' : 'day';
+    lightBtn.classList.toggle('on', dusk);
+    lightBtn.setAttribute('aria-pressed', dusk ? 'true' : 'false');
+    if (themeMeta) themeMeta.content = dusk ? '#14170f' : '#f6f1e7';
+    syncLightTargets();
+    repaintFronts();
+    markInteract();
+  }
+  function setNav(id) {
+    navId = id;
+    if (query) {
+      query = '';
+      searchInput.value = '';
+    }
+    document.querySelectorAll('[data-nav]').forEach((btn) => {
+      if (btn.dataset.nav === id) btn.setAttribute('aria-current', 'page');
+      else btn.removeAttribute('aria-current');
+    });
+    if (id === 'home') {
+      query = '';
+      searchInput.value = '';
+      navId = 'all';
+      document.querySelectorAll('[data-nav]').forEach((btn) => {
+        if (btn.dataset.nav === 'home') btn.setAttribute('aria-current', 'page');
+        else btn.removeAttribute('aria-current');
+      });
+      applyFilter();
+      const homeIndex = Math.max(0, ITEMS.findIndex((it) => it.id === 'item-03-hp-dat-160'));
+      select(homeIndex, Math.sign(homeIndex - current) || 1);
+      goHome();
+      setFocusMode(false);
+      if (hero.dataset.light === 'dusk') setLight(false);
+      return;
+    }
+    applyFilter();
+  }
+  function backOut(t) {
+    const c1 = 2.05;
+    const c3 = c1 + 1;
+    return 1 + c3 * (t - 1) ** 3 + c1 * (t - 1) ** 2;
+  }
+  function easeOutCubic(t) { return 1 - (1 - t) ** 3; }
+  function poseSwitch() {
+    const t = switchT;
+    const dir = switchDir;
+    if (outgoing >= 0 && outgoing !== current) {
+      const rig = rigs[outgoing];
+      const e = t * t * (3 - 2 * t);
+      rig.pivot.position.x = dir * 1.65 * e;
+      rig.pivot.scale.setScalar(Math.max(0.001, 1 - 0.55 * e));
+      setOpacity(rig, 1 - t);
+    }
+    const rig = rigs[current];
+    if (rig) {
+      const popped = backOut(Math.min(t, 1));
+      const slide = 1 - easeOutCubic(Math.min(t, 1));
+      rig.pivot.position.x = -dir * 1.4 * slide;
+      rig.pivot.scale.setScalar(Math.max(0.001, 0.5 + 0.5 * popped));
+      setOpacity(rig, Math.min(1, 0.15 + t * 1.15));
+    }
+  }
+  function measure() {
+    const W = hero.clientWidth;
+    const H = hero.clientHeight;
+    if (W < 2 || H < 2) return;
+    if (W !== viewW || H !== viewH) {
+      viewW = W;
+      viewH = H;
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(W, H, false);
+    }
+    const focus = hero.classList.contains('focus');
+    const sr = stage.getBoundingClientRect();
+    const hr = hero.getBoundingClientRect();
+    if (focus) {
+      targetCx = W / 2;
+      targetCy = H * 0.5;
+      targetPx = Math.min(W * 0.5, H * 0.6) * 1.16;
+    } else {
+      targetCx = (sr.left - hr.left) + sr.width / 2;
+      targetCy = (sr.top - hr.top) + sr.height * 0.44;
+      targetPx = Math.min(Math.max(sr.width, 1) * 0.5, Math.max(sr.height, 1) * 0.6) * 1.16;
+    }
+    if (!framed) {
+      cx = targetCx;
+      cy = targetCy;
+      px = targetPx;
+      framed = true;
+    }
+  }
+  function frame() {
+    const dt = Math.min(clock.getDelta(), 0.05);
+    const now = performance.now();
+    measure();
+    const dur = reduce.matches ? 0 : 0.78;
+    if (switchT < 1) {
+      switchT = dur === 0 ? 1 : Math.min(1, (now - switchStart) / 1000 / dur);
+      poseSwitch();
+      if (switchT >= 1 && outgoing >= 0) {
+        unmount(outgoing);
+        outgoing = -1;
+        const rig = rigs[current];
+        if (rig) {
+          rig.pivot.position.x = 0;
+          rig.pivot.scale.setScalar(1);
+          setOpacity(rig, 1);
+        }
+      }
+    }
+    const ease = 1 - Math.exp(-dt * 7);
+    cx += (targetCx - cx) * ease;
+    cy += (targetCy - cy) * ease;
+    px += (targetPx - px) * ease;
+    zoom += (zoomTarget - zoom) * (1 - Math.exp(-dt * 6));
+    if (homing) {
+      const spin = activeSpin();
+      if (spin) {
+        spin.quaternion.slerp(targetQuat, 1 - Math.exp(-dt * 5));
+        if (spin.quaternion.angleTo(targetQuat) < 0.002) {
+          spin.quaternion.copy(targetQuat);
+          homing = false;
+        }
+      }
+    } else if (!drag) {
+      if (queue) {
+        const step = queue * (1 - Math.exp(-dt * 4.2));
+        queue -= step;
+        applySpin(step, 0);
+        if (Math.abs(queue) < 0.0006) queue = 0;
+      }
+      if (vel.x || vel.y) {
+        applySpin(vel.y * dt, vel.x * dt);
+        const decay = Math.exp(-dt * 4.5);
+        vel.multiplyScalar(decay);
+        if (vel.length() < 0.0004) vel.set(0, 0);
+      }
+    }
+    const idleTarget = (!reduce.matches && now - lastInteract > 1800) ? 1 : 0;
+    idleAmt += (idleTarget - idleAmt) * (1 - Math.exp(-dt * 2.4));
+    const t = now / 1000;
+    [current, outgoing].forEach((index) => {
+      if (index < 0) return;
+      const rig = rigs[index];
+      if (!rig || rig.pivot.parent !== scene) return;
+      const sway = idleAmt;
+      rig.pivot.rotation.x = Math.sin(t * 0.9) * 0.03 * sway;
+      rig.pivot.rotation.y = Math.sin(t * 0.55) * 0.16 * sway;
+      rig.pivot.rotation.z = 0;
+      rig.pivot.position.y = Math.sin(t * 1.3 + index) * 0.028 * sway;
+    });
+    const lk = 1 - Math.exp(-dt * 4);
+    scene.environmentIntensity += (envTarget.v - scene.environmentIntensity) * lk;
+    keyLight.intensity += (keyI.v - keyLight.intensity) * lk;
+    rimLight.intensity += (rimI.v - rimLight.intensity) * lk;
+    expI.live = (expI.live ?? renderer.toneMappingExposure) + (expI.v - (expI.live ?? renderer.toneMappingExposure)) * lk;
+    renderer.toneMappingExposure = expI.live;
+    keyLight.color.lerp(keyColorTarget, lk);
+    rimLight.color.lerp(rimColorTarget, lk);
+    edgeMats.forEach((mat, i) => {
+      mat.color.lerp(i % 2 === 0 ? sideTarget : backTarget, lk);
+    });
+    const closeup = article.querySelector('[data-action="closeup"]');
+    if (closeup) {
+      const pressed = zoom > 2.0;
+      if ((closeup.getAttribute('aria-pressed') === 'true') !== pressed) {
+        closeup.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+      }
+    }
+    if (viewW > 2 && viewH > 2) {
+      const fov = THREE.MathUtils.degToRad(camera.fov);
+      camera.position.z = viewH / (2 * Math.tan(fov / 2) * Math.max(px, 1) * Math.max(zoom, 0.05));
+      camera.setViewOffset(viewW, viewH, viewW / 2 - cx, viewH / 2 - cy, viewW, viewH);
+      renderer.render(scene, camera);
+    }
+    requestAnimationFrame(frame);
+  }
+  const clock = new THREE.Clock();
+  function pinchDist() {
+    const arr = [...pts.values()];
+    if (arr.length < 2) return 0;
+    return Math.hypot(arr[0].x - arr[1].x, arr[0].y - arr[1].y);
+  }
+  stage.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('button, a, input')) return;
+    stage.setPointerCapture(e.pointerId);
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    stage.focus({ preventScroll: true });
+    homing = false;
+    markInteract();
+    if (pts.size >= 2) {
+      drag = null;
+      pinch = pinchDist();
+      vel.set(0, 0);
+    } else {
+      drag = { x: e.clientX, y: e.clientY, t: performance.now() };
+      vel.set(0, 0);
+    }
+  });
+  stage.addEventListener('pointermove', (e) => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pts.size >= 2) {
+      const dist = pinchDist();
+      if (pinch && dist > 0) zoomTarget = clamp(zoomTarget * (dist / pinch), 0.55, 3.4);
+      pinch = dist;
+      markInteract();
+      return;
+    }
+    if (!drag) return;
+    const now = performance.now();
+    const dx = e.clientX - drag.x;
+    const dy = e.clientY - drag.y;
+    const elapsed = Math.max(16, now - drag.t) / 1000;
+    const k = Math.PI / Math.max(260, px * 1.6);
+    applySpin(dx * k, dy * k);
+    vel.y = (dx * k) / elapsed;
+    vel.x = (dy * k) / elapsed;
+    drag.x = e.clientX;
+    drag.y = e.clientY;
+    drag.t = now;
+    markInteract();
+  });
+  function endPointer(e) {
+    pts.delete(e.pointerId);
+    if (pts.size < 2) pinch = null;
+    if (pts.size === 0) drag = null;
+    else if (pts.size === 1) {
+      const only = [...pts.values()][0];
+      drag = { x: only.x, y: only.y, t: performance.now() };
+      vel.set(0, 0);
+    }
+  }
+  stage.addEventListener('pointerup', endPointer);
+  stage.addEventListener('pointercancel', endPointer);
+  stage.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    let dy = e.deltaY;
+    if (e.deltaMode === 1) dy *= 16;
+    else if (e.deltaMode === 2) dy *= window.innerHeight;
+    zoomTarget = clamp(zoomTarget * Math.exp(-dy * 0.0016), 0.55, 3.4);
+    markInteract();
+  }, { passive: false });
+  stage.addEventListener('dblclick', (e) => {
+    if (e.target.closest('button, a')) return;
+    goHome();
+  });
+  tabsEl.addEventListener('click', (e) => {
+    const tab = e.target.closest('[role="tab"]');
+    if (!tab || tab.hidden) return;
+    const next = Number(tab.dataset.index);
+    select(next, Math.sign(next - current) || 1);
+  });
+  document.querySelector('.nav').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-nav]');
+    if (!btn) return;
+    setNav(btn.dataset.nav);
+  });
+  document.getElementById('zoom-in').addEventListener('click', () => bumpZoom(1.35));
+  document.getElementById('zoom-out').addEventListener('click', () => bumpZoom(1 / 1.35));
+  expandBtn.addEventListener('click', () => setFocusMode(!hero.classList.contains('focus')));
+  lightBtn.addEventListener('click', () => setLight(hero.dataset.light !== 'dusk'));
+  document.getElementById('turn-ccw').addEventListener('click', () => { queue -= Math.PI / 2; homing = false; markInteract(); });
+  document.getElementById('turn-cw').addEventListener('click', () => { queue += Math.PI / 2; homing = false; markInteract(); });
+  document.getElementById('turn-360').addEventListener('click', () => { queue += Math.PI * 2; homing = false; markInteract(); });
+  detail.addEventListener('click', (e) => {
+    if (e.target.closest('[data-action="closeup"]')) toggleCloseup();
+  });
+  const recordModal = document.getElementById('record-modal');
+  const recordDialog = document.getElementById('record-dialog');
+  function openRecordModal(index) {
+    const item = ITEMS[index] || ITEMS[current];
+    if (!item) return;
+    if (index !== current) {
+      select(index, Math.sign(index - current) || 1);
+    }
+    const specsRows = Object.entries(item.specs || {}).map(([k, v]) => `<dt>${esc(SPEC_LABEL[k] || k)}</dt><dd>${esc(Array.isArray(v) ? v.join(', ') : v)}</dd>`).join('');
+    const connButtons = (item.connections || []).map((connId) => {
+      const targetIdx = ITEMS.findIndex((it) => it.id === connId);
+      if (targetIdx < 0) return '';
+      const targetItem = ITEMS[targetIdx];
+      return `<button type="button" class="record-conn-btn" data-conn-index="${targetIdx}">${esc(nameOf(targetItem))} (${esc(targetItem.era)})</button>`;
+    }).join('');
+    const readingList = (item.furtherReading || []).map((r) => `<p style="margin-top:8px;font-size:13px;"><b>${esc(r.title)}</b> (${esc(r.type)}) — <span style="color:var(--muted)">${esc(r.note)}</span></p>`).join('');
+    recordDialog.innerHTML = `
+      <div class="record-dialog-top">
+        <div>
+          <p class="eyebrow">DScape Archival Dossier · ${esc(item.id)}</p>
+          <h2 class="record-dialog-title" id="record-modal-title">${esc(item.title)}</h2>
+        </div>
+        <button type="button" class="record-close-btn" data-close-modal="true">[X]</button>
+      </div>
+      <div class="record-grid">
+        <div>
+          <div class="record-preview-box"><img src="${esc(item.media.image)}" alt="${esc(item.title)}"></div>
+          <dl class="record-meta-table">
+            <dt>Manufacturer</dt><dd>${esc(item.citation?.manufacturer || 'Unknown')}</dd>
+            <dt>Model</dt><dd>${esc(item.citation?.model || '—')}</dd>
+            <dt>Part / Serial</dt><dd>${esc(item.citation?.partNumber || 'N/A')}</dd>
+            <dt>Date / Era</dt><dd>${esc(item.era)}</dd>
+            <dt>Category</dt><dd>${esc(item.category)}</dd>
+          </dl>
+        </div>
+        <div>
+          <p class="eyebrow">Primary Archival Function</p>
+          <p style="font-size:15px;font-weight:600;margin-top:4px;">${esc(item.function)}</p>
+          <p class="narrative" style="margin-top:12px;">${esc(item.narrative)}</p>
+          <dl class="record-meta-table">
+            <dt>Label Inscription</dt><dd>${esc(item.labelNotes)}</dd>
+            ${specsRows}
+          </dl>
+          ${readingList ? `<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line);"><p class="eyebrow">Further Reading</p>${readingList}</div>` : ''}
+          ${connButtons ? `<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line);"><p class="eyebrow">Connected Archive Relics</p><div class="record-conn-list">${connButtons}</div></div>` : ''}
+        </div>
+      </div>`;
+    recordModal.hidden = false;
+  }
+  hero.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-action="record"]');
+    if (!link) return;
+    e.preventDefault();
+    openRecordModal(featuredIndex);
+  });
+  recordModal.addEventListener('click', (e) => {
+    if (e.target === recordModal || e.target.closest('[data-close-modal]')) {
+      recordModal.hidden = true;
+      return;
+    }
+    const connBtn = e.target.closest('[data-conn-index]');
+    if (connBtn) {
+      const nextIdx = Number(connBtn.dataset.connIndex);
+      recordModal.hidden = true;
+      select(nextIdx, Math.sign(nextIdx - current) || 1);
+    }
+  });
+  searchForm.addEventListener('submit', (e) => e.preventDefault());
+  searchInput.addEventListener('input', () => {
+    query = searchInput.value.trim().toLowerCase();
+    if (query && navId !== 'all') {
+      navId = 'all';
+      document.querySelectorAll('[data-nav]').forEach((btn) => {
+        if (btn.dataset.nav === 'all') btn.setAttribute('aria-current', 'page');
+        else btn.removeAttribute('aria-current');
+      });
+    }
+    applyFilter();
+  });
+  searchToggle.addEventListener('click', () => {
+    const open = !tools.classList.contains('is-searching');
+    tools.classList.toggle('is-searching', open);
+    searchToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) searchInput.focus();
+  });
+  window.addEventListener('keydown', (e) => {
+    const target = e.target instanceof Element ? e.target : null;
+    if (target?.closest('input, textarea')) {
+      if (e.key === 'Escape') target.blur();
+      return;
+    }
+    if (target?.closest('[role="tab"]') && (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Home' || e.key === 'End')) {
+      e.preventDefault();
+      if (e.key === 'Home') select(visibleIndexes()[0], -1);
+      else if (e.key === 'End') {
+        const list = visibleIndexes();
+        select(list[list.length - 1], 1);
+      } else moveTab(e.key === 'ArrowRight' ? 1 : -1);
+      return;
+    }
+    if (e.key === 'Escape') {
+      if (!recordModal.hidden) {
+        recordModal.hidden = true;
+        return;
+      }
+      if (tools.classList.contains('is-searching')) {
+        tools.classList.remove('is-searching');
+        searchToggle.setAttribute('aria-expanded', 'false');
+      }
+      if (hero.classList.contains('focus')) setFocusMode(false);
+      return;
+    }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); homing = false; applySpin(-0.18, 0); markInteract(); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); homing = false; applySpin(0.18, 0); markInteract(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); homing = false; applySpin(0, -0.18); markInteract(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); homing = false; applySpin(0, 0.18); markInteract(); }
+    else if (e.key === '+' || e.key === '=' || e.key === 'Add') { e.preventDefault(); bumpZoom(1.2); }
+    else if (e.key === '-' || e.key === '_' || e.key === 'Subtract') { e.preventDefault(); bumpZoom(1 / 1.2); }
+    else if (e.key === '0') { e.preventDefault(); goHome(); }
+  });
+  const ro = new ResizeObserver(() => measure());
+  ro.observe(hero);
+  ro.observe(stage);
+  NAV.forEach((group) => {
+    if (!group.test) return;
+    const n = ITEMS.filter(group.test).length;
+    const small = document.querySelector(`[data-nav="${group.id}"] small`);
+    if (small) small.textContent = `${n} ${n === 1 ? 'item' : 'items'}`;
+  });
+  syncLightTargets();
+  renderTabs();
+  showFeatured(ITEMS[current], current);
+  captionEl.textContent = captionFor(ITEMS[current]);
+  showInfo(ITEMS[current]);
+  mount(current);
+  ensure(current);
+  ITEMS.forEach((_, i) => { if (i !== current) ensure(i); });
+  measure();
+  requestAnimationFrame(frame);
+  </script>
+</body>
+</html>
