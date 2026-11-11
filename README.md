@@ -1,6 +1,8 @@
 # DScape Archive
 
-Presenting digital relics and ruins unearthed from the storage room of HKUST Library. Developed alongside the 2026-11-05 workshop “(Vibe) Coding for Curating a Web-Native Exhibition,” experimenting with various pathways and AI tools.
+Presenting digital relics and ruins unearthed from the storage room of HKUST Library. 
+
+Developed alongside the 2026-11-05 workshop **“(Vibe) Coding for Curating a Web-Native Exhibition,”** experimenting with various pathways and AI tools.
 
 ## Demos & Development
 
@@ -45,7 +47,9 @@ Presenting digital relics and ruins unearthed from the storage room of HKUST Lib
 - https://yifanwo.github.io/dscape-archive/1.0.7.html
 - Reference: https://unifiersofjapan.framer.website/
 
-**NOTE:** Paths are categorized and outlined in the workshop slides [(Vibe) Coding for Curating a Web-Native Exhibition](https://yifanwo.github.io/vibe-coding-exhibition-slides/) .
+**NOTE:** 
+
+Paths are categorized and outlined in the workshop slides [(Vibe) Coding for Curating a Web-Native Exhibition](https://yifanwo.github.io/vibe-coding-exhibition-slides/) .
 
 ## Related
 
